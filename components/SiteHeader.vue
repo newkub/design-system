@@ -8,12 +8,12 @@
       
       <nav class="flex items-center gap-4">
         <div class="hidden md:flex items-center gap-6">
-          <NuxtLink to="/docs/guide" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Docs</NuxtLink>
-          <NuxtLink to="/docs/api-docs" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">API</NuxtLink>
-          <NuxtLink to="/design-system" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Design System</NuxtLink>
-          <NuxtLink to="/blog" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Blog</NuxtLink>
-          <NuxtLink to="/showcase" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Showcase</NuxtLink>
-          <NuxtLink to="/changelog" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Changelog</NuxtLink>
+          <NuxtLink to="/docs/guide" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/docs') }">Docs</NuxtLink>
+          <NuxtLink to="/docs/api-docs" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/docs/api-docs') }">API</NuxtLink>
+          <NuxtLink to="/design-system" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/design-system') }">Design System</NuxtLink>
+          <NuxtLink to="/blog" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/blog') }">Blog</NuxtLink>
+          <NuxtLink to="/showcase" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/showcase') }">Showcase</NuxtLink>
+          <NuxtLink to="/changelog" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/changelog') }">Changelog</NuxtLink>
         </div>
         
         <!-- Mobile menu button -->
@@ -48,6 +48,7 @@
 </template>
 
 <script setup>
+const route = useRoute()
 const colorMode = useColorMode()
 const isDark = computed(() => colorMode.value === 'dark')
 const mobileMenuOpen = ref(false)
@@ -60,8 +61,13 @@ function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
 
+// Check if the current route starts with the given path
+function isActive(path) {
+  return route.path.startsWith(path)
+}
+
 // Close mobile menu when route changes
-watch(() => useRoute().path, () => {
+watch(() => route.path, () => {
   mobileMenuOpen.value = false
 })
 </script>

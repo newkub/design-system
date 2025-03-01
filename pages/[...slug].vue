@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout :name="layoutName">
     <div>
       <ContentDoc v-slot="{ doc }">
         <template v-if="doc">
@@ -43,6 +43,14 @@ const { path } = useRoute()
 
 const { data: page } = await useAsyncData(`content-${path}`, () => {
   return queryContent().where({ _path: path }).findOne()
+})
+
+// Determine the layout based on the path
+const layoutName = computed(() => {
+  if (path.startsWith('/docs/')) {
+    return 'docs'
+  }
+  return 'default'
 })
 
 // Use ref for prev and next to ensure reactivity

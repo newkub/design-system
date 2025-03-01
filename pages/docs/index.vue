@@ -1,7 +1,7 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="docs">
     <div>
-      <h1 class="text-3xl font-bold mb-6">Guide</h1>
+      <h1 class="text-3xl font-bold mb-6">Documentation</h1>
       
       <div class="grid md:grid-cols-2 gap-6">
         <NuxtLink 
@@ -19,9 +19,9 @@
 </template>
 
 <script setup>
-const { data: docs } = await useAsyncData('guide-index', () => {
-  return queryContent('/guide')
-    .where({ _path: { $ne: '/guide' } })
+const { data: docs } = await useAsyncData('docs-index', () => {
+  return queryContent('/docs/guide')
+    .where({ _path: { $ne: '/docs/guide' } })
     .sort({ _path: 1 })
     .find()
 })

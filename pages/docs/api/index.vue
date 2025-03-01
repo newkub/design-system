@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="docs">
     <div>
       <h1 class="text-3xl font-bold mb-6">API Reference</h1>
       
