@@ -4,10 +4,10 @@
     
     <div class="flex-1 container mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
       <!-- Sidebar -->
-      <Sidebar class="w-64 shrink-0" />
+      <DocSidebar class="w-64 shrink-0" />
       
       <!-- Main content -->
-      <div class="flex-1">
+      <div class="flex-1 prose dark:prose-invert prose-primary max-w-none">
         <slot />
       </div>
       

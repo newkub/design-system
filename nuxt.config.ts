@@ -26,7 +26,13 @@ export default defineNuxtConfig({
       anchorLinks: {
         depth: 3,
         exclude: [1]
-      }
+      },
+      remarkPlugins: ['remark-emoji'],
+      rehypePlugins: []
+    },
+    experimental: {
+      clientDB: true,
+      componentIslands: true
     }
   },
   colorMode: {
