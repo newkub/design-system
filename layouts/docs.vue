@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col min-h-screen w-full">
-    <SiteHeader />
+    <Navbar />
     <div class="flex-1 flex w-full">
-      <SiteSidebar v-if="showSidebar" />
+      <Sidebar v-if="showSidebar" />
       <main class="flex-1 px-4 py-8 md:px-8 lg:px-12 w-full">
         <div class="max-w-5xl mx-auto w-full">
           <slot />
@@ -10,7 +10,7 @@
       </main>
       <TableOfContents v-if="showToc && tocLinks.length > 0" :links="tocLinks" class="w-64 hidden xl:block shrink-0" />
     </div>
-    <SiteFooter />
+    <Footer />
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="design-system">
+  <NuxtLayout name="default">
     <div>
       <div class="flex items-center gap-2 mb-2">
         <NuxtLink to="/design-system" class="text-primary-600 dark:text-primary-400 hover:underline">Design System</NuxtLink>

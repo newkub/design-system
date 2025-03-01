@@ -10,7 +10,6 @@
         <div class="hidden md:flex items-center gap-6">
           <NuxtLink to="/docs/guide" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/docs') }">Docs</NuxtLink>
           <NuxtLink to="/docs/api-docs" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/docs/api-docs') }">API</NuxtLink>
-          <NuxtLink to="/design-system" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/design-system') }">Design System</NuxtLink>
           <NuxtLink to="/blog" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/blog') }">Blog</NuxtLink>
           <NuxtLink to="/showcase" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/showcase') }">Showcase</NuxtLink>
           <NuxtLink to="/changelog" class="nav-link relative py-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" :class="{ 'text-primary-600 dark:text-primary-400 font-medium': isActive('/changelog') }">Changelog</NuxtLink>
@@ -38,7 +37,6 @@
       <div class="px-4 py-2 space-y-2">
         <NuxtLink to="/docs/guide" class="block py-2 hover:text-primary-600 dark:hover:text-primary-400" @click="mobileMenuOpen = false">Docs</NuxtLink>
         <NuxtLink to="/docs/api-docs" class="block py-2 hover:text-primary-600 dark:hover:text-primary-400" @click="mobileMenuOpen = false">API</NuxtLink>
-        <NuxtLink to="/design-system" class="block py-2 hover:text-primary-600 dark:hover:text-primary-400" @click="mobileMenuOpen = false">Design System</NuxtLink>
         <NuxtLink to="/blog" class="block py-2 hover:text-primary-600 dark:hover:text-primary-400" @click="mobileMenuOpen = false">Blog</NuxtLink>
         <NuxtLink to="/showcase" class="block py-2 hover:text-primary-600 dark:hover:text-primary-400" @click="mobileMenuOpen = false">Showcase</NuxtLink>
         <NuxtLink to="/changelog" class="block py-2 hover:text-primary-600 dark:hover:text-primary-400" @click="mobileMenuOpen = false">Changelog</NuxtLink>
