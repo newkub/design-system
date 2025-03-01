@@ -1,7 +1,5 @@
 <template>
-  <div class="flex flex-col min-h-screen">
-    <SiteHeader />
-    
+  <NuxtLayout name="default">
     <!-- Hero section -->
     <div class="bg-gradient-to-b from-primary-50 to-white dark:from-gray-900 dark:to-gray-950 py-16">
       <div class="container mx-auto px-4 md:px-6 lg:px-8">
@@ -139,7 +137,5 @@ npm run dev</code></pre>
         </div>
       </div>
     </div>
-    
-    <SiteFooter />
-  </div>
+  </NuxtLayout>
 </template>
