@@ -1,32 +1,31 @@
 <template>
-  <div class="flex flex-col h-screen">
-    <!-- Header -->
-    <SiteHeader />
-    
-    <!-- Main content -->
-    <div class="flex-1 flex overflow-hidden">
-      <!-- Sidebar -->
-      <ApiSidebar 
-        :api-spec="apiSpec" 
-        @select-operation="handleSelectOperation"
-        @select-schema="handleSelectSchema"
-      />
-      
+  <NuxtLayout name="docs">
+    <div class="flex flex-col h-screen">
       <!-- Main content -->
-      <ApiContent 
-        :api-spec="apiSpec" 
-        :selected-operation-info="selectedOperationInfo"
-        :selected-schema-name="selectedSchemaName"
-      />
-      
-      <!-- Examples panel -->
-      <ApiExamples 
-        :api-spec="apiSpec" 
-        :selected-operation-info="selectedOperationInfo"
-        :selected-schema-name="selectedSchemaName"
-      />
+      <div class="flex-1 flex overflow-hidden">
+        <!-- Sidebar -->
+        <ApiSidebar 
+          :api-spec="apiSpec" 
+          @select-operation="handleSelectOperation"
+          @select-schema="handleSelectSchema"
+        />
+        
+        <!-- Main content -->
+        <ApiContent 
+          :api-spec="apiSpec" 
+          :selected-operation-info="selectedOperationInfo"
+          :selected-schema-name="selectedSchemaName"
+        />
+        
+        <!-- Examples panel -->
+        <ApiExamples 
+          :api-spec="apiSpec" 
+          :selected-operation-info="selectedOperationInfo"
+          :selected-schema-name="selectedSchemaName"
+        />
+      </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup>
