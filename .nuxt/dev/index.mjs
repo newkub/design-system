@@ -34,6 +34,8 @@ import Slugger from 'file:///home/project/node_modules/github-slugger/index.js';
 import destr, { destr as destr$1 } from 'file:///home/project/node_modules/destr/dist/index.mjs';
 import { createWasmOnigEngine } from 'file:///home/project/node_modules/shiki/dist/engine-oniguruma.mjs';
 import slugify from 'file:///home/project/node_modules/slugify/slugify.js';
+import fs from 'fs';
+import path from 'path';
 import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///home/project/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import { stringify, uneval } from 'file:///home/project/node_modules/devalue/index.js';
 import { renderToString } from 'file:///home/project/node_modules/vue/server-renderer/index.mjs';
@@ -401,6 +403,7 @@ const _inlineRuntimeConfig = {
       },
       "navigation": {
         "fields": [
+          "layout",
           "layout"
         ]
       },
@@ -464,10 +467,18 @@ const _inlineRuntimeConfig = {
           "css",
           "vue",
           "bash",
+          "markdown",
+          "json",
+          "js",
+          "ts",
+          "html",
+          "css",
+          "vue",
+          "bash",
           "markdown"
         ]
       },
-      "wsUrl": "ws://localhost:4001/",
+      "wsUrl": "ws://localhost:4000/",
       "documentDriven": {
         "page": true,
         "navigation": true,
@@ -549,6 +560,14 @@ const _inlineRuntimeConfig = {
         "css",
         "vue",
         "bash",
+        "markdown",
+        "json",
+        "js",
+        "ts",
+        "html",
+        "css",
+        "vue",
+        "bash",
         "markdown"
       ]
     },
@@ -595,6 +614,7 @@ const _inlineRuntimeConfig = {
     },
     "navigation": {
       "fields": [
+        "layout",
         "layout"
       ]
     },
@@ -2038,9 +2058,11 @@ const _yz1ajH = defineEventHandler(async (event) => {
   return createNav(contents?.result || contents, configs);
 });
 
+const _lazy_j4SThj = () => Promise.resolve().then(function () { return components$1; });
 const _lazy_kdwqQN = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
+  { route: '/api/components', handler: _lazy_j4SThj, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_error', handler: _lazy_kdwqQN, lazy: true, middleware: false, method: undefined },
   { route: '/api/_mdc/highlight', handler: _zs47Wz, lazy: false, middleware: false, method: undefined },
   { route: '/api/_content/query/:qid/**:params', handler: _xzPqfi, lazy: false, middleware: false, method: "get" },
@@ -4315,6 +4337,38 @@ function isObject(obj) {
 const navigation = /*#__PURE__*/Object.freeze({
   __proto__: null,
   createNav: createNav
+});
+
+const components = defineEventHandler(async (event) => {
+  try {
+    const componentsDir = path.resolve(process.cwd(), "components");
+    const files = fs.readdirSync(componentsDir).filter((file) => file.endsWith(".vue"));
+    const components = [];
+    for (const file of files) {
+      const filePath = path.join(componentsDir, file);
+      const content = fs.readFileSync(filePath, "utf-8");
+      const metadataRegex = /@componentMetadata\s*\n\s*\*\s*({[\s\S]*?})\s*\n\s*\*/;
+      const match = content.match(metadataRegex);
+      if (match && match[1]) {
+        try {
+          const metadataStr = match[1].replace(/\s*\*\s*/g, "");
+          const metadata = JSON.parse(metadataStr);
+          components.push(metadata);
+        } catch (err) {
+          console.error(`Error parsing metadata for ${file}:`, err);
+        }
+      }
+    }
+    return components;
+  } catch (err) {
+    console.error("Error loading components:", err);
+    return { error: "Failed to load components" };
+  }
+});
+
+const components$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: components
 });
 
 const Vue3 = version[0] === "3";

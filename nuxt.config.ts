@@ -35,5 +35,9 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ]
     }
-  }
+  },
+  // Add auto-imports for components
+  components: [
+    { path: '~/components', pathPrefix: false }
+  ]
 })

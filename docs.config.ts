@@ -4,9 +4,9 @@ const themeConfig: ThemeConfig = {
   logo: '/logo.svg',
   siteTitle: 'Design System',
   nav: [
-    { text: 'Guide', link: '/guide/' },
+    { text: 'Get Started', link: '/design-system/get-started/design-principles' },
     { text: 'Components', link: '/components' },
-    { text: 'Showcase', link: '/showcase/' },
+    { text: 'Showcase', link: '/showcase' },
     { 
       text: 'Links',
       items: [
@@ -16,15 +16,15 @@ const themeConfig: ThemeConfig = {
     }
   ],
   sidebar: {
-    '/guide/': [
+    '/design-system/get-started/': [
       {
         text: 'Get Started',
         collapsible: true,
         items: [
-          { text: 'Design Principles', link: '/guide/design-principles' },
-          { text: 'Installation', link: '/guide/installation' },
-          { text: 'Usage', link: '/guide/usage' },
-          { text: 'Customize Theme', link: '/guide/customize-theme' },
+          { text: 'Design Principles', link: '/design-system/get-started/design-principles' },
+          { text: 'Installation', link: '/design-system/get-started/installation' },
+          { text: 'Usage', link: '/design-system/get-started/usage' },
+          { text: 'Customize Theme', link: '/design-system/get-started/customize-theme' },
         ]
       },
       {
