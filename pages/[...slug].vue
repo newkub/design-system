@@ -1,6 +1,7 @@
 <template>
   <NuxtLayout name="docs">
     <div class="prose py-8">
+      <MobileTableOfContents />
       <ContentDoc>
         <template #not-found>
           <div class="text-center py-12">
@@ -15,3 +16,30 @@
     </div>
   </NuxtLayout>
 </template>
+
+<script setup>
+// This ensures headings have IDs for the table of contents
+import { useHead } from '#imports';
+
+useHead({
+  script: [
+    {
+      innerHTML: `
+        document.addEventListener('DOMContentLoaded', () => {
+          const headings = document.querySelectorAll('.prose h1, .prose h2, .prose h3, .prose h4');
+          headings.forEach(heading => {
+            if (!heading.id) {
+              const id = heading.textContent
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+              heading.id = id;
+            }
+          });
+        });
+      `,
+      type: 'text/javascript'
+    }
+  ]
+});
+</script>

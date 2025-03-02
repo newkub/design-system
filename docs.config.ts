@@ -6,6 +6,17 @@ export default {
     siteTitle: 'Nuxt Docs',
     nav: [
       { text: 'Guide', link: '/guide/' },
+      { text: 'Design System', link: '/design-system/' },
+      { 
+        text: 'Components',
+        items: [
+          { text: 'Buttons', link: '/design-system/buttons' },
+          { text: 'Typography', link: '/design-system/typography' },
+          { text: 'Cards', link: '/design-system/cards' },
+          { text: 'Alerts', link: '/design-system/alerts' },
+          { text: 'Inputs', link: '/design-system/inputs' }
+        ]
+      },
       { 
         text: 'Links',
         items: [
@@ -28,6 +39,36 @@ export default {
           items: [
             { text: 'Configuration', link: '/guide/configuration' },
             { text: 'Routing', link: '/guide/routing' }
+          ]
+        }
+      ],
+      '/design-system/': [
+        {
+          text: 'Overview',
+          items: [
+            { text: 'Introduction', link: '/design-system/' },
+            { text: 'Design Principles', link: '/design-system/principles' },
+            { text: 'Color System', link: '/design-system/colors' }
+          ]
+        },
+        {
+          text: 'Components',
+          items: [
+            { text: 'Buttons', link: '/design-system/buttons' },
+            { text: 'Typography', link: '/design-system/typography' },
+            { text: 'Cards', link: '/design-system/cards' },
+            { text: 'Alerts', link: '/design-system/alerts' },
+            { text: 'Badges', link: '/design-system/badges' },
+            { text: 'Tabs', link: '/design-system/tabs' },
+            { text: 'Inputs', link: '/design-system/inputs' }
+          ]
+        },
+        {
+          text: 'Patterns',
+          items: [
+            { text: 'Forms', link: '/design-system/patterns/forms' },
+            { text: 'Navigation', link: '/design-system/patterns/navigation' },
+            { text: 'Layouts', link: '/design-system/patterns/layouts' }
           ]
         }
       ],

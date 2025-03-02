@@ -15,9 +15,15 @@ export default defineNuxtConfig({
   },
   unocss: {
     preflight: true,
+    icons: true,
+    presets: [
+      'uno',
+      'icons'
+    ]
   },
   css: [
     '~/assets/css/main.css',
+    '~/assets/css/design-system.css',
   ],
   app: {
     head: {

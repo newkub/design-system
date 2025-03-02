@@ -11,6 +11,7 @@
           <slot />
         </div>
       </main>
+      <DocsToc />
     </div>
     
     <DocsFooter />
