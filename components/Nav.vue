@@ -97,7 +97,7 @@ function isNavItemActive(item) {
             class="social-link"
             :title="link.icon.charAt(0).toUpperCase() + link.icon.slice(1)"
           >
-            <div :class="`i-carbon-logo-${link.icon} text-xl`"></div>
+            <div :class="`i-logos-${link.icon} text-xl`"></div>
           </a>
         </div>
       </div>
@@ -128,7 +128,7 @@ function isNavItemActive(item) {
             rel="noopener noreferrer"
             class="social-link"
           >
-            <div :class="`i-carbon-logo-${link.icon} text-xl`"></div>
+            <div :class="`i-logos-${link.icon} text-xl`"></div>
           </a>
         </div>
         

@@ -1,20 +1,20 @@
 <template>
   <div class="docs-container flex flex-col min-h-screen">
     <!-- Full-width header at the top -->
-    <DocsHeader />
+    <Nav />
     
     <!-- Main content area with sidebar inside -->
     <div class="flex flex-1 relative">
-      <DocsSidebar />
+      <Sidebar />
       <main class="flex-1 p-6 w-full">
         <div class="w-full mx-auto"> <!-- Changed from max-w-4xl to w-full -->
           <slot />
         </div>
       </main>
-      <DocsToc />
+      <Toc />
     </div>
     
-    <DocsFooter />
+    <Footer />
     <MobileSidebar />
   </div>
 </template>

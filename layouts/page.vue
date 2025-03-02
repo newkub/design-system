@@ -1,14 +1,14 @@
 <template>
   <div class="page-container flex flex-col min-h-screen">
     <!-- Full-width header at the top -->
-    <DocsHeader />
+    <Nav />
     
     <!-- Main content area without sidebar -->
     <main class="flex-1 w-full">
       <slot />
     </main>
     
-    <DocsFooter />
+    <Footer />
   </div>
 </template>
 

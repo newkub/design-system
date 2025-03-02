@@ -2,11 +2,11 @@
 import type { DefineComponent, SlotsType } from 'vue'
 type IslandComponent<T extends DefineComponent> = T & DefineComponent<{}, {refresh: () => Promise<void>}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, SlotsType<{ fallback: { error: unknown } }>>
 interface _GlobalComponents {
-      'DocsFooter': typeof import("../components/DocsFooter.vue")['default']
-    'DocsHeader': typeof import("../components/DocsHeader.vue")['default']
-    'DocsSidebar': typeof import("../components/DocsSidebar.vue")['default']
-    'DocsToc': typeof import("../components/DocsToc.vue")['default']
+      'Footer': typeof import("../components/Footer.vue")['default']
     'MobileSidebar': typeof import("../components/MobileSidebar.vue")['default']
+    'Nav': typeof import("../components/Nav.vue")['default']
+    'Sidebar': typeof import("../components/Sidebar.vue")['default']
+    'Toc': typeof import("../components/Toc.vue")['default']
     'DesignSystemAlert': typeof import("../components/design-system/Alert.vue")['default']
     'DesignSystemBadge': typeof import("../components/design-system/Badge.vue")['default']
     'DesignSystemButton': typeof import("../components/design-system/Button.vue")['default']
@@ -78,11 +78,11 @@ interface _GlobalComponents {
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
     'NuxtRouteAnnouncer': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
-      'LazyDocsFooter': typeof import("../components/DocsFooter.vue")['default']
-    'LazyDocsHeader': typeof import("../components/DocsHeader.vue")['default']
-    'LazyDocsSidebar': typeof import("../components/DocsSidebar.vue")['default']
-    'LazyDocsToc': typeof import("../components/DocsToc.vue")['default']
+      'LazyFooter': typeof import("../components/Footer.vue")['default']
     'LazyMobileSidebar': typeof import("../components/MobileSidebar.vue")['default']
+    'LazyNav': typeof import("../components/Nav.vue")['default']
+    'LazySidebar': typeof import("../components/Sidebar.vue")['default']
+    'LazyToc': typeof import("../components/Toc.vue")['default']
     'LazyDesignSystemAlert': typeof import("../components/design-system/Alert.vue")['default']
     'LazyDesignSystemBadge': typeof import("../components/design-system/Badge.vue")['default']
     'LazyDesignSystemButton': typeof import("../components/design-system/Button.vue")['default']
@@ -160,11 +160,11 @@ declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
-export const DocsFooter: typeof import("../components/DocsFooter.vue")['default']
-export const DocsHeader: typeof import("../components/DocsHeader.vue")['default']
-export const DocsSidebar: typeof import("../components/DocsSidebar.vue")['default']
-export const DocsToc: typeof import("../components/DocsToc.vue")['default']
+export const Footer: typeof import("../components/Footer.vue")['default']
 export const MobileSidebar: typeof import("../components/MobileSidebar.vue")['default']
+export const Nav: typeof import("../components/Nav.vue")['default']
+export const Sidebar: typeof import("../components/Sidebar.vue")['default']
+export const Toc: typeof import("../components/Toc.vue")['default']
 export const DesignSystemAlert: typeof import("../components/design-system/Alert.vue")['default']
 export const DesignSystemBadge: typeof import("../components/design-system/Badge.vue")['default']
 export const DesignSystemButton: typeof import("../components/design-system/Button.vue")['default']
@@ -236,11 +236,11 @@ export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
-export const LazyDocsFooter: typeof import("../components/DocsFooter.vue")['default']
-export const LazyDocsHeader: typeof import("../components/DocsHeader.vue")['default']
-export const LazyDocsSidebar: typeof import("../components/DocsSidebar.vue")['default']
-export const LazyDocsToc: typeof import("../components/DocsToc.vue")['default']
+export const LazyFooter: typeof import("../components/Footer.vue")['default']
 export const LazyMobileSidebar: typeof import("../components/MobileSidebar.vue")['default']
+export const LazyNav: typeof import("../components/Nav.vue")['default']
+export const LazySidebar: typeof import("../components/Sidebar.vue")['default']
+export const LazyToc: typeof import("../components/Toc.vue")['default']
 export const LazyDesignSystemAlert: typeof import("../components/design-system/Alert.vue")['default']
 export const LazyDesignSystemBadge: typeof import("../components/design-system/Badge.vue")['default']
 export const LazyDesignSystemButton: typeof import("../components/design-system/Button.vue")['default']
