@@ -34,9 +34,6 @@ import Slugger from 'file:///home/project/node_modules/github-slugger/index.js';
 import destr, { destr as destr$1 } from 'file:///home/project/node_modules/destr/dist/index.mjs';
 import { createWasmOnigEngine } from 'file:///home/project/node_modules/shiki/dist/engine-oniguruma.mjs';
 import slugify from 'file:///home/project/node_modules/slugify/slugify.js';
-import fs from 'fs';
-import path from 'path';
-import yaml$1 from 'file:///home/project/node_modules/js-yaml/dist/js-yaml.mjs';
 import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///home/project/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import { stringify, uneval } from 'file:///home/project/node_modules/devalue/index.js';
 import { renderToString } from 'file:///home/project/node_modules/vue/server-renderer/index.mjs';
@@ -190,7 +187,7 @@ const errorHandler = (async function errorhandler(error, event) {
 
 const rootDir = "/home/project";
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Documentation site built with Nuxt and UnoCSS"}],"link":[{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"}],"style":[],"script":[],"noscript":[],"title":"Nuxt Docs"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Documentation site built with Nuxt and UnoCSS"}],"link":[{"rel":"icon","type":"image/svg+xml","href":"/favicon.svg"}],"style":[],"script":[],"noscript":[],"title":"Nuxt Docs"};
 
 const appRootTag = "div";
 
@@ -383,7 +380,7 @@ const _inlineRuntimeConfig = {
           "h1": false,
           "h2": true,
           "h3": true,
-          "h4": false,
+          "h4": true,
           "h5": false,
           "h6": false
         }
@@ -434,10 +431,7 @@ const _inlineRuntimeConfig = {
         "tr": "prose-tr"
       },
       "highlight": {
-        "theme": {
-          "default": "github-light",
-          "dark": "github-dark"
-        },
+        "theme": "github-light",
         "preload": [
           "json",
           "js",
@@ -446,16 +440,8 @@ const _inlineRuntimeConfig = {
           "css",
           "vue",
           "bash",
-          "markdown",
-          "yaml",
-          "md"
+          "markdown"
         ],
-        "shiki": {
-          "theme": {
-            "default": "github-light",
-            "dark": "github-dark"
-          }
-        },
         "highlighter": "shiki",
         "shikiEngine": "oniguruma",
         "langs": [
@@ -478,9 +464,7 @@ const _inlineRuntimeConfig = {
           "css",
           "vue",
           "bash",
-          "markdown",
-          "yaml",
-          "md"
+          "markdown"
         ]
       },
       "wsUrl": "ws://localhost:4000/",
@@ -499,9 +483,8 @@ const _inlineRuntimeConfig = {
       "search": "",
       "contentHead": true,
       "anchorLinks": {
-        "depth": 3,
+        "depth": 4,
         "exclude": [
-          1,
           1
         ]
       }
@@ -509,7 +492,7 @@ const _inlineRuntimeConfig = {
   },
   "content": {
     "cacheVersion": 2,
-    "cacheIntegrity": "rNkDojdDqm",
+    "cacheIntegrity": "PVIILNgQhk",
     "transformers": [],
     "base": "",
     "api": {
@@ -533,10 +516,7 @@ const _inlineRuntimeConfig = {
     "locales": [],
     "defaultLocale": "",
     "highlight": {
-      "theme": {
-        "default": "github-light",
-        "dark": "github-dark"
-      },
+      "theme": "github-light",
       "preload": [
         "json",
         "js",
@@ -545,16 +525,8 @@ const _inlineRuntimeConfig = {
         "css",
         "vue",
         "bash",
-        "markdown",
-        "yaml",
-        "md"
+        "markdown"
       ],
-      "shiki": {
-        "theme": {
-          "default": "github-light",
-          "dark": "github-dark"
-        }
-      },
       "highlighter": "shiki",
       "shikiEngine": "oniguruma",
       "langs": [
@@ -577,9 +549,7 @@ const _inlineRuntimeConfig = {
         "css",
         "vue",
         "bash",
-        "markdown",
-        "yaml",
-        "md"
+        "markdown"
       ]
     },
     "markdown": {
@@ -610,15 +580,12 @@ const _inlineRuntimeConfig = {
         "tr": "prose-tr"
       },
       "anchorLinks": {
-        "depth": 3,
+        "depth": 4,
         "exclude": [
-          1,
           1
         ]
       },
-      "remarkPlugins": {
-        "remark-emoji": {}
-      },
+      "remarkPlugins": {},
       "rehypePlugins": {}
     },
     "yaml": {},
@@ -635,12 +602,11 @@ const _inlineRuntimeConfig = {
     "documentDriven": true,
     "respectPathCase": false,
     "experimental": {
-      "clientDB": true,
+      "clientDB": false,
       "cacheContents": true,
       "stripQueryParameters": false,
       "advanceQuery": false,
-      "search": "",
-      "componentIslands": true
+      "search": ""
     }
   }
 };
@@ -1961,18 +1927,9 @@ const _5wUQ2dztSW = defineNitroPlugin(async (nitro) => {
   });
 });
 
-const script = "\"use strict\";(()=>{const t=window,e=document.documentElement,c=[\"dark\",\"light\"],n=getStorageValue(\"localStorage\",\"nuxt-color-mode\")||\"light\";let i=n===\"system\"?u():n;const r=e.getAttribute(\"data-color-mode-forced\");r&&(i=r),l(i),t[\"__NUXT_COLOR_MODE__\"]={preference:n,value:i,getColorScheme:u,addColorScheme:l,removeColorScheme:d};function l(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.add(s):e.className+=\" \"+s,a&&e.setAttribute(\"data-\"+a,o)}function d(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.remove(s):e.className=e.className.replace(new RegExp(s,\"g\"),\"\"),a&&e.removeAttribute(\"data-\"+a)}function f(o){return t.matchMedia(\"(prefers-color-scheme\"+o+\")\")}function u(){if(t.matchMedia&&f(\"\").media!==\"not all\"){for(const o of c)if(f(\":\"+o).matches)return o}return\"light\"}})();function getStorageValue(t,e){switch(t){case\"localStorage\":return window.localStorage.getItem(e);case\"sessionStorage\":return window.sessionStorage.getItem(e);case\"cookie\":return getCookie(e);default:return null}}function getCookie(t){const c=(\"; \"+window.document.cookie).split(\"; \"+t+\"=\");if(c.length===2)return c.pop()?.split(\";\").shift()}";
-
-const _6NfI6BipN1 = (function(nitro) {
-  nitro.hooks.hook("render:html", (htmlContext) => {
-    htmlContext.head.push(`<script>${script}<\/script>`);
-  });
-});
-
 const plugins = [
   _5gU0qFpjn9,
-_5wUQ2dztSW,
-_6NfI6BipN1
+_5wUQ2dztSW
 ];
 
 const _zs47Wz = eventHandler(async (event) => {
@@ -2081,11 +2038,9 @@ const _yz1ajH = defineEventHandler(async (event) => {
   return createNav(contents?.result || contents, configs);
 });
 
-const _lazy_59bGj2 = () => Promise.resolve().then(function () { return openapi$1; });
 const _lazy_kdwqQN = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
-  { route: '/api/openapi', handler: _lazy_59bGj2, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_error', handler: _lazy_kdwqQN, lazy: true, middleware: false, method: undefined },
   { route: '/api/_mdc/highlight', handler: _zs47Wz, lazy: false, middleware: false, method: undefined },
   { route: '/api/_content/query/:qid/**:params', handler: _xzPqfi, lazy: false, middleware: false, method: "get" },
@@ -2384,7 +2339,7 @@ const rehypePlugins = {
   'highlight': { instance: rehypeHighlight, options: {} },
 };
 
-const highlight = {"theme":{"default":"github-light","dark":"github-dark"}};
+const highlight = {"theme":"github-light"};
 
 const mdcImports = /*#__PURE__*/Object.freeze({
   __proto__: null,
@@ -4164,7 +4119,6 @@ const bundledLangs = {
 };
 const bundledThemes = {
 "github-light": () => import('file:///home/project/node_modules/shiki/dist/themes/github-light.mjs').then(r => r.default),
-"github-dark": () => import('file:///home/project/node_modules/shiki/dist/themes/github-dark.mjs').then(r => r.default),
 };
 const options = {};
 const engine = createWasmOnigEngine(() => import('file:///home/project/node_modules/shiki/dist/wasm.mjs'));
@@ -4361,23 +4315,6 @@ function isObject(obj) {
 const navigation = /*#__PURE__*/Object.freeze({
   __proto__: null,
   createNav: createNav
-});
-
-const openapi = defineEventHandler(async (event) => {
-  try {
-    const openapiPath = path.resolve("public/openapi.yaml");
-    const openapiContent = fs.readFileSync(openapiPath, "utf8");
-    const openapiSpec = yaml$1.load(openapiContent);
-    return openapiSpec;
-  } catch (error) {
-    console.error("Error loading OpenAPI spec:", error);
-    return { error: "Failed to load OpenAPI specification" };
-  }
-});
-
-const openapi$1 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  default: openapi
 });
 
 const Vue3 = version[0] === "3";

@@ -105,16 +105,13 @@
         "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
       "#mdc-configs": [
-        "./mdc-configs"
+        "./mdc-configs.mjs"
       ],
       "#mdc-highlighter": [
-        "./mdc-highlighter"
+        "./mdc-highlighter.mjs"
       ],
       "#mdc-imports": [
-        "./mdc-imports"
-      ],
-      "#color-mode-options": [
-        "./color-mode-options.mjs"
+        "./mdc-imports.mjs"
       ],
       "#vue-router": [
         "../node_modules/vue-router"
@@ -171,8 +168,6 @@
     "../node_modules/@nuxtjs/mdc/dist/runtime",
     "../node_modules/@nuxt/content/runtime",
     "../node_modules/@nuxt/content/dist/runtime",
-    "../node_modules/@nuxtjs/color-mode/runtime",
-    "../node_modules/@nuxtjs/color-mode/dist/runtime",
     "../node_modules/@unocss/nuxt/runtime",
     "../node_modules/@unocss/nuxt/dist/runtime",
     "../node_modules/@nuxt/telemetry/runtime",
@@ -185,15 +180,12 @@
     "../node_modules/nuxt/node_modules",
     "../node_modules/@nuxtjs/mdc/node_modules",
     "../node_modules/@nuxt/content/node_modules",
-    "../node_modules/@nuxtjs/color-mode/node_modules",
     "../node_modules/@unocss/nuxt/node_modules",
     "../node_modules/@nuxt/telemetry/node_modules",
     "../node_modules/@nuxtjs/mdc/runtime/server",
     "../node_modules/@nuxtjs/mdc/dist/runtime/server",
     "../node_modules/@nuxt/content/runtime/server",
     "../node_modules/@nuxt/content/dist/runtime/server",
-    "../node_modules/@nuxtjs/color-mode/runtime/server",
-    "../node_modules/@nuxtjs/color-mode/dist/runtime/server",
     "../node_modules/@unocss/nuxt/runtime/server",
     "../node_modules/@unocss/nuxt/dist/runtime/server",
     "../node_modules/@nuxt/telemetry/runtime/server",

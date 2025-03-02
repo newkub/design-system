@@ -10,10 +10,6 @@ declare module '@nuxt/schema' {
      */
     ["content"]: typeof import("@nuxt/content").default extends NuxtModule<infer O> ? O : Record<string, any>
     /**
-     * Configuration for `@nuxtjs/color-mode`
-     */
-    ["colorMode"]: typeof import("@nuxtjs/color-mode").default extends NuxtModule<infer O> ? O : Record<string, any>
-    /**
      * Configuration for `@unocss/nuxt`
      */
     ["unocss"]: typeof import("@unocss/nuxt").default extends NuxtModule<infer O> ? O : Record<string, any>
@@ -32,10 +28,6 @@ declare module '@nuxt/schema' {
      */
     ["content"]?: typeof import("@nuxt/content").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
     /**
-     * Configuration for `@nuxtjs/color-mode`
-     */
-    ["colorMode"]?: typeof import("@nuxtjs/color-mode").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
-    /**
      * Configuration for `@unocss/nuxt`
      */
     ["unocss"]?: typeof import("@unocss/nuxt").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
@@ -43,7 +35,7 @@ declare module '@nuxt/schema' {
      * Configuration for `@nuxt/telemetry`
      */
     ["telemetry"]?: typeof import("@nuxt/telemetry").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
-    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@nuxtjs/mdc", Exclude<NuxtConfig["mdc"], boolean>] | ["@nuxt/content", Exclude<NuxtConfig["content"], boolean>] | ["@nuxtjs/color-mode", Exclude<NuxtConfig["colorMode"], boolean>] | ["@unocss/nuxt", Exclude<NuxtConfig["unocss"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
+    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@nuxtjs/mdc", Exclude<NuxtConfig["mdc"], boolean>] | ["@nuxt/content", Exclude<NuxtConfig["content"], boolean>] | ["@unocss/nuxt", Exclude<NuxtConfig["unocss"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
   }
 }
 declare module 'nuxt/schema' {
@@ -59,11 +51,6 @@ declare module 'nuxt/schema' {
      */
     ["content"]: typeof import("@nuxt/content").default extends NuxtModule<infer O> ? O : Record<string, any>
     /**
-     * Configuration for `@nuxtjs/color-mode`
-     * @see https://www.npmjs.com/package/@nuxtjs/color-mode
-     */
-    ["colorMode"]: typeof import("@nuxtjs/color-mode").default extends NuxtModule<infer O> ? O : Record<string, any>
-    /**
      * Configuration for `@unocss/nuxt`
      * @see https://www.npmjs.com/package/@unocss/nuxt
      */
@@ -86,11 +73,6 @@ declare module 'nuxt/schema' {
      */
     ["content"]?: typeof import("@nuxt/content").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
     /**
-     * Configuration for `@nuxtjs/color-mode`
-     * @see https://www.npmjs.com/package/@nuxtjs/color-mode
-     */
-    ["colorMode"]?: typeof import("@nuxtjs/color-mode").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
-    /**
      * Configuration for `@unocss/nuxt`
      * @see https://www.npmjs.com/package/@unocss/nuxt
      */
@@ -100,7 +82,7 @@ declare module 'nuxt/schema' {
      * @see https://www.npmjs.com/package/@nuxt/telemetry
      */
     ["telemetry"]?: typeof import("@nuxt/telemetry").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
-    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@nuxtjs/mdc", Exclude<NuxtConfig["mdc"], boolean>] | ["@nuxt/content", Exclude<NuxtConfig["content"], boolean>] | ["@nuxtjs/color-mode", Exclude<NuxtConfig["colorMode"], boolean>] | ["@unocss/nuxt", Exclude<NuxtConfig["unocss"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
+    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@nuxtjs/mdc", Exclude<NuxtConfig["mdc"], boolean>] | ["@nuxt/content", Exclude<NuxtConfig["content"], boolean>] | ["@unocss/nuxt", Exclude<NuxtConfig["unocss"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
   }
   interface RuntimeConfig {
    app: {
@@ -153,21 +135,9 @@ declare module 'nuxt/schema' {
       defaultLocale: any,
 
       highlight: {
-         theme: {
-            default: string,
-
-            dark: string,
-         },
+         theme: string,
 
          preload: Array<string>,
-
-         shiki: {
-            theme: {
-               default: string,
-
-               dark: string,
-            },
-         },
 
          highlighter: string,
 
@@ -233,9 +203,7 @@ declare module 'nuxt/schema' {
             exclude: Array<number>,
          },
 
-         remarkPlugins: {
-            "remark-emoji": any,
-         },
+         remarkPlugins: any,
 
          rehypePlugins: any,
       },
@@ -268,8 +236,6 @@ declare module 'nuxt/schema' {
          advanceQuery: boolean,
 
          search: any,
-
-         componentIslands: boolean,
       },
    },
   }
@@ -422,21 +388,9 @@ declare module 'nuxt/schema' {
       },
 
       highlight: {
-         theme: {
-            default: string,
-
-            dark: string,
-         },
+         theme: string,
 
          preload: Array<string>,
-
-         shiki: {
-            theme: {
-               default: string,
-
-               dark: string,
-            },
-         },
 
          highlighter: string,
 

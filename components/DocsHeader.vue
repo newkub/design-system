@@ -1,0 +1,102 @@
+<script setup>
+import { useDocsConfig } from '~/composables/useDocsConfig';
+import { ref } from 'vue';
+
+const { themeConfig } = useDocsConfig();
+const { nav, logo, siteTitle } = themeConfig;
+
+const isMobileMenuOpen = ref(false);
+
+function toggleMobileMenu() {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+}
+
+function closeMobileMenu() {
+  isMobileMenuOpen.value = false;
+}
+</script>
+
+<template>
+  <header class="sticky top-0 z-10 w-full border-b border-gray-200 bg-white">
+    <div class="flex items-center justify-between h-16 px-6">
+      <div class="flex items-center gap-2">
+        <NuxtLink to="/" class="flex items-center gap-2" @click="closeMobileMenu">
+          <img v-if="logo" :src="logo" alt="Logo" class="h-8 w-8" />
+          <span class="text-lg font-semibold">{{ siteTitle }}</span>
+        </NuxtLink>
+      </div>
+      
+      <nav class="hidden md:flex items-center gap-4">
+        <NuxtLink 
+          v-for="item in nav" 
+          :key="item.text"
+          :to="item.link"
+          class="text-gray-600 hover:text-gray-900 px-2 py-1 text-sm"
+          v-if="!item.items"
+        >
+          {{ item.text }}
+        </NuxtLink>
+        
+        <div v-else class="relative group">
+          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-900 px-2 py-1 text-sm">
+            {{ item.text }}
+            <div class="i-carbon-chevron-down text-xs"></div>
+          </button>
+          <div class="absolute top-full right-0 hidden group-hover:block bg-white shadow-lg rounded-md p-2 min-w-40">
+            <NuxtLink 
+              v-for="subItem in item.items" 
+              :key="subItem.text"
+              :to="subItem.link"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              {{ subItem.text }}
+            </NuxtLink>
+          </div>
+        </div>
+      </nav>
+      
+      <button 
+        class="md:hidden flex items-center justify-center" 
+        @click="toggleMobileMenu"
+        aria-label="Toggle mobile menu"
+      >
+        <div v-if="!isMobileMenuOpen" class="i-carbon-menu text-xl"></div>
+        <div v-else class="i-carbon-close text-xl"></div>
+      </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div 
+      v-if="isMobileMenuOpen" 
+      class="md:hidden bg-white border-t border-gray-200 absolute w-full left-0 shadow-lg"
+    >
+      <div class="px-4 py-2">
+        <div v-for="item in nav" :key="item.text" class="py-2">
+          <NuxtLink 
+            v-if="!item.items" 
+            :to="item.link" 
+            class="block py-2 text-gray-700 hover:text-gray-900"
+            @click="closeMobileMenu"
+          >
+            {{ item.text }}
+          </NuxtLink>
+          
+          <div v-else>
+            <div class="py-2 font-medium text-gray-900">{{ item.text }}</div>
+            <div class="pl-4 border-l border-gray-200">
+              <NuxtLink 
+                v-for="subItem in item.items" 
+                :key="subItem.text"
+                :to="subItem.link"
+                class="block py-2 text-gray-700 hover:text-gray-900"
+                @click="closeMobileMenu"
+              >
+                {{ subItem.text }}
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+</template>

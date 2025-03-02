@@ -201,9 +201,8 @@ const bundledLangs = {
 }
 const bundledThemes = {
 "github-light": () => import('shiki/themes/github-light.mjs').then(r => r.default),
-"github-dark": () => import('shiki/themes/github-dark.mjs').then(r => r.default),
 }
-const options = {"theme":{"default":"github-light","dark":"github-dark"}}
+const options = {"theme":"github-light"}
 const engine = createWasmOnigEngine(() => import('shiki/wasm'))
 const highlighter = createShikiHighlighter({ bundledLangs, bundledThemes, options, getMdcConfigs, engine })
 export default highlighter
