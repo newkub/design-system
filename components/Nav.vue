@@ -95,7 +95,7 @@ function isNavItemActive(item) {
             target="_blank" 
             rel="noopener noreferrer"
             class="social-link"
-            :title="link.icon.split(':').pop()"
+            :title="link.icon.split('-').pop()"
           >
             <div class="text-xl" :class="link.icon"></div>
           </a>

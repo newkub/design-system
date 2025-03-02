@@ -7,8 +7,6 @@ const themeConfig: ThemeConfig = {
     { text: 'Guide', link: '/guide/' },
     { text: 'Design System', link: '/design-system/' },
     { text: 'Showcase', link: '/showcase/' },
-    { text: 'Blog', link: '/blog/' },
-    { text: 'Changelog', link: '/changelog/' },
     { 
       text: 'Links',
       items: [

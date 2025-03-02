@@ -6,6 +6,10 @@ export default defineConfig({
     presetIcons({
       scale: 1.2,
       cdn: 'https://esm.sh/',
+      extraProperties: {
+        'display': 'inline-block',
+        'vertical-align': 'middle',
+      },
       collections: {
         'carbon': () => import('@iconify-json/carbon/icons.json').then(i => i.default),
         'logos': () => import('@iconify-json/logos/icons.json').then(i => i.default),
