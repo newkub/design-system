@@ -125,7 +125,9 @@ const themeConfig: ThemeConfig = {
   },
   socialLinks: [
     { icon: 'github', link: 'https://github.com' },
-    { icon: 'twitter', link: 'https://twitter.com' }
+    { icon: 'twitter', link: 'https://twitter.com' },
+    { icon: 'discord', link: 'https://discord.com' },
+    { icon: 'linkedin', link: 'https://linkedin.com' }
   ]
 };
 
