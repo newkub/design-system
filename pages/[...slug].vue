@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="docs">
     <div class="prose py-8">
       <ContentDoc>
         <template #not-found>

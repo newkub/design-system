@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { useDocsConfig } from '~/composables/useDocsConfig';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const route = useRoute();
 const { themeConfig } = useDocsConfig();

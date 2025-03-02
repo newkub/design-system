@@ -31,15 +31,15 @@ function closeMobileMenu() {
           <NuxtLink 
             v-if="item && !item.items"
             :to="item.link"
-            class="text-gray-600 hover:text-gray-900 px-2 py-1 text-sm"
+            class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
           >
             {{ item.text }}
           </NuxtLink>
           
           <div v-else-if="item && item.items" class="relative group">
-            <button class="flex items-center gap-1 text-gray-600 hover:text-gray-900 px-2 py-1 text-sm">
+            <button class="flex items-center gap-1 text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100">
               {{ item.text }}
-              <div class="i-carbon-chevron-down text-xs"></div>
+              <div class="i-carbon-chevron-down text-xs transition-transform group-hover:rotate-180"></div>
             </button>
             <div class="absolute top-full right-0 hidden group-hover:block bg-white shadow-lg rounded-md p-2 min-w-40">
               <NuxtLink 
@@ -83,7 +83,10 @@ function closeMobileMenu() {
             </NuxtLink>
             
             <div v-else>
-              <div class="py-2 font-medium text-gray-900">{{ item.text }}</div>
+              <div class="py-2 font-medium text-gray-900 flex items-center">
+                {{ item.text }}
+                <div class="i-carbon-chevron-down text-xs ml-1"></div>
+              </div>
               <div class="pl-4 border-l border-gray-200">
                 <NuxtLink 
                   v-for="subItem in item.items" 

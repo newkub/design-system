@@ -6,8 +6,6 @@ export default {
     siteTitle: 'Nuxt Docs',
     nav: [
       { text: 'Guide', link: '/guide/' },
-      { text: 'API', link: '/api/' },
-      { text: 'Examples', link: '/examples/' },
       { 
         text: 'Links',
         items: [
