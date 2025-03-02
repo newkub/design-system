@@ -1,8 +1,9 @@
 import docsConfig from '~/docs.config';
+import type { DocsConfig } from '~/types/docs-config';
 
 export function useDocsConfig() {
   // Ensure we return a default object with themeConfig if docsConfig is undefined
-  const defaultConfig = {
+  const defaultConfig: DocsConfig = {
     title: 'Nuxt Docs',
     description: 'Documentation site built with Nuxt and UnoCSS',
     themeConfig: {

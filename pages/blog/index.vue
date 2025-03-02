@@ -8,7 +8,7 @@ const blogPosts = [
   {
     id: 1,
     title: 'Introducing Our New Design System',
-    excerpt: 'We're excited to announce the launch of our new design system, built to help developers create consistent and beautiful interfaces.',
+    excerpt: "We're excited to announce the launch of our new design system, built to help developers create consistent and beautiful interfaces.",
     date: '2024-05-15',
     author: 'Jane Smith',
     category: 'Updates',
@@ -53,12 +53,7 @@ const categories = [...new Set(blogPosts.map(post => post.category))];
 
 <template>
   <NuxtLayout name="page">
-    <div class="blog-header bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 px-4">
-      <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Blog</h1>
-        <p class="text-xl opacity-90 max-w-3xl">Latest news, tutorials, and insights about our design system and development practices.</p>
-      </div>
-    </div>
+    
     
     <div class="max-w-7xl mx-auto px-4 py-12">
       <!-- Category Filter -->
