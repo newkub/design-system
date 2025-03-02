@@ -6,6 +6,7 @@ const themeConfig: ThemeConfig = {
   nav: [
     { text: 'Guide', link: '/guide/' },
     { text: 'Design System', link: '/design-system/' },
+    { text: 'Showcase', link: '/showcase/' },
     { text: 'Blog', link: '/blog/' },
     { text: 'Changelog', link: '/changelog/' },
     { 
@@ -79,6 +80,27 @@ const themeConfig: ThemeConfig = {
         ]
       }
     ],
+    '/showcase/': [
+      {
+        text: 'Templates',
+        collapsible: true,
+        items: [
+          { text: 'Overview', link: '/showcase/' },
+          { text: 'Documentation', link: '/showcase/documentation' },
+          { text: 'Blog', link: '/showcase/blog' },
+          { text: 'Changelog', link: '/showcase/changelog' }
+        ]
+      },
+      {
+        text: 'Examples',
+        collapsible: true,
+        items: [
+          { text: 'Portfolio', link: '/showcase/examples/portfolio' },
+          { text: 'Dashboard', link: '/showcase/examples/dashboard' },
+          { text: 'E-commerce', link: '/showcase/examples/ecommerce' }
+        ]
+      }
+    ],
     '/blog/': [
       {
         text: 'Recent Posts',
@@ -124,10 +146,10 @@ const themeConfig: ThemeConfig = {
     copyright: 'Copyright © 2024'
   },
   socialLinks: [
-    { icon: 'github', link: 'https://github.com' },
-    { icon: 'twitter', link: 'https://twitter.com' },
-    { icon: 'discord', link: 'https://discord.com' },
-    { icon: 'linkedin', link: 'https://linkedin.com' }
+    { icon: 'carbon:logo-github', link: 'https://github.com' },
+    { icon: 'carbon:logo-twitter', link: 'https://twitter.com' },
+    { icon: 'carbon:logo-discord', link: 'https://discord.com' },
+    { icon: 'carbon:logo-linkedin', link: 'https://linkedin.com' }
   ]
 };
 
