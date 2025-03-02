@@ -1,26 +1,25 @@
 <template>
-  <div class="docs-container">
-    <DocsSidebar />
-    <div class="docs-content">
-      <DocsHeader />
-      <main class="p-6 w-full max-w-4xl mx-auto">
-        <slot />
+  <div class="docs-container flex flex-col min-h-screen">
+    <!-- Full-width header at the top -->
+    <DocsHeader />
+    
+    <!-- Main content area with sidebar inside -->
+    <div class="flex flex-1 relative">
+      <DocsSidebar />
+      <main class="flex-1 p-6 w-full">
+        <div class="max-w-4xl mx-auto">
+          <slot />
+        </div>
       </main>
-      <DocsFooter />
     </div>
+    
+    <DocsFooter />
     <MobileSidebar />
   </div>
 </template>
 
 <style>
 .docs-container {
-  display: flex;
   min-height: 100vh;
-}
-
-.docs-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 </style>
