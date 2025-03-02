@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen w-full">
-    <Navbar />
+    <DocNavbar />
     <slot />
-    <Footer />
+    <DocFooter />
   </div>
 </template>

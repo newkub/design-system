@@ -53,5 +53,9 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       ]
     }
+  },
+  // Auto-import composables
+  imports: {
+    dirs: ['composables']
   }
 })
