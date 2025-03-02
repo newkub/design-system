@@ -3,7 +3,7 @@
     <Navbar />
     
     <div class="flex-1 container mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
-      <!-- Sidebar -->
+      <!-- Left sidebar - Navigation -->
       <DocSidebar class="w-64 shrink-0" />
       
       <!-- Main content -->
@@ -11,7 +11,7 @@
         <slot />
       </div>
       
-      <!-- Table of contents -->
+      <!-- Right sidebar - Table of contents -->
       <div class="w-64 hidden lg:block shrink-0">
         <TableOfContents :links="tocLinks" />
       </div>
