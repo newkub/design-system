@@ -403,7 +403,6 @@ const _inlineRuntimeConfig = {
       },
       "navigation": {
         "fields": [
-          "layout",
           "layout"
         ]
       },
@@ -460,14 +459,6 @@ const _inlineRuntimeConfig = {
           "md",
           "mdc",
           "yaml",
-          "json",
-          "js",
-          "ts",
-          "html",
-          "css",
-          "vue",
-          "bash",
-          "markdown",
           "json",
           "js",
           "ts",
@@ -560,14 +551,6 @@ const _inlineRuntimeConfig = {
         "css",
         "vue",
         "bash",
-        "markdown",
-        "json",
-        "js",
-        "ts",
-        "html",
-        "css",
-        "vue",
-        "bash",
         "markdown"
       ]
     },
@@ -614,7 +597,6 @@ const _inlineRuntimeConfig = {
     },
     "navigation": {
       "fields": [
-        "layout",
         "layout"
       ]
     },
