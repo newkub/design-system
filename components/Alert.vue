@@ -31,6 +31,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { ComponentMetadataDefinition } from '~/types/component-metadata';
+
 defineProps({
   type: {
     type: String,
@@ -49,32 +51,29 @@ defineProps({
 
 defineEmits(['dismiss']);
 
-/**
- * @componentMetadata
- * {
- *   "id": "alert",
- *   "title": "Alert",
- *   "description": "Alerts display important messages to the user.",
- *   "category": "feedback",
- *   "tags": ["notification", "message"],
- *   "usage": {
- *     "basic": "<Alert type=\"info\" title=\"Information\">This is an informational alert</Alert>",
- *     "advanced": "<Alert type=\"warning\" title=\"Warning\" dismissible @dismiss=\"handleDismiss\"><template #icon><div class=\"i-carbon-warning-alt\"></div></template>This is a custom warning alert</Alert>"
- *   },
- *   "props": [
- *     { "name": "type", "type": "String", "default": "info", "description": "Alert type (info, success, warning, error)" },
- *     { "name": "title", "type": "String", "default": "\"\"", "description": "Alert title" },
- *     { "name": "dismissible", "type": "Boolean", "default": "false", "description": "Whether the alert can be dismissed" }
- *   ],
- *   "events": [
- *     { "name": "dismiss", "description": "Emitted when the alert is dismissed" }
- *   ],
- *   "slots": [
- *     { "name": "default", "description": "Alert content" },
- *     { "name": "icon", "description": "Custom icon for the alert" }
- *   ]
- * }
- */
+// Define component metadata using TypeScript
+export const componentMetadata: ComponentMetadataDefinition = {
+  title: "Alert",
+  description: "Alerts display important messages to the user.",
+  category: "feedback",
+  tags: ["notification", "message"],
+  usage: {
+    basic: "<Alert type=\"info\" title=\"Information\">This is an informational alert</Alert>",
+    advanced: "<Alert type=\"warning\" title=\"Warning\" dismissible @dismiss=\"handleDismiss\"><template #icon><div class=\"i-carbon-warning-alt\"></div></template>This is a custom warning alert</Alert>"
+  },
+  props: [
+    { name: "type", type: "String", default: "info", description: "Alert type (info, success, warning, error)" },
+    { name: "title", type: "String", default: "\"\"", description: "Alert title" },
+    { name: "dismissible", type: "Boolean", default: "false", description: "Whether the alert can be dismissed" }
+  ],
+  events: [
+    { name: "dismiss", description: "Emitted when the alert is dismissed" }
+  ],
+  slots: [
+    { name: "default", description: "Alert content" },
+    { name: "icon", description: "Custom icon for the alert" }
+  ]
+};
 </script>
 
 <style>

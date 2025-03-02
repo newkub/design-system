@@ -32,3 +32,8 @@ export interface ComponentWithPreview extends ComponentMetadata {
     slots?: Record<string, string>;
   };
 }
+
+// Define a type for component metadata that can be used directly in components
+export type ComponentMetadataDefinition = Omit<ComponentMetadata, 'id'> & {
+  id?: string; // Make id optional as it can be derived from the component name
+};

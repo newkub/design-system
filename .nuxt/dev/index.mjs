@@ -4329,22 +4329,60 @@ const components = defineEventHandler(async (event) => {
     for (const file of files) {
       const filePath = path.join(componentsDir, file);
       const content = fs.readFileSync(filePath, "utf-8");
-      const metadataRegex = /@componentMetadata\s*\n\s*\*\s*({[\s\S]*?})\s*\n\s*\*/;
-      const match = content.match(metadataRegex);
-      if (match && match[1]) {
-        try {
-          const metadataStr = match[1].replace(/\s*\*\s*/g, "");
-          const metadata = JSON.parse(metadataStr);
-          components.push(metadata);
-        } catch (err) {
-          console.error(`Error parsing metadata for ${file}:`, err);
+      try {
+        const componentName = file.replace(".vue", "");
+        const componentId = componentName.toLowerCase();
+        let metadata = null;
+        const metadataMatch = content.match(/export\s+const\s+componentMetadata\s*=\s*({[\s\S]*?});/);
+        if (metadataMatch && metadataMatch[1]) {
+          try {
+            const metadataStr = metadataMatch[1].replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+            const jsonStr = metadataStr.replace(/(\w+):/g, '"$1":').replace(/,(\s*[}\]])/g, "$1");
+            metadata = JSON.parse(jsonStr);
+          } catch (err) {
+            console.error(`Error parsing exported metadata for ${file}:`, err);
+          }
         }
+        if (!metadata) {
+          const commentMatch = content.match(/@componentMetadata\s*\n\s*\*\s*({[\s\S]*?})\s*\n\s*\*/);
+          if (commentMatch && commentMatch[1]) {
+            try {
+              const metadataStr = commentMatch[1].replace(/\s*\*\s*/g, "");
+              metadata = JSON.parse(metadataStr);
+            } catch (err) {
+              console.error(`Error parsing comment metadata for ${file}:`, err);
+            }
+          }
+        }
+        if (!metadata) {
+          metadata = {
+            id: componentId,
+            title: componentName,
+            description: `${componentName} component`,
+            category: "layout",
+            // Default category
+            tags: [componentId]
+          };
+        }
+        if (!metadata.id) {
+          metadata.id = componentId;
+        }
+        const componentWithPreview = {
+          ...metadata,
+          preview: () => ({
+            component: componentName,
+            content: "Preview"
+          })
+        };
+        components.push(componentWithPreview);
+      } catch (err) {
+        console.error(`Error processing component ${file}:`, err);
       }
     }
     return components;
   } catch (err) {
     console.error("Error loading components:", err);
-    return { error: "Failed to load components" };
+    return { error: "Failed to load components", details: String(err) };
   }
 });
 
