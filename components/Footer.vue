@@ -23,7 +23,7 @@ const { footer, socialLinks } = themeConfig;
             rel="noopener noreferrer"
             class="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <div :class="`i-${link.icon} text-xl`"></div>
+            <div class="text-xl" :class="link.icon"></div>
           </a>
         </div>
       </div>

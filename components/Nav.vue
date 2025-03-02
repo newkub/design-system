@@ -97,7 +97,7 @@ function isNavItemActive(item) {
             class="social-link"
             :title="link.icon.split(':').pop()"
           >
-            <div :class="`i-${link.icon} text-xl`"></div>
+            <div class="text-xl" :class="link.icon"></div>
           </a>
         </div>
       </div>
@@ -128,7 +128,7 @@ function isNavItemActive(item) {
             rel="noopener noreferrer"
             class="social-link"
           >
-            <div :class="`i-${link.icon} text-xl`"></div>
+            <div class="text-xl" :class="link.icon"></div>
           </a>
         </div>
         

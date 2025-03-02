@@ -10,16 +10,6 @@ const themeConfig: ThemeConfig = {
     { text: 'Blog', link: '/blog/' },
     { text: 'Changelog', link: '/changelog/' },
     { 
-      text: 'Components',
-      items: [
-        { text: 'Buttons', link: '/design-system/buttons' },
-        { text: 'Typography', link: '/design-system/typography' },
-        { text: 'Cards', link: '/design-system/cards' },
-        { text: 'Alerts', link: '/design-system/alerts' },
-        { text: 'Inputs', link: '/design-system/inputs' }
-      ]
-    },
-    { 
       text: 'Links',
       items: [
         { text: 'GitHub', link: 'https://github.com' },
@@ -146,10 +136,10 @@ const themeConfig: ThemeConfig = {
     copyright: 'Copyright © 2024'
   },
   socialLinks: [
-    { icon: 'carbon:logo-github', link: 'https://github.com' },
-    { icon: 'carbon:logo-twitter', link: 'https://twitter.com' },
-    { icon: 'carbon:logo-discord', link: 'https://discord.com' },
-    { icon: 'carbon:logo-linkedin', link: 'https://linkedin.com' }
+    { icon: 'i-carbon-logo-github', link: 'https://github.com' },
+    { icon: 'i-carbon-logo-twitter', link: 'https://twitter.com' },
+    { icon: 'i-carbon-logo-discord', link: 'https://discord.com' },
+    { icon: 'i-carbon-logo-linkedin', link: 'https://linkedin.com' }
   ]
 };
 
