@@ -27,9 +27,7 @@
   </div>
 </template>
 
-<script setup>
-import { defineProps, defineEmits } from 'vue';
-
+<script lang="ts" setup>
 defineProps({
   modelValue: {
     type: [String, Number],
@@ -70,40 +68,39 @@ defineProps({
 });
 
 defineEmits(['update:modelValue']);
-</script>
 
-<script>
-import type { ComponentMetadataDefinition } from '~/types/component-metadata';
-
-// Define component metadata using TypeScript
-export const componentMetadata = {
-  title: "Input",
-  description: "Input fields allow users to enter text.",
-  category: "form",
-  tags: ["form", "text"],
-  usage: {
-    basic: "<Input v-model=\"inputValue\" label=\"Username\" placeholder=\"Enter your username\" />",
-    advanced: "<Input v-model=\"email\" label=\"Email Address\" type=\"email\" placeholder=\"example@domain.com\" required :error=\"emailError\" hint=\"We'll never share your email with anyone else.\"><template #prefix><div class=\"i-carbon-email\"></div></template></Input>"
-  },
-  props: [
-    { name: "modelValue", type: "String/Number", default: "\"\"", description: "Input value (v-model)" },
-    { name: "label", type: "String", default: "\"\"", description: "Input label" },
-    { name: "type", type: "String", default: "text", description: "Input type (text, password, email, etc.)" },
-    { name: "placeholder", type: "String", default: "\"\"", description: "Input placeholder" },
-    { name: "hint", type: "String", default: "\"\"", description: "Helper text below the input" },
-    { name: "error", type: "String", default: "\"\"", description: "Error message" },
-    { name: "id", type: "String", default: "\"\"", description: "Input ID attribute" },
-    { name: "disabled", type: "Boolean", default: "false", description: "Whether the input is disabled" },
-    { name: "required", type: "Boolean", default: "false", description: "Whether the input is required" }
-  ],
-  events: [
-    { name: "update:modelValue", description: "Emitted when the input value changes" }
-  ],
-  slots: [
-    { name: "prefix", description: "Content to display before the input" },
-    { name: "suffix", description: "Content to display after the input" }
-  ]
-} as ComponentMetadataDefinition;
+/**
+ * @componentMetadata
+ * {
+ *   "id": "input",
+ *   "title": "Input",
+ *   "description": "Input fields allow users to enter text.",
+ *   "category": "form",
+ *   "tags": ["form", "text"],
+ *   "usage": {
+ *     "basic": "<Input v-model=\"inputValue\" label=\"Username\" placeholder=\"Enter your username\" />",
+ *     "advanced": "<Input v-model=\"email\" label=\"Email Address\" type=\"email\" placeholder=\"example@domain.com\" required :error=\"emailError\" hint=\"We'll never share your email with anyone else.\"><template #prefix><div class=\"i-carbon-email\"></div></template></Input>"
+ *   },
+ *   "props": [
+ *     { "name": "modelValue", "type": "String/Number", "default": "\"\"", "description": "Input value (v-model)" },
+ *     { "name": "label", "type": "String", "default": "\"\"", "description": "Input label" },
+ *     { "name": "type", "type": "String", "default": "text", "description": "Input type (text, password, email, etc.)" },
+ *     { "name": "placeholder", "type": "String", "default": "\"\"", "description": "Input placeholder" },
+ *     { "name": "hint", "type": "String", "default": "\"\"", "description": "Helper text below the input" },
+ *     { "name": "error", "type": "String", "default": "\"\"", "description": "Error message" },
+ *     { "name": "id", "type": "String", "default": "\"\"", "description": "Input ID attribute" },
+ *     { "name": "disabled", "type": "Boolean", "default": "false", "description": "Whether the input is disabled" },
+ *     { "name": "required", "type": "Boolean", "default": "false", "description": "Whether the input is required" }
+ *   ],
+ *   "events": [
+ *     { "name": "update:modelValue", "description": "Emitted when the input value changes" }
+ *   ],
+ *   "slots": [
+ *     { "name": "prefix", "description": "Content to display before the input" },
+ *     { "name": "suffix", "description": "Content to display after the input" }
+ *   ]
+ * }
+ */
 </script>
 
 <style>
