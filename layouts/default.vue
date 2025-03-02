@@ -14,7 +14,6 @@
     </div>
     
     <Footer />
-    <MobileSidebar />
   </div>
 </template>
 

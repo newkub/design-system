@@ -60,7 +60,6 @@ const themeConfig: ThemeConfig = {
       {
         text: 'Patterns',
         collapsible: true,
-        collapsed: true,
         items: [
           { text: 'Forms', link: '/design-system/patterns/forms' },
           { text: 'Navigation', link: '/design-system/patterns/navigation' },
