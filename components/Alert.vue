@@ -1,27 +1,27 @@
 <template>
   <div 
-    class="alert"
+    class="flex p-4 rounded-md mb-4"
     :class="`alert-${type}`"
     role="alert"
   >
-    <div class="alert-icon" v-if="$slots.icon">
+    <div v-if="$slots.icon" class="flex-shrink-0 mr-3 flex items-start">
       <slot name="icon"></slot>
     </div>
-    <div v-else-if="type" class="alert-icon">
+    <div v-else-if="type" class="flex-shrink-0 mr-3 flex items-start">
       <div v-if="type === 'info'" class="i-carbon-information text-xl"></div>
       <div v-else-if="type === 'success'" class="i-carbon-checkmark-filled text-xl"></div>
       <div v-else-if="type === 'warning'" class="i-carbon-warning text-xl"></div>
       <div v-else-if="type === 'error'" class="i-carbon-warning-alt text-xl"></div>
     </div>
-    <div class="alert-content">
-      <div v-if="title" class="alert-title">{{ title }}</div>
-      <div class="alert-message">
+    <div class="flex-1">
+      <div v-if="title" class="font-semibold mb-1">{{ title }}</div>
+      <div>
         <slot></slot>
       </div>
     </div>
     <button 
       v-if="dismissible" 
-      class="alert-close"
+      class="bg-transparent border-none cursor-pointer p-0 flex items-center justify-center opacity-70 hover:opacity-100"
       @click="$emit('dismiss')"
       aria-label="Close alert"
     >
@@ -78,26 +78,6 @@ defineEmits(['dismiss']);
 </script>
 
 <style>
-.alert {
-  @apply flex p-4 rounded-md mb-4;
-}
-
-.alert-icon {
-  @apply flex-shrink-0 mr-3 flex items-start;
-}
-
-.alert-content {
-  @apply flex-1;
-}
-
-.alert-title {
-  @apply font-semibold mb-1;
-}
-
-.alert-close {
-  @apply bg-transparent border-none cursor-pointer p-0 flex items-center justify-center opacity-70 hover:opacity-100;
-}
-
 /* Alert types */
 .alert-info {
   @apply bg-blue-50 border-l-4 border-blue-500 text-blue-800;

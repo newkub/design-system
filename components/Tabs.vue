@@ -1,17 +1,17 @@
 <template>
-  <div class="tabs">
-    <div class="tabs-header">
+  <div class="w-full">
+    <div class="flex border-b border-gray-200 mb-4">
       <button
         v-for="(tab, index) in tabs"
         :key="index"
-        class="tabs-tab"
-        :class="{ 'tabs-tab-active': modelValue === index }"
+        class="py-3 px-4 bg-transparent border-none border-b-2 border-transparent font-medium text-gray-500 cursor-pointer transition-all hover:text-blue-500"
+        :class="{ 'text-blue-500 border-b-blue-500': modelValue === index }"
         @click="$emit('update:modelValue', index)"
       >
         {{ tab }}
       </button>
     </div>
-    <div class="tabs-content">
+    <div class="py-4">
       <slot></slot>
     </div>
   </div>
@@ -53,25 +53,3 @@ defineEmits(['update:modelValue']);
  * }
  */
 </script>
-
-<style>
-.tabs {
-  @apply w-full;
-}
-
-.tabs-header {
-  @apply flex border-b border-gray-200 mb-4;
-}
-
-.tabs-tab {
-  @apply py-3 px-4 bg-transparent border-none border-b-2 border-transparent font-medium text-gray-500 cursor-pointer transition-all hover:text-blue-500;
-}
-
-.tabs-tab-active {
-  @apply text-blue-500 border-b-blue-500;
-}
-
-.tabs-content {
-  @apply py-4;
-}
-</style>

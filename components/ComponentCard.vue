@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-blue-300 cursor-pointer"
+    class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:(shadow-md border-blue-300) transition-all cursor-pointer"
     @click="openComponentModal"
   >
     <!-- Component Preview -->

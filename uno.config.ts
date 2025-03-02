@@ -1,4 +1,5 @@
 import { defineConfig, presetIcons, presetUno } from 'unocss'
+import transformerVariantGroup from '@unocss/transformer-variant-group'
 
 export default defineConfig({
   presets: [
@@ -15,6 +16,9 @@ export default defineConfig({
         'logos': () => import('@iconify-json/logos/icons.json').then(i => i.default),
       }
     }),
+  ],
+  transformers: [
+    transformerVariantGroup(),
   ],
   shortcuts: {
     // Add any shortcuts you need here

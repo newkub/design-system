@@ -1,11 +1,11 @@
 <template>
-  <div class="input-wrapper">
-    <label v-if="label" :for="id" class="input-label">
+  <div class="mb-4">
+    <label v-if="label" :for="id" class="block mb-2 text-sm font-medium text-gray-700">
       {{ label }}
-      <span v-if="required" class="input-required">*</span>
+      <span v-if="required" class="text-red-500 ml-1">*</span>
     </label>
-    <div class="input-container" :class="{ 'input-container-error': error }">
-      <div v-if="$slots['prefix']" class="input-prefix">
+    <div class="flex border border-gray-300 rounded-md overflow-hidden transition-all" :class="{ 'border-red-500 focus-within:(ring-2 ring-red-100)': error, 'focus-within:(border-blue-500 ring-2 ring-blue-100)': !error }">
+      <div v-if="$slots['prefix']" class="flex items-center px-3 text-gray-500 bg-gray-50">
         <slot name="prefix"></slot>
       </div>
       <input
@@ -15,15 +15,15 @@
         :placeholder="placeholder"
         :disabled="disabled"
         :required="required"
-        class="input-field"
+        class="flex-1 py-2.5 px-3 border-none outline-none bg-transparent text-base text-gray-800 w-full placeholder:text-gray-400 disabled:(bg-gray-100 cursor-not-allowed)"
         @input="$emit('update:modelValue', $event.target.value)"
       />
-      <div v-if="$slots['suffix']" class="input-suffix">
+      <div v-if="$slots['suffix']" class="flex items-center px-3 text-gray-500 bg-gray-50">
         <slot name="suffix"></slot>
       </div>
     </div>
-    <p v-if="error" class="input-error">{{ error }}</p>
-    <p v-else-if="hint" class="input-hint">{{ hint }}</p>
+    <p v-if="error" class="mt-1.5 text-sm text-red-500">{{ error }}</p>
+    <p v-else-if="hint" class="mt-1.5 text-sm text-gray-500">{{ hint }}</p>
   </div>
 </template>
 
@@ -102,58 +102,3 @@ defineEmits(['update:modelValue']);
  * }
  */
 </script>
-
-<style>
-.input-wrapper {
-  @apply mb-4;
-}
-
-.input-label {
-  @apply block mb-2 text-sm font-medium text-gray-700;
-}
-
-.input-required {
-  @apply text-red-500 ml-1;
-}
-
-.input-container {
-  @apply flex border border-gray-300 rounded-md overflow-hidden transition-all;
-}
-
-.input-container:focus-within {
-  @apply border-blue-500 ring-2 ring-blue-100;
-}
-
-.input-container-error {
-  @apply border-red-500;
-}
-
-.input-container-error:focus-within {
-  @apply ring-2 ring-red-100;
-}
-
-.input-field {
-  @apply flex-1 py-2.5 px-3 border-none outline-none bg-transparent text-base text-gray-800 w-full;
-}
-
-.input-field::placeholder {
-  @apply text-gray-400;
-}
-
-.input-field:disabled {
-  @apply bg-gray-100 cursor-not-allowed;
-}
-
-.input-prefix,
-.input-suffix {
-  @apply flex items-center px-3 text-gray-500 bg-gray-50;
-}
-
-.input-error {
-  @apply mt-1.5 text-sm text-red-500;
-}
-
-.input-hint {
-  @apply mt-1.5 text-sm text-gray-500;
-}
-</style>

@@ -1,46 +1,3 @@
-<script setup>
-import { useDocsConfig } from '~/composables/useDocsConfig';
-import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-const { themeConfig } = useDocsConfig();
-const { nav = [], logo, siteTitle, socialLinks = [] } = themeConfig || {};
-
-const isMobileMenuOpen = ref(false);
-
-function toggleMobileMenu() {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value;
-}
-
-function closeMobileMenu() {
-  isMobileMenuOpen.value = false;
-}
-
-// Check if a nav item is active
-function isNavItemActive(item) {
-  if (!item) return false;
-  
-  // For items with direct links
-  if (item.link) {
-    // Exact match for home page
-    if (item.link === '/' && route.path === '/') return true;
-    // Prefix match for other pages
-    if (item.link !== '/' && route.path.startsWith(item.link)) return true;
-  }
-  
-  // For dropdown items, check if any child is active
-  if (item.items) {
-    return item.items.some(subItem => 
-      subItem.link === route.path || 
-      (subItem.link !== '/' && route.path.startsWith(subItem.link))
-    );
-  }
-  
-  return false;
-}
-</script>
-
 <template>
   <header class="sticky top-0 z-20 w-full border-b border-gray-200 bg-white h-16">
     <div class="max-w-full mx-auto flex items-center justify-between h-full px-6">
@@ -58,7 +15,7 @@ function isNavItemActive(item) {
               v-if="item && !item.items"
               :to="item.link"
               class="nav-link px-3 py-2 text-sm font-medium rounded-md transition-colors"
-              :class="isNavItemActive(item) ? 'active-nav-link' : 'inactive-nav-link'"
+              :class="isNavItemActive(item) ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:(text-blue-600 bg-gray-100)'"
             >
               {{ item.text }}
             </NuxtLink>
@@ -66,7 +23,7 @@ function isNavItemActive(item) {
             <div v-else-if="item && item.items" class="relative group">
               <button 
                 class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors"
-                :class="isNavItemActive(item) ? 'active-nav-link' : 'inactive-nav-link'"
+                :class="isNavItemActive(item) ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:(text-blue-600 bg-gray-100)'"
               >
                 {{ item.text }}
                 <div class="i-carbon-chevron-down text-xs transition-transform group-hover:rotate-180"></div>
@@ -77,7 +34,7 @@ function isNavItemActive(item) {
                   :key="subItem?.text"
                   :to="subItem.link"
                   class="block px-4 py-2 text-sm rounded-md transition-colors"
-                  :class="route.path === subItem.link ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600 hover:bg-gray-100'"
+                  :class="route.path === subItem.link ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:(text-blue-600 bg-gray-100)'"
                 >
                   {{ subItem.text }}
                 </NuxtLink>
@@ -87,14 +44,14 @@ function isNavItemActive(item) {
         </nav>
         
         <!-- Social Links -->
-        <div class="social-links hidden md:flex items-center ml-4 border-l border-gray-200 pl-4">
+        <div class="hidden md:flex items-center ml-4 border-l border-gray-200 pl-4 gap-3">
           <a 
             v-for="link in socialLinks" 
             :key="link.icon"
             :href="link.link" 
             target="_blank" 
             rel="noopener noreferrer"
-            class="social-link"
+            class="flex items-center justify-center text-gray-500 hover:text-blue-600 w-6 h-6 rounded transition-colors"
             :title="link.icon.split('-').pop()"
           >
             <div class="text-xl" :class="link.icon"></div>
@@ -126,7 +83,7 @@ function isNavItemActive(item) {
             :href="link.link" 
             target="_blank" 
             rel="noopener noreferrer"
-            class="social-link"
+            class="flex items-center justify-center text-gray-500 hover:text-blue-600 w-6 h-6 rounded transition-colors"
           >
             <div class="text-xl" :class="link.icon"></div>
           </a>
@@ -172,38 +129,45 @@ function isNavItemActive(item) {
   </header>
 </template>
 
-<style scoped>
-.active-nav-link {
-  color: #2563eb; /* blue-600 */
-  background-color: #eff6ff; /* blue-50 */
+<script setup>
+import { useDocsConfig } from '~/composables/useDocsConfig';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const { themeConfig } = useDocsConfig();
+const { nav = [], logo, siteTitle, socialLinks = [] } = themeConfig || {};
+
+const isMobileMenuOpen = ref(false);
+
+function toggleMobileMenu() {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
 }
 
-.inactive-nav-link {
-  color: #4b5563; /* gray-600 */
+function closeMobileMenu() {
+  isMobileMenuOpen.value = false;
 }
 
-.inactive-nav-link:hover {
-  color: #2563eb; /* blue-600 */
-  background-color: #f3f4f6; /* gray-100 */
+// Check if a nav item is active
+function isNavItemActive(item) {
+  if (!item) return false;
+  
+  // For items with direct links
+  if (item.link) {
+    // Exact match for home page
+    if (item.link === '/' && route.path === '/') return true;
+    // Prefix match for other pages
+    if (item.link !== '/' && route.path.startsWith(item.link)) return true;
+  }
+  
+  // For dropdown items, check if any child is active
+  if (item.items) {
+    return item.items.some(subItem => 
+      subItem.link === route.path || 
+      (subItem.link !== '/' && route.path.startsWith(subItem.link))
+    );
+  }
+  
+  return false;
 }
-
-.social-links {
-  display: flex;
-  gap: 12px;
-}
-
-.social-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280; /* gray-500 */
-  transition: color 0.2s ease;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-}
-
-.social-link:hover {
-  color: #2563eb; /* blue-600 */
-}
-</style>
+</script>

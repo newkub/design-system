@@ -1,10 +1,3 @@
-<script setup>
-import { useDocsConfig } from '~/composables/useDocsConfig';
-
-const { themeConfig } = useDocsConfig();
-const { footer, socialLinks } = themeConfig;
-</script>
-
 <template>
   <footer class="border-t border-gray-200 py-12 px-6 mt-auto bg-gray-50">
     <div class="max-w-4xl mx-auto">
@@ -30,3 +23,10 @@ const { footer, socialLinks } = themeConfig;
     </div>
   </footer>
 </template>
+
+<script setup>
+import { useDocsConfig } from '~/composables/useDocsConfig';
+
+const { themeConfig } = useDocsConfig();
+const { footer, socialLinks } = themeConfig;
+</script>
