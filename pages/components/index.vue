@@ -212,25 +212,25 @@ const searchResults = computed(() => {
   );
 });
 
-// Get color for category badge
-function getCategoryColor(category) {
-  const colorMap = {
-    'layout': 'bg-purple-100 text-purple-800',
-    'form': 'bg-blue-100 text-blue-800',
-    'feedback': 'bg-amber-100 text-amber-800',
-    'navigation': 'bg-green-100 text-green-800',
-    'data-display': 'bg-indigo-100 text-indigo-800'
-  };
-  
-  return colorMap[category] || 'bg-gray-100 text-gray-800';
-}
-
 // Get component count by category
 function getComponentCountByCategory(categoryId) {
   if (categoryId === 'all') {
     return components.length;
   }
   return components.filter(component => component.category === categoryId).length;
+}
+
+// Modal state
+const isModalOpen = ref(false);
+const selectedComponent = ref(null);
+
+function openComponentModal(component) {
+  selectedComponent.value = component;
+  isModalOpen.value = true;
+}
+
+function closeComponentModal() {
+  isModalOpen.value = false;
 }
 </script>
 
@@ -293,65 +293,22 @@ function getComponentCountByCategory(categoryId) {
         
         <!-- Components grid -->
         <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div 
+          <ComponentCard 
             v-for="component in searchResults" 
             :key="component.id"
-            class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-blue-300"
-          >
-            <!-- Component Preview -->
-            <div class="h-32 bg-gray-50 flex items-center justify-center p-4 border-b border-gray-200">
-              <component 
-                v-if="component.preview"
-                :is="component.preview().component" 
-                v-bind="component.preview().props"
-              >
-                {{ component.preview().content }}
-                <template v-if="component.preview().slots" v-for="(slotContent, name) in component.preview().slots" #[name]>
-                  {{ slotContent }}
-                </template>
-              </component>
-              <div v-else class="text-gray-400 text-sm">Preview not available</div>
-            </div>
-            
-            <div class="p-4">
-              <!-- Component Title and Link -->
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-bold">{{ component.title }}</h3>
-                <NuxtLink 
-                  :to="component.link" 
-                  class="text-blue-600 hover:text-blue-800"
-                >
-                  <div class="i-carbon-arrow-right"></div>
-                </NuxtLink>
-              </div>
-              
-              <!-- Component Description -->
-              <p class="text-gray-600 text-sm mb-4">{{ component.description }}</p>
-              
-              <!-- Tags and Category -->
-              <div class="flex flex-wrap items-center gap-2 mt-auto">
-                <!-- Category Badge -->
-                <span 
-                  class="text-xs px-2 py-1 rounded-full"
-                  :class="getCategoryColor(component.category)"
-                >
-                  {{ component.category }}
-                </span>
-                
-                <!-- Tags -->
-                <span 
-                  v-for="tag in component.tags" 
-                  :key="tag"
-                  class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700"
-                >
-                  {{ tag }}
-                </span>
-              </div>
-            </div>
-          </div>
+            :component="component"
+            @open-modal="openComponentModal"
+          />
         </div>
       </div>
     </div>
+    
+    <!-- Component Modal -->
+    <ComponentModal 
+      :is-open="isModalOpen" 
+      :component="selectedComponent || {}"
+      @close="closeComponentModal"
+    />
     
     <!-- CTA Section -->
     <div class="py-12 px-4 bg-gray-50">
@@ -365,7 +322,3 @@ function getComponentCountByCategory(categoryId) {
     </div>
   </NuxtLayout>
 </template>
-
-<style scoped>
-/* Add any component-specific styles here */
-</style>
