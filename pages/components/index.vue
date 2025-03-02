@@ -20,65 +20,171 @@ const activeCategory = ref('all');
 // Components data with previews, titles, and tags
 const components = [
   {
-    id: 'docs',
-    title: 'Documentation',
-    description: 'Comprehensive guides and references for our design system.',
-    category: 'resources',
-    tags: ['guides', 'reference'],
-    link: '/docs',
-    preview: null
-  },
-  {
-    id: 'blog',
-    title: 'Blog',
-    description: 'Latest updates, insights, and best practices from our team.',
-    category: 'resources',
-    tags: ['news', 'updates'],
-    link: '/blog',
-    preview: null
-  },
-  {
-    id: 'api',
-    title: 'API Reference',
-    description: 'Detailed documentation for developers integrating with our API.',
-    category: 'developer',
-    tags: ['developer', 'integration'],
-    link: '/api',
-    preview: null
-  },
-  {
-    id: 'changelog',
-    title: 'Changelog',
-    description: 'Track new features, improvements, and bug fixes.',
-    category: 'updates',
-    tags: ['versioning', 'releases'],
-    link: '/changelog',
-    preview: null
-  },
-  {
-    id: 'form',
-    title: 'Form Elements',
-    description: 'A collection of form elements including inputs, checkboxes, and radio buttons.',
-    category: 'components',
-    tags: ['input', 'form-controls'],
-    link: '/components/form',
+    id: 'button',
+    title: 'Button',
+    description: 'Buttons allow users to trigger an action or event with a single click.',
+    category: 'form',
+    tags: ['interactive', 'action'],
+    link: '/design-system/buttons',
     preview: () => ({
-      component: 'DsForm',
-      props: { variant: 'standard' },
-      content: 'Form Example'
+      component: 'DsButton',
+      props: { variant: 'primary' },
+      content: 'Button'
     })
   },
   {
-    id: 'account',
-    title: 'Account Management',
-    description: 'Manage user accounts, settings, and authentication.',
-    category: 'user',
-    tags: ['profile', 'security'],
-    link: '/account',
+    id: 'alert',
+    title: 'Alert',
+    description: 'Alerts display important messages to the user.',
+    category: 'feedback',
+    tags: ['notification', 'message'],
+    link: '/design-system/alerts',
+    preview: () => ({
+      component: 'DsAlert',
+      props: { type: 'info', title: 'Information' },
+      content: 'This is an alert message'
+    })
+  },
+  {
+    id: 'badge',
+    title: 'Badge',
+    description: 'Badges are small status descriptors for UI elements.',
+    category: 'data-display',
+    tags: ['label', 'status'],
+    link: '/design-system/badges',
+    preview: () => ({
+      component: 'DsBadge',
+      props: { variant: 'primary' },
+      content: 'Badge'
+    })
+  },
+  {
+    id: 'card',
+    title: 'Card',
+    description: 'Cards contain content and actions about a single subject.',
+    category: 'layout',
+    tags: ['container', 'content'],
+    link: '/design-system/cards',
+    preview: () => ({
+      component: 'DsCard',
+      props: { variant: 'bordered' },
+      content: 'Card Content',
+      slots: {
+        header: 'Card Header',
+        footer: 'Card Footer'
+      }
+    })
+  },
+  {
+    id: 'typography',
+    title: 'Typography',
+    description: 'Typography components for displaying text with various styles.',
+    category: 'data-display',
+    tags: ['text', 'heading'],
+    link: '/design-system/typography',
+    preview: () => ({
+      component: 'DsTypography',
+      props: { variant: 'h3', weight: 'semibold' },
+      content: 'Typography'
+    })
+  },
+  {
+    id: 'input',
+    title: 'Input',
+    description: 'Input fields allow users to enter text.',
+    category: 'form',
+    tags: ['form', 'text'],
+    link: '/design-system/inputs',
+    preview: () => ({
+      component: 'DsInput',
+      props: { label: 'Input Field', placeholder: 'Enter text...' }
+    })
+  },
+  {
+    id: 'tabs',
+    title: 'Tabs',
+    description: 'Tabs organize content into separate views which users can switch between.',
+    category: 'navigation',
+    tags: ['navigation', 'content'],
+    link: '/design-system/tabs',
+    preview: () => ({
+      component: 'DsTabs',
+      props: { tabs: ['Tab 1', 'Tab 2', 'Tab 3'], modelValue: 0 }
+    })
+  },
+  {
+    id: 'breadcrumbs',
+    title: 'Breadcrumbs',
+    description: 'Breadcrumbs show the current page location within a navigational hierarchy.',
+    category: 'navigation',
+    tags: ['navigation', 'location'],
+    link: '/design-system/breadcrumbs',
+    preview: null
+  },
+  {
+    id: 'dropdown',
+    title: 'Dropdown',
+    description: 'Dropdowns display a list of options that can be selected.',
+    category: 'navigation',
+    tags: ['selection', 'menu'],
+    link: '/design-system/dropdown',
+    preview: null
+  },
+  {
+    id: 'modal',
+    title: 'Modal',
+    description: 'Modals display content that requires user interaction.',
+    category: 'feedback',
+    tags: ['dialog', 'popup'],
+    link: '/design-system/modals',
+    preview: null
+  },
+  {
+    id: 'tooltip',
+    title: 'Tooltip',
+    description: 'Tooltips display informative text when users hover over an element.',
+    category: 'data-display',
+    tags: ['info', 'hover'],
+    link: '/design-system/tooltips',
+    preview: null
+  },
+  {
+    id: 'progress',
+    title: 'Progress',
+    description: 'Progress indicators show the completion status of an operation.',
+    category: 'feedback',
+    tags: ['loading', 'status'],
+    link: '/design-system/progress',
+    preview: null
+  },
+  {
+    id: 'avatar',
+    title: 'Avatar',
+    description: 'Avatars represent a user or entity.',
+    category: 'data-display',
+    tags: ['user', 'image'],
+    link: '/design-system/avatars',
+    preview: null
+  },
+  {
+    id: 'checkbox',
+    title: 'Checkbox',
+    description: 'Checkboxes allow users to select multiple options from a set.',
+    category: 'form',
+    tags: ['selection', 'toggle'],
+    link: '/design-system/checkboxes',
+    preview: null
+  },
+  {
+    id: 'radio',
+    title: 'Radio Button',
+    description: 'Radio buttons allow users to select one option from a set.',
+    category: 'form',
+    tags: ['selection', 'toggle'],
+    link: '/design-system/radio-buttons',
     preview: null
   }
 ];
-
 
 // Computed property for filtered components
 const filteredComponents = computed(() => {

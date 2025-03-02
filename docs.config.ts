@@ -2,10 +2,10 @@ import { SidebarItem, NavItem, ThemeConfig, DocsConfig } from './types/docs-conf
 
 const themeConfig: ThemeConfig = {
   logo: '/logo.svg',
-  siteTitle: 'Nuxt Docs',
+  siteTitle: 'Design System',
   nav: [
     { text: 'Guide', link: '/guide/' },
-    { text: 'Design System', link: '/design-system/' },
+    { text: 'Components', link: '/components' },
     { text: 'Showcase', link: '/showcase/' },
     { 
       text: 'Links',
@@ -18,126 +18,41 @@ const themeConfig: ThemeConfig = {
   sidebar: {
     '/guide/': [
       {
-        text: 'Introduction',
+        text: 'Get Started',
         collapsible: true,
         items: [
-          { text: 'Getting Started', link: '/guide/' },
-          { text: 'Installation', link: '/guide/installation' }
+          { text: 'Design Principles', link: '/guide/design-principles' },
+          { text: 'Installation', link: '/guide/installation' },
+          { text: 'Usage', link: '/guide/usage' },
+          { text: 'Customize Theme', link: '/guide/customize-theme' },
         ]
       },
       {
-        text: 'Essentials',
+        text: 'Design System',
         collapsible: true,
         items: [
-          { text: 'Configuration', link: '/guide/configuration' },
-          { text: 'Routing', link: '/guide/routing' }
+          { text: 'Tokens', link: '/guide/tokens' },
+          { text: 'Components', link: '/guide/components' },
+          { text: 'Patterns', link: '/guide/patterns' },
+          { text: 'Templates', link: '/guide/templates' },
+          { text: 'Showcase', link: '/guide/showcase' }
+
         ]
       }
     ],
-    '/design-system/': [
-      {
-        text: 'Overview',
-        collapsible: true,
-        items: [
-          { text: 'Introduction', link: '/design-system/' },
-          { text: 'Design Principles', link: '/design-system/principles' },
-          { text: 'Customize Theme', link: '/design-system/customize-theme' },
-    
-        ]
-      },
-      {
-        text: 'Core Components',
-        collapsible: true,
-        items: [
-          { text: 'Buttons', link: '/design-system/buttons' },
-          { text: 'Typography', link: '/design-system/typography' },
-          { text: 'Cards', link: '/design-system/cards' },
-          { text: 'Alerts', link: '/design-system/alerts' },
-          { text: 'Badges', link: '/design-system/badges' },
-          { text: 'Inputs', link: '/design-system/inputs' },
-          { text: 'Checkboxes', link: '/design-system/checkboxes' },
-          { text: 'Radio Buttons', link: '/design-system/radio-buttons' },
-          { text: 'Select Menus', link: '/design-system/select-menus' },
-          { text: 'Toggles', link: '/design-system/toggles' },
-          { text: 'Sliders', link: '/design-system/sliders' },
-          { text: 'Date Pickers', link: '/design-system/date-pickers' },
-          { text: 'File Upload', link: '/design-system/file-upload' },
-          { text: 'Tabs', link: '/design-system/tabs' },
-          { text: 'Breadcrumbs', link: '/design-system/breadcrumbs' },
-          { text: 'Pagination', link: '/design-system/pagination' },
-          { text: 'Navbar', link: '/design-system/navbar' },
-          { text: 'Sidebar', link: '/design-system/sidebar' },
-          { text: 'Menu', link: '/design-system/menu' },
-          { text: 'Dropdown', link: '/design-system/dropdown' },
-          { text: 'Stepper', link: '/design-system/stepper' },
-          { text: 'Modals', link: '/design-system/modals' },
-          { text: 'Tooltips', link: '/design-system/tooltips' },
-          { text: 'Popovers', link: '/design-system/popovers' },
-          { text: 'Progress', link: '/design-system/progress' },
-          { text: 'Spinners', link: '/design-system/spinners' },
-          { text: 'Skeleton Loaders', link: '/design-system/skeleton-loaders' },
-          { text: 'Toast Notifications', link: '/design-system/toast-notifications' },
-          { text: 'Snackbars', link: '/design-system/snackbars' },
-          { text: 'Tables', link: '/design-system/tables' },
-          { text: 'Lists', link: '/design-system/lists' },
-          { text: 'Tree View', link: '/design-system/tree-view' },
-          { text: 'Timeline', link: '/design-system/timeline' },
-          { text: 'Avatars', link: '/design-system/avatars' },
-          { text: 'Badges', link: '/design-system/badges' },
-          { text: 'Stats Cards', link: '/design-system/stats-cards' },
-          { text: 'Charts', link: '/design-system/charts' },
-          { text: 'Image Gallery', link: '/design-system/image-gallery' },
-          { text: 'Carousel', link: '/design-system/carousel' },
-          { text: 'Video Player', link: '/design-system/video-player' },
-          { text: 'Audio Player', link: '/design-system/audio-player' },
-          { text: 'Icons', link: '/design-system/icons' }
-          
-        ]
-      },
-   
-     
-      {
-        text: 'Layout Components',
-        collapsible: true,
-        items: [
-          { text: 'Grid System', link: '/design-system/grid-system' },
-          { text: 'Containers', link: '/design-system/containers' },
-          { text: 'Dividers', link: '/design-system/dividers' },
-          { text: 'Accordion', link: '/design-system/accordion' },
-          { text: 'Tabs Panel', link: '/design-system/tabs-panel' },
-          { text: 'Split Panes', link: '/design-system/split-panes' },
-          { text: 'Masonry Layout', link: '/design-system/masonry-layout' },
-          { text: 'Clipboard', link: '/design-system/clipboard' },
-          { text: 'Infinite Scroll', link: '/design-system/infinite-scroll' },
-          { text: 'Virtual Scroll', link: '/design-system/virtual-scroll' },
-          { text: 'Drag and Drop', link: '/design-system/drag-and-drop' },
-          { text: 'Resizable', link: '/design-system/resizable' },
-          { text: 'Sortable', link: '/design-system/sortable' },
-          { text: 'Color Picker', link: '/design-system/color-picker' }
-        ]
-      },
-      {
-        text: 'Patterns',
-        collapsible: true,
-        items: [
-          { text: 'Forms', link: '/design-system/patterns/forms' },
-          { text: 'Navigation', link: '/design-system/patterns/navigation' },
-          { text: 'Layouts', link: '/design-system/patterns/layouts' },
-          { text: 'Authentication', link: '/design-system/patterns/authentication' },
-          { text: 'Data Tables', link: '/design-system/patterns/data-tables' },
-          { text: 'Search', link: '/design-system/patterns/search' },
-          { text: 'Filtering', link: '/design-system/patterns/filtering' },
-          { text: 'Onboarding', link: '/design-system/patterns/onboarding' },
-          { text: 'Empty States', link: '/design-system/patterns/empty-states' },
-          { text: 'Error Handling', link: '/design-system/patterns/error-handling' },
-          { text: 'Notifications', link: '/design-system/patterns/notifications' },
-          { text: 'Wizards', link: '/design-system/patterns/wizards' },
-          { text: 'Responsive Design', link: '/design-system/patterns/responsive-design' }
-        ]
-      },
-
-    ],
     '/showcase/': [
+      {
+        text: 'Components',
+        collapsible: true,
+        items: [
+          { text: 'All Components', link: '/showcase/components' },
+          { text: 'Layout Components', link: '/showcase/components?category=layout' },
+          { text: 'Form Components', link: '/showcase/components?category=form' },
+          { text: 'Feedback Components', link: '/showcase/components?category=feedback' },
+          { text: 'Navigation Components', link: '/showcase/components?category=navigation' },
+          { text: 'Data Display Components', link: '/showcase/components?category=data-display' }
+        ]
+      },
       {
         text: 'Templates',
         collapsible: true,
