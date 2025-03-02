@@ -7,7 +7,7 @@
     <div class="flex flex-1 relative">
       <DocsSidebar />
       <main class="flex-1 p-6 w-full">
-        <div class="max-w-4xl mx-auto">
+        <div class="w-full mx-auto"> <!-- Changed from max-w-4xl to w-full -->
           <slot />
         </div>
       </main>

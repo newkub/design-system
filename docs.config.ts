@@ -7,6 +7,8 @@ export default {
     nav: [
       { text: 'Guide', link: '/guide/' },
       { text: 'Design System', link: '/design-system/' },
+      { text: 'Blog', link: '/blog/' },
+      { text: 'Changelog', link: '/changelog/' },
       { 
         text: 'Components',
         items: [
@@ -69,6 +71,32 @@ export default {
             { text: 'Forms', link: '/design-system/patterns/forms' },
             { text: 'Navigation', link: '/design-system/patterns/navigation' },
             { text: 'Layouts', link: '/design-system/patterns/layouts' }
+          ]
+        }
+      ],
+      '/blog/': [
+        {
+          text: 'Recent Posts',
+          items: [
+            { text: 'All Posts', link: '/blog/' }
+          ]
+        },
+        {
+          text: 'Categories',
+          items: [
+            { text: 'Tutorials', link: '/blog/category/tutorials' },
+            { text: 'Updates', link: '/blog/category/updates' },
+            { text: 'Case Studies', link: '/blog/category/case-studies' }
+          ]
+        }
+      ],
+      '/changelog/': [
+        {
+          text: 'Releases',
+          items: [
+            { text: 'All Releases', link: '/changelog/' },
+            { text: 'Major Releases', link: '/changelog/major' },
+            { text: 'Beta Releases', link: '/changelog/beta' }
           ]
         }
       ],

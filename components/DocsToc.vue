@@ -20,6 +20,43 @@
         </li>
       </ul>
     </nav>
+    
+    <!-- Mobile TOC -->
+    <div class="mobile-toc">
+      <button 
+        class="mobile-toc__toggle"
+        @click="isOpen = !isOpen"
+        :aria-expanded="isOpen"
+        aria-controls="mobile-toc-menu"
+      >
+        <span>On this page</span>
+        <div :class="isOpen ? 'i-carbon-chevron-up' : 'i-carbon-chevron-down'" class="text-sm"></div>
+      </button>
+      
+      <div 
+        id="mobile-toc-menu"
+        v-show="isOpen" 
+        class="mobile-toc__menu"
+      >
+        <ul class="mobile-toc__list">
+          <li 
+            v-for="heading in headings" 
+            :key="heading.id" 
+            class="mobile-toc__item"
+            :class="`mobile-toc__item--${heading.depth}`"
+          >
+            <a 
+              :href="`#${heading.id}`" 
+              class="mobile-toc__link"
+              :class="{ 'mobile-toc__link--active': activeId === heading.id }"
+              @click="handleMobileClick(heading.id)"
+            >
+              {{ heading.text }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -40,6 +77,7 @@ const props = defineProps({
 const headings = ref([]);
 const activeId = ref('');
 const observer = ref(null);
+const isOpen = ref(false);
 
 onMounted(async () => {
   // Wait for content to be fully rendered
@@ -106,6 +144,12 @@ function scrollToHeading(id) {
     });
   }
 }
+
+function handleMobileClick(id) {
+  scrollToHeading(id);
+  // Close the mobile TOC after clicking
+  isOpen.value = false;
+}
 </script>
 
 <style>
@@ -169,9 +213,77 @@ function scrollToHeading(id) {
   font-weight: 500;
 }
 
+/* Mobile TOC styles */
+.mobile-toc {
+  display: none;
+  margin: 1.5rem 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.mobile-toc__toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f9fafb;
+  border: none;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mobile-toc__menu {
+  border-top: 1px solid #e5e7eb;
+  padding: 0.75rem 0;
+  background-color: white;
+}
+
+.mobile-toc__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-toc__item {
+  margin: 0;
+}
+
+.mobile-toc__item--2 {
+  padding-left: 1rem;
+}
+
+.mobile-toc__item--3 {
+  padding-left: 2rem;
+}
+
+.mobile-toc__link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.mobile-toc__link:hover {
+  background-color: #f3f4f6;
+  color: #3b82f6;
+}
+
+.mobile-toc__link--active {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
 @media (max-width: 1280px) {
   .docs-toc {
     display: none;
+  }
+  
+  .mobile-toc {
+    display: block;
   }
 }
 </style>

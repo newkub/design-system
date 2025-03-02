@@ -1,7 +1,6 @@
 <template>
   <NuxtLayout name="docs">
     <div class="prose py-8">
-      <MobileTableOfContents />
       <ContentDoc>
         <template #not-found>
           <div class="text-center py-12">
