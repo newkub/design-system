@@ -4321,6 +4321,134 @@ const navigation = /*#__PURE__*/Object.freeze({
   createNav: createNav
 });
 
+function extractMetadataFromSource(source, fileName) {
+  try {
+    const metadataRegex = /@componentMetadata\s*\n\s*\*\s*({[\s\S]*?})\s*\n\s*\*/;
+    const match = source.match(metadataRegex);
+    if (match && match[1]) {
+      const metadataStr = match[1].replace(/\s*\*\s*/g, "");
+      return JSON.parse(metadataStr);
+    }
+    return extractMetadataFromScript(source, fileName);
+  } catch (err) {
+    console.error("Error extracting metadata:", err);
+    return null;
+  }
+}
+function extractMetadataFromScript(source, fileName) {
+  try {
+    const componentName = fileName.replace(/\.vue$/, "");
+    const id = componentName.toLowerCase();
+    const props = extractProps(source);
+    const events = extractEvents(source);
+    const slots = extractSlots(source);
+    const category = determineCategory(componentName, source);
+    return {
+      id,
+      title: componentName,
+      description: `${componentName} component`,
+      category,
+      tags: [id],
+      props,
+      events,
+      slots
+    };
+  } catch (err) {
+    console.error("Error extracting metadata from script:", err);
+    return null;
+  }
+}
+function extractProps(source) {
+  const props = [];
+  const propsRegex = /defineProps\(\{([^}]*)\}\)/s;
+  const propsMatch = source.match(propsRegex);
+  if (propsMatch && propsMatch[1]) {
+    const propsContent = propsMatch[1];
+    const propRegex = /(\w+):\s*\{([^}]*)\}/g;
+    let propMatch;
+    while ((propMatch = propRegex.exec(propsContent)) !== null) {
+      const propName = propMatch[1];
+      const propContent = propMatch[2];
+      const typeMatch = /type:\s*([\w\[\]]+)/.exec(propContent);
+      const type = typeMatch ? typeMatch[1] : "any";
+      const defaultMatch = /default:\s*([^,\n]+)/.exec(propContent);
+      const defaultValue = defaultMatch ? defaultMatch[1].trim() : '""';
+      const commentRegex = new RegExp(`${propName}[^]*?/\\/\\s*(.+)`, "i");
+      const commentMatch = source.match(commentRegex);
+      const description = commentMatch ? commentMatch[1].trim() : `${propName} property`;
+      props.push({
+        name: propName,
+        type,
+        default: defaultValue,
+        description
+      });
+    }
+  }
+  return props;
+}
+function extractEvents(source) {
+  const events = [];
+  const emitsRegex = /defineEmits\(\[(.*?)\]\)/s;
+  const emitsMatch = source.match(emitsRegex);
+  if (emitsMatch && emitsMatch[1]) {
+    const emitsContent = emitsMatch[1];
+    const eventRegex = /'([^']+)'/g;
+    let eventMatch;
+    while ((eventMatch = eventRegex.exec(emitsContent)) !== null) {
+      const eventName = eventMatch[1];
+      const commentRegex = new RegExp(`${eventName}[^]*?/\\/\\s*(.+)`, "i");
+      const commentMatch = source.match(commentRegex);
+      const description = commentMatch ? commentMatch[1].trim() : `Emitted when ${eventName.replace(/:/g, " ").replace(/([A-Z])/g, " $1").toLowerCase()}`;
+      events.push({
+        name: eventName,
+        description
+      });
+    }
+  }
+  return events;
+}
+function extractSlots(source) {
+  const slots = [];
+  if (source.includes("<slot>") || source.includes("<slot />")) {
+    slots.push({
+      name: "default",
+      description: "Default slot content"
+    });
+  }
+  const slotRegex = /<slot\s+name=["']([^"']+)["'][^>]*>/g;
+  let slotMatch;
+  while ((slotMatch = slotRegex.exec(source)) !== null) {
+    const slotName = slotMatch[1];
+    const commentRegex = new RegExp(`slot[^]*?${slotName}[^]*?/\\/\\s*(.+)`, "i");
+    const commentMatch = source.match(commentRegex);
+    const description = commentMatch ? commentMatch[1].trim() : `${slotName} slot content`;
+    slots.push({
+      name: slotName,
+      description
+    });
+  }
+  return slots;
+}
+function determineCategory(componentName, source) {
+  const name = componentName.toLowerCase();
+  if (name.includes("input") || name.includes("form") || name.includes("select") || name.includes("checkbox") || name.includes("radio") || name.includes("button")) {
+    return "form";
+  }
+  if (name.includes("layout") || name.includes("grid") || name.includes("container") || name.includes("row") || name.includes("col") || name.includes("card")) {
+    return "layout";
+  }
+  if (name.includes("alert") || name.includes("toast") || name.includes("notification") || name.includes("modal") || name.includes("dialog")) {
+    return "feedback";
+  }
+  if (name.includes("nav") || name.includes("menu") || name.includes("sidebar") || name.includes("tab") || name.includes("pagination")) {
+    return "navigation";
+  }
+  if (name.includes("table") || name.includes("list") || name.includes("badge") || name.includes("tag") || name.includes("text") || name.includes("typography")) {
+    return "data-display";
+  }
+  return "data-display";
+}
+
 const components = defineEventHandler(async (event) => {
   try {
     const componentsDir = path.resolve(process.cwd(), "components");
@@ -4329,16 +4457,9 @@ const components = defineEventHandler(async (event) => {
     for (const file of files) {
       const filePath = path.join(componentsDir, file);
       const content = fs.readFileSync(filePath, "utf-8");
-      const metadataRegex = /@componentMetadata\s*\n\s*\*\s*({[\s\S]*?})\s*\n\s*\*/;
-      const match = content.match(metadataRegex);
-      if (match && match[1]) {
-        try {
-          const metadataStr = match[1].replace(/\s*\*\s*/g, "");
-          const metadata = JSON.parse(metadataStr);
-          components.push(metadata);
-        } catch (err) {
-          console.error(`Error parsing metadata for ${file}:`, err);
-        }
+      const metadata = extractMetadataFromSource(content, file);
+      if (metadata) {
+        components.push(metadata);
       }
     }
     return components;

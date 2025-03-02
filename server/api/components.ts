@@ -2,11 +2,9 @@ import { defineEventHandler } from 'h3';
 import fs from 'fs';
 import path from 'path';
 import type { ComponentMetadata } from '~/types/component-metadata';
+import { extractMetadataFromSource } from '~/utils/component-metadata-extractor';
 
 export default defineEventHandler(async (event) => {
-  // In a real implementation, this would scan the components directory
-  // and extract metadata from each component file
-  
   try {
     const componentsDir = path.resolve(process.cwd(), 'components');
     const files = fs.readdirSync(componentsDir)
@@ -19,18 +17,10 @@ export default defineEventHandler(async (event) => {
       const content = fs.readFileSync(filePath, 'utf-8');
       
       // Extract metadata from component source
-      const metadataRegex = /@componentMetadata\s*\n\s*\*\s*({[\s\S]*?})\s*\n\s*\*/;
-      const match = content.match(metadataRegex);
+      const metadata = extractMetadataFromSource(content, file);
       
-      if (match && match[1]) {
-        try {
-          // Parse the JSON metadata
-          const metadataStr = match[1].replace(/\s*\*\s*/g, '');
-          const metadata = JSON.parse(metadataStr);
-          components.push(metadata);
-        } catch (err) {
-          console.error(`Error parsing metadata for ${file}:`, err);
-        }
+      if (metadata) {
+        components.push(metadata);
       }
     }
     
