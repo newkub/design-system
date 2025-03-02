@@ -7,24 +7,28 @@
   </span>
 </template>
 
-<script lang="ts" setup>
-import type { ComponentMetadataDefinition } from '~/types/component-metadata';
+<script setup>
+import { defineProps } from 'vue';
 
 defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (value: string) => ['primary', 'secondary', 'success', 'warning', 'danger', 'info'].includes(value)
+    validator: (value) => ['primary', 'secondary', 'success', 'warning', 'danger', 'info'].includes(value)
   },
   size: {
     type: String,
     default: 'md',
-    validator: (value: string) => ['sm', 'md', 'lg'].includes(value)
+    validator: (value) => ['sm', 'md', 'lg'].includes(value)
   }
 });
+</script>
+
+<script>
+import type { ComponentMetadataDefinition } from '~/types/component-metadata';
 
 // Define component metadata using TypeScript
-export const componentMetadata: ComponentMetadataDefinition = {
+export const componentMetadata = {
   title: "Badge",
   description: "Badges are small status descriptors for UI elements.",
   category: "data-display",
@@ -37,7 +41,7 @@ export const componentMetadata: ComponentMetadataDefinition = {
     { name: "variant", type: "String", default: "primary", description: "Badge style variant (primary, secondary, success, warning, danger, info)" },
     { name: "size", type: "String", default: "md", description: "Badge size (sm, md, lg)" }
   ]
-};
+} as ComponentMetadataDefinition;
 </script>
 
 <style>

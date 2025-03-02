@@ -17,12 +17,12 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import type { ComponentMetadataDefinition } from '~/types/component-metadata';
+<script setup>
+import { defineProps, defineEmits } from 'vue';
 
 defineProps({
   tabs: {
-    type: Array as () => string[],
+    type: Array,
     required: true
   },
   modelValue: {
@@ -32,9 +32,13 @@ defineProps({
 });
 
 defineEmits(['update:modelValue']);
+</script>
+
+<script>
+import type { ComponentMetadataDefinition } from '~/types/component-metadata';
 
 // Define component metadata using TypeScript
-export const componentMetadata: ComponentMetadataDefinition = {
+export const componentMetadata = {
   title: "Tabs",
   description: "Tabs organize content into separate views which users can switch between.",
   category: "navigation",
@@ -50,7 +54,7 @@ export const componentMetadata: ComponentMetadataDefinition = {
   events: [
     { name: "update:modelValue", description: "Emitted when the active tab changes" }
   ]
-};
+} as ComponentMetadataDefinition;
 </script>
 
 <style>

@@ -27,8 +27,8 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import type { ComponentMetadataDefinition } from '~/types/component-metadata';
+<script setup>
+import { defineProps, defineEmits } from 'vue';
 
 defineProps({
   modelValue: {
@@ -70,9 +70,13 @@ defineProps({
 });
 
 defineEmits(['update:modelValue']);
+</script>
+
+<script>
+import type { ComponentMetadataDefinition } from '~/types/component-metadata';
 
 // Define component metadata using TypeScript
-export const componentMetadata: ComponentMetadataDefinition = {
+export const componentMetadata = {
   title: "Input",
   description: "Input fields allow users to enter text.",
   category: "form",
@@ -99,7 +103,7 @@ export const componentMetadata: ComponentMetadataDefinition = {
     { name: "prefix", description: "Content to display before the input" },
     { name: "suffix", description: "Content to display after the input" }
   ]
-};
+} as ComponentMetadataDefinition;
 </script>
 
 <style>

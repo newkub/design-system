@@ -30,14 +30,14 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import type { ComponentMetadataDefinition } from '~/types/component-metadata';
+<script setup>
+import { defineProps, defineEmits } from 'vue';
 
 defineProps({
   type: {
     type: String,
     default: 'info',
-    validator: (value: string) => ['info', 'success', 'warning', 'error'].includes(value)
+    validator: (value) => ['info', 'success', 'warning', 'error'].includes(value)
   },
   title: {
     type: String,
@@ -50,9 +50,13 @@ defineProps({
 });
 
 defineEmits(['dismiss']);
+</script>
+
+<script>
+import type { ComponentMetadataDefinition } from '~/types/component-metadata';
 
 // Define component metadata using TypeScript
-export const componentMetadata: ComponentMetadataDefinition = {
+export const componentMetadata = {
   title: "Alert",
   description: "Alerts display important messages to the user.",
   category: "feedback",
@@ -73,7 +77,7 @@ export const componentMetadata: ComponentMetadataDefinition = {
     { name: "default", description: "Alert content" },
     { name: "icon", description: "Custom icon for the alert" }
   ]
-};
+} as ComponentMetadataDefinition;
 </script>
 
 <style>
