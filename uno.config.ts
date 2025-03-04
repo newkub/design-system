@@ -1,33 +1,100 @@
-import { defineConfig, presetIcons, presetUno } from 'unocss'
-import transformerVariantGroup from '@unocss/transformer-variant-group'
+import { defineConfig, presetIcons, presetWind } from 'unocss';
 
 export default defineConfig({
   presets: [
-    presetUno(),
+    presetWind(),
     presetIcons({
       scale: 1.2,
-      cdn: 'https://esm.sh/',
       extraProperties: {
         'display': 'inline-block',
         'vertical-align': 'middle',
       },
-      collections: {
-        'carbon': () => import('@iconify-json/carbon/icons.json').then(i => i.default),
-        'logos': () => import('@iconify-json/logos/icons.json').then(i => i.default),
-      }
     }),
   ],
-  transformers: [
-    transformerVariantGroup(),
-  ],
-  shortcuts: {
-    // Add any shortcuts you need here
-    'btn': 'py-2 px-4 font-semibold rounded-lg shadow-md',
-    'btn-primary': 'bg-blue-500 text-white hover:bg-blue-700',
-  },
   theme: {
     colors: {
-      // You can extend the color palette here
-    }
-  }
-})
+      primary: {
+        50: 'var(--color-primary-50)',
+        100: 'var(--color-primary-100)',
+        200: 'var(--color-primary-200)',
+        300: 'var(--color-primary-300)',
+        400: 'var(--color-primary-400)',
+        500: 'var(--color-primary-500)',
+        600: 'var(--color-primary-600)',
+        700: 'var(--color-primary-700)',
+        800: 'var(--color-primary-800)',
+        900: 'var(--color-primary-900)',
+        950: 'var(--color-primary-950)',
+      },
+      secondary: {
+        50: 'var(--color-secondary-50)',
+        100: 'var(--color-secondary-100)',
+        200: 'var(--color-secondary-200)',
+        300: 'var(--color-secondary-300)',
+        400: 'var(--color-secondary-400)',
+        500: 'var(--color-secondary-500)',
+        600: 'var(--color-secondary-600)',
+        700: 'var(--color-secondary-700)',
+        800: 'var(--color-secondary-800)',
+        900: 'var(--color-secondary-900)',
+        950: 'var(--color-secondary-950)',
+      },
+      success: {
+        50: 'var(--color-success-50)',
+        100: 'var(--color-success-100)',
+        500: 'var(--color-success-500)',
+        900: 'var(--color-success-900)',
+      },
+      warning: {
+        50: 'var(--color-warning-50)',
+        100: 'var(--color-warning-100)',
+        500: 'var(--color-warning-500)',
+        900: 'var(--color-warning-900)',
+      },
+      error: {
+        50: 'var(--color-error-50)',
+        100: 'var(--color-error-100)',
+        500: 'var(--color-error-500)',
+        900: 'var(--color-error-900)',
+      },
+      info: {
+        50: 'var(--color-info-50)',
+        100: 'var(--color-info-100)',
+        500: 'var(--color-info-500)',
+        900: 'var(--color-info-900)',
+      },
+    },
+    fontSize: {
+      'xs': 'var(--font-size-xs)',
+      'sm': 'var(--font-size-sm)',
+      'base': 'var(--font-size-base)',
+      'lg': 'var(--font-size-lg)',
+      'xl': 'var(--font-size-xl)',
+      '2xl': 'var(--font-size-2xl)',
+      '3xl': 'var(--font-size-3xl)',
+      '4xl': 'var(--font-size-4xl)',
+    },
+    borderRadius: {
+      'none': '0',
+      'sm': 'var(--radius-sm)',
+      'md': 'var(--radius-md)',
+      'lg': 'var(--radius-lg)',
+      'xl': 'var(--radius-xl)',
+      'full': '9999px',
+    },
+    spacing: {
+      '1': 'var(--spacing-1)',
+      '2': 'var(--spacing-2)',
+      '3': 'var(--spacing-3)',
+      '4': 'var(--spacing-4)',
+      '5': 'var(--spacing-5)',
+      '6': 'var(--spacing-6)',
+      '8': 'var(--spacing-8)',
+      '10': 'var(--spacing-10)',
+      '12': 'var(--spacing-12)',
+      '16': 'var(--spacing-16)',
+      '20': 'var(--spacing-20)',
+      '24': 'var(--spacing-24)',
+    },
+  },
+});
