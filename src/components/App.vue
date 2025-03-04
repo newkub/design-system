@@ -8,19 +8,11 @@ import ComponentsSection from './components/ComponentsSection.vue'
 import ThemeCustomizer from './components/ThemeCustomizer.vue'
 import { ref } from 'vue'
 
-const themeCustomizerRef = ref<InstanceType<typeof ThemeCustomizer> | null>(null)
-
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
     behavior: 'smooth'
   })
-}
-
-const openThemeCustomizer = () => {
-  if (themeCustomizerRef.value) {
-    themeCustomizerRef.value.toggleCustomizer()
-  }
 }
 </script>
 
@@ -80,24 +72,9 @@ import ThemeCustomizer from './components/ThemeCustomizer.vue'
             or by updating the UnoCSS configuration in the <code>uno.config.ts</code> file.
           </p>
           <p class="mb-4 text-foreground">
-            You can also use the theme customizer below to change colors, typography, spacing, and more in real-time.
+            You can also use the theme customizer to change colors, typography, spacing, and more in real-time.
+            Click on the palette icon in the navbar to open the theme customizer.
           </p>
-          
-          <div class="card p-6 mt-6 flex flex-col items-center">
-            <h3 class="text-xl font-heading font-semibold mb-4">Try the Theme Customizer</h3>
-            <p class="text-center mb-6">Click on the button below to open the customizer panel</p>
-            <div class="flex justify-center">
-              <Button 
-                variant="primary" 
-                @click="openThemeCustomizer"
-                class="flex items-center gap-2"
-              >
-                <div class="i-mdi-palette text-lg"></div>
-                Open Theme Customizer
-              </Button>
-              <ThemeCustomizer ref="themeCustomizerRef" />
-            </div>
-          </div>
           
           <div class="card p-4 mt-6">
             <h3 class="text-xl font-heading font-semibold mb-3">Theme Customization Options</h3>

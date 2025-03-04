@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ThemeToggle from './ThemeToggle.vue'
 import ThemeCustomizer from './ThemeCustomizer.vue'
+import Modal from './Modal.vue'
 import { ref, onMounted } from 'vue'
 
 const scrollToTop = () => {
@@ -11,7 +12,7 @@ const scrollToTop = () => {
 }
 
 const isMenuOpen = ref(false)
-const themeCustomizerRef = ref<InstanceType<typeof ThemeCustomizer> | null>(null)
+const showThemeModal = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -21,10 +22,8 @@ const closeMenu = () => {
   isMenuOpen.value = false
 }
 
-const openThemeCustomizer = () => {
-  if (themeCustomizerRef.value) {
-    themeCustomizerRef.value.toggleCustomizer()
-  }
+const toggleThemeModal = () => {
+  showThemeModal.value = !showThemeModal.value
 }
 
 const menuItems = [
@@ -60,8 +59,14 @@ const menuItems = [
             </li>
           </ul>
         </nav>
-        <ThemeToggle @click="openThemeCustomizer" />
-        <ThemeCustomizer ref="themeCustomizerRef" />
+        <ThemeToggle />
+        <button 
+          @click="toggleThemeModal"
+          class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors"
+          aria-label="Open theme customizer"
+        >
+          <div class="i-mdi-palette text-primary text-xl"></div>
+        </button>
         <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
           <div class="i-mdi-github text-muted-foreground text-xl"></div>
         </a>
@@ -77,7 +82,14 @@ const menuItems = [
       
       <!-- Mobile Menu Button -->
       <div class="flex items-center gap-3 md:hidden">
-        <ThemeToggle @click="openThemeCustomizer" />
+        <ThemeToggle />
+        <button 
+          @click="toggleThemeModal"
+          class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors"
+          aria-label="Open theme customizer"
+        >
+          <div class="i-mdi-palette text-primary text-xl"></div>
+        </button>
         <button 
           @click="toggleMenu" 
           class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors"
@@ -108,7 +120,6 @@ const menuItems = [
           </li>
           <li class="pt-2 border-t border-border">
             <div class="flex items-center gap-2">
-              <ThemeCustomizer ref="themeCustomizerRef" />
               <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
                 <div class="i-mdi-github text-muted-foreground text-xl"></div>
               </a>
@@ -125,5 +136,17 @@ const menuItems = [
         </ul>
       </nav>
     </div>
+
+    <!-- Theme Customizer Modal -->
+    <Modal 
+      :show="showThemeModal" 
+      title="Theme Customizer"
+      maxWidth="xl"
+      @close="toggleThemeModal"
+    >
+      <div class="p-4">
+        <ThemeCustomizer />
+      </div>
+    </Modal>
   </header>
 </template>

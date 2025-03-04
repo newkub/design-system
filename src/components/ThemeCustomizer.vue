@@ -2,9 +2,10 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import Button from './Button.vue'
 import Modal from './Modal.vue'
+import { predefinedPresets } from '../presets/themePresets'
+import { ThemePreset } from '../types/theme'
 
 // Main state
-const isOpen = ref(false)
 const activePreset = ref('default')
 const customPresets = ref<Record<string, ThemePreset>>({})
 const newPresetName = ref('')
@@ -32,84 +33,6 @@ const animationEasing = ref('ease')
 // Layout settings
 const containerWidth = ref(1280) // Max container width in px
 const gridColumns = ref(12) // Number of grid columns
-
-// Interface for theme presets
-interface ThemePreset {
-  name: string
-  primaryColor: string
-  secondaryColor: string
-  accentColor: string
-  borderRadius: number
-  fontScale: number
-  spacing: number
-  shadowIntensity: number
-  bodyFont: string
-  headingFont: string
-  fontSize: number
-  lineHeight: number
-  animationSpeed: number
-  animationEasing: string
-  containerWidth: number
-  gridColumns: number
-}
-
-// Predefined presets
-const predefinedPresets: Record<string, ThemePreset> = {
-  default: {
-    name: 'Default',
-    primaryColor: '#3b82f6',
-    secondaryColor: '#8b5cf6',
-    accentColor: '#10b981',
-    borderRadius: 4,
-    fontScale: 1,
-    spacing: 4,
-    shadowIntensity: 10,
-    bodyFont: 'Inter',
-    headingFont: 'Montserrat',
-    fontSize: 16,
-    lineHeight: 1.5,
-    animationSpeed: 300,
-    animationEasing: 'ease',
-    containerWidth: 1280,
-    gridColumns: 12
-  },
-  minimal: {
-    name: 'Minimal',
-    primaryColor: '#000000',
-    secondaryColor: '#404040',
-    accentColor: '#2563eb',
-    borderRadius: 2,
-    fontScale: 0.95,
-    spacing: 4,
-    shadowIntensity: 5,
-    bodyFont: 'Inter',
-    headingFont: 'Inter',
-    fontSize: 16,
-    lineHeight: 1.6,
-    animationSpeed: 200,
-    animationEasing: 'ease-out',
-    containerWidth: 1200,
-    gridColumns: 12
-  },
-  playful: {
-    name: 'Playful',
-    primaryColor: '#8b5cf6',
-    secondaryColor: '#ec4899',
-    accentColor: '#06b6d4',
-    borderRadius: 12,
-    fontScale: 1.05,
-    spacing: 5,
-    shadowIntensity: 15,
-    bodyFont: 'Nunito',
-    headingFont: 'Nunito',
-    fontSize: 18,
-    lineHeight: 1.6,
-    animationSpeed: 400,
-    animationEasing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-    containerWidth: 1320,
-    gridColumns: 12
-  }
-}
 
 // Available font options
 const fontOptions = [
@@ -257,11 +180,6 @@ const saveCurrentSettings = () => {
 // Reset to defaults
 const resetToDefaults = () => {
   applyPreset('default')
-}
-
-// Toggle the customizer
-const toggleCustomizer = () => {
-  isOpen.value = !isOpen.value
 }
 
 // Apply a preset
@@ -417,404 +335,384 @@ onMounted(() => {
     applyPreset('default')
   }
 })
-
-// Expose toggleCustomizer for external components
-defineExpose({ toggleCustomizer })
 </script>
 
 <template>
-  <div class="relative">
-    <!-- Customizer toggle button with animation -->
-    <button 
-      @click="toggleCustomizer" 
-      class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors palette-icon"
-      aria-label="Customize theme"
-    >
-      <div class="i-mdi-palette text-primary text-xl"></div>
-    </button>
+  <div>
+    <!-- Header Actions -->
+    <div class="flex justify-between items-center gap-2 mb-4">
+      <div class="flex gap-2">
+        <Button 
+          variant="outline-primary" 
+          size="sm" 
+          @click="resetToDefaults"
+          class="text-sm"
+        >
+          <div class="i-mdi-refresh mr-1"></div>
+          Reset
+        </Button>
+        <Button 
+          variant="outline-primary" 
+          size="sm" 
+          @click="showSavePresetModal = true"
+          class="text-sm"
+        >
+          <div class="i-mdi-content-save mr-1"></div>
+          Save Preset
+        </Button>
+      </div>
+    </div>
     
-    <!-- Theme Customizer Modal -->
-    <Modal 
-      :show="isOpen" 
-      title="Theme Customizer"
-      maxWidth="xl"
-      @close="toggleCustomizer"
-    >
-      <div class="p-4 max-h-[70vh] overflow-y-auto">
-        <!-- Header Actions -->
-        <div class="flex justify-end items-center gap-2 mb-4">
-          <Button 
-            variant="outline-primary" 
-            size="sm" 
-            @click="resetToDefaults"
-            class="text-sm"
+    <!-- Presets Section -->
+    <div class="customizer-block mb-6">
+      <h4 class="customizer-block-title">Theme Presets</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div 
+          v-for="(name, key) in allPresets" 
+          :key="key"
+          class="flex items-center justify-between bg-muted/30 rounded-md p-2"
+        >
+          <button 
+            @click="applyPreset(key)"
+            class="text-left py-1 px-2 rounded-md w-full transition-colors text-sm flex items-center"
+            :class="activePreset === key ? 'text-primary font-medium' : 'text-foreground hover:text-primary'"
           >
-            <div class="i-mdi-refresh mr-1"></div>
-            Reset
-          </Button>
-          <Button 
-            variant="outline-primary" 
-            size="sm" 
-            @click="showSavePresetModal = true"
-            class="text-sm"
+            <div class="i-mdi-check-circle text-sm mr-1.5" v-if="activePreset === key"></div>
+            <div class="i-mdi-circle-outline text-sm mr-1.5" v-else></div>
+            {{ name }}
+            <span v-if="key.startsWith('custom-')" class="text-xs text-muted-foreground ml-1">(Custom)</span>
+          </button>
+          <button 
+            v-if="key.startsWith('custom-')"
+            @click="deleteCustomPreset(key.replace('custom-', ''))"
+            class="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger-light/30 transition-colors"
+            aria-label="Delete preset"
           >
-            <div class="i-mdi-content-save mr-1"></div>
-            Save Preset
-          </Button>
+            <div class="i-mdi-delete-outline text-sm"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Customization Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Colors Column -->
+      <div class="customizer-block">
+        <h4 class="customizer-block-title">Colors</h4>
+        
+        <!-- Primary Color -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Primary Color</label>
+          <div class="flex items-center gap-2">
+            <input 
+              type="color" 
+              v-model="primaryColor" 
+              class="color-picker"
+            />
+            <input 
+              type="text" 
+              v-model="primaryColor" 
+              class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+            />
+          </div>
+          <div class="flex mt-1.5 gap-1">
+            <div class="h-4 flex-1 rounded-sm bg-primary-light"></div>
+            <div class="h-4 flex-1 rounded-sm bg-primary"></div>
+            <div class="h-4 flex-1 rounded-sm bg-primary-dark"></div>
+          </div>
         </div>
         
-        <!-- Presets Section -->
-        <div class="customizer-block mb-6">
-          <h4 class="customizer-block-title">Theme Presets</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            <div 
-              v-for="(name, key) in allPresets" 
-              :key="key"
-              class="flex items-center justify-between bg-muted/30 rounded-md p-2"
-            >
-              <button 
-                @click="applyPreset(key)"
-                class="text-left py-1 px-2 rounded-md w-full transition-colors text-sm flex items-center"
-                :class="activePreset === key ? 'text-primary font-medium' : 'text-foreground hover:text-primary'"
-              >
-                <div class="i-mdi-check-circle text-sm mr-1.5" v-if="activePreset === key"></div>
-                <div class="i-mdi-circle-outline text-sm mr-1.5" v-else></div>
-                {{ name }}
-                <span v-if="key.startsWith('custom-')" class="text-xs text-muted-foreground ml-1">(Custom)</span>
-              </button>
-              <button 
-                v-if="key.startsWith('custom-')"
-                @click="deleteCustomPreset(key.replace('custom-', ''))"
-                class="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger-light/30 transition-colors"
-                aria-label="Delete preset"
-              >
-                <div class="i-mdi-delete-outline text-sm"></div>
-              </button>
-            </div>
+        <!-- Secondary Color -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Secondary Color</label>
+          <div class="flex items-center gap-2">
+            <input 
+              type="color" 
+              v-model="secondaryColor" 
+              class="color-picker"
+            />
+            <input 
+              type="text" 
+              v-model="secondaryColor" 
+              class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+            />
+          </div>
+          <div class="flex mt-1.5 gap-1">
+            <div class="h-4 flex-1 rounded-sm bg-secondary-light"></div>
+            <div class="h-4 flex-1 rounded-sm bg-secondary"></div>
+            <div class="h-4 flex-1 rounded-sm bg-secondary-dark"></div>
           </div>
         </div>
         
-        <!-- Main Customization Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Colors Column -->
-          <div class="customizer-block">
-            <h4 class="customizer-block-title">Colors</h4>
-            
-            <!-- Primary Color -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Primary Color</label>
-              <div class="flex items-center gap-2">
-                <input 
-                  type="color" 
-                  v-model="primaryColor" 
-                  class="color-picker"
-                />
-                <input 
-                  type="text" 
-                  v-model="primaryColor" 
-                  class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
-                />
-              </div>
-              <div class="flex mt-1.5 gap-1">
-                <div class="h-4 flex-1 rounded-sm bg-primary-light"></div>
-                <div class="h-4 flex-1 rounded-sm bg-primary"></div>
-                <div class="h-4 flex-1 rounded-sm bg-primary-dark"></div>
-              </div>
-            </div>
-            
-            <!-- Secondary Color -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Secondary Color</label>
-              <div class="flex items-center gap-2">
-                <input 
-                  type="color" 
-                  v-model="secondaryColor" 
-                  class="color-picker"
-                />
-                <input 
-                  type="text" 
-                  v-model="secondaryColor" 
-                  class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
-                />
-              </div>
-              <div class="flex mt-1.5 gap-1">
-                <div class="h-4 flex-1 rounded-sm bg-secondary-light"></div>
-                <div class="h-4 flex-1 rounded-sm bg-secondary"></div>
-                <div class="h-4 flex-1 rounded-sm bg-secondary-dark"></div>
-              </div>
-            </div>
-            
-            <!-- Accent Color -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Accent Color</label>
-              <div class="flex items-center gap-2">
-                <input 
-                  type="color" 
-                  v-model="accentColor" 
-                  class="color-picker"
-                />
-                <input 
-                  type="text" 
-                  v-model="accentColor" 
-                  class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
-                />
-              </div>
-              <div class="flex mt-1.5 gap-1">
-                <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + '33' }"></div>
-                <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor }"></div>
-                <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + 'dd' }"></div>
-              </div>
-            </div>
-            
-            <!-- Color Preview -->
-            <div class="customizer-item mt-4 p-2 border border-border rounded-md bg-muted/30">
-              <h5 class="text-xs font-medium mb-2">Preview</h5>
-              <div class="grid grid-cols-3 gap-1.5">
-                <Button variant="primary" size="sm" class="text-xs">Primary</Button>
-                <Button variant="secondary" size="sm" class="text-xs">Secondary</Button>
-                <Button variant="outline-primary" size="sm" class="text-xs">Outline</Button>
-              </div>
-            </div>
+        <!-- Accent Color -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Accent Color</label>
+          <div class="flex items-center gap-2">
+            <input 
+              type="color" 
+              v-model="accentColor" 
+              class="color-picker"
+            />
+            <input 
+              type="text" 
+              v-model="accentColor" 
+              class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+            />
           </div>
-          
-          <!-- Typography Column -->
-          <div class="customizer-block">
-            <h4 class="customizer-block-title">Typography</h4>
-            
-            <!-- Body Font -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Body Font</label>
-              <select 
-                v-model="bodyFont"
-                class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
-              >
-                <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
-              </select>
-              <p class="mt-1.5 text-sm" :style="{ fontFamily: bodyFont }">
-                Body text with {{ bodyFont }}.
-              </p>
-            </div>
-            
-            <!-- Heading Font -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Heading Font</label>
-              <select 
-                v-model="headingFont"
-                class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
-              >
-                <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
-              </select>
-              <h5 class="mt-1.5 text-base font-bold" :style="{ fontFamily: headingFont }">
-                Heading with {{ headingFont }}.
-              </h5>
-            </div>
-            
-            <!-- Base Font Size -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Base Font Size ({{ fontSize }}px)</label>
-              <input 
-                type="range" 
-                v-model="fontSize" 
-                min="12" 
-                max="24" 
-                step="1" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>12px</span>
-                <span>24px</span>
-              </div>
-            </div>
-            
-            <!-- Line Height -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Line Height ({{ lineHeight }})</label>
-              <input 
-                type="range" 
-                v-model="lineHeight" 
-                min="1" 
-                max="2" 
-                step="0.1" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>1.0</span>
-                <span>2.0</span>
-              </div>
-            </div>
-            
-            <!-- Font Scale -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Font Scale ({{ fontScale }})</label>
-              <input 
-                type="range" 
-                v-model="fontScale" 
-                min="0.8" 
-                max="1.2" 
-                step="0.05" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>0.8</span>
-                <span>1.2</span>
-              </div>
-            </div>
+          <div class="flex mt-1.5 gap-1">
+            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + '33' }"></div>
+            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor }"></div>
+            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + 'dd' }"></div>
           </div>
-          
-          <!-- Spacing & Effects Column -->
-          <div class="customizer-block">
-            <h4 class="customizer-block-title">Spacing & Effects</h4>
-            
-            <!-- Border Radius -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Border Radius ({{ borderRadius }}px)</label>
-              <input 
-                type="range" 
-                v-model="borderRadius" 
-                min="0" 
-                max="16" 
-                step="1" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>0px</span>
-                <span>16px</span>
-              </div>
-              <div class="flex gap-2 mt-1.5">
-                <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 0.5 + 'px' }"></div>
-                <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius + 'px' }"></div>
-                <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 2 + 'px' }"></div>
-              </div>
-            </div>
-            
-            <!-- Base Spacing -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Base Spacing Unit ({{ spacing }}px)</label>
-              <input 
-                type="range" 
-                v-model="spacing" 
-                min="2" 
-                max="8" 
-                step="1" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>2px</span>
-                <span>8px</span>
-              </div>
-              <div class="flex gap-1 mt-1.5">
-                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 0.5 + 'px' }"></div>
-                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing + 'px' }"></div>
-                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 2 + 'px' }"></div>
-                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 4 + 'px' }"></div>
-              </div>
-            </div>
-            
-            <!-- Shadow Intensity -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Shadow Intensity ({{ shadowIntensity }})</label>
-              <input 
-                type="range" 
-                v-model="shadowIntensity" 
-                min="0" 
-                max="20" 
-                step="1" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>None</span>
-                <span>Heavy</span>
-              </div>
-              <div class="flex gap-2 mt-1.5">
-                <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 1px ${Math.round(2 * shadowIntensity/10)}px 0 rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
-                <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 4px ${Math.round(6 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 2px ${Math.round(4 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.06 * shadowIntensity/10})` }"></div>
-                <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 10px ${Math.round(15 * shadowIntensity/10)}px -3px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 4px ${Math.round(6 * shadowIntensity/10)}px -2px rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Animation Settings Column -->
-          <div class="customizer-block">
-            <h4 class="customizer-block-title">Animation</h4>
-            
-            <!-- Animation Speed -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Animation Speed ({{ animationSpeed }}ms)</label>
-              <input 
-                type="range" 
-                v-model="animationSpeed" 
-                min="100" 
-                max="500" 
-                step="50" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>Fast</span>
-                <span>Slow</span>
-              </div>
-            </div>
-            
-            <!-- Animation Easing -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Animation Easing</label>
-              <select 
-                v-model="animationEasing"
-                class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
-              >
-                <option v-for="easing in easingOptions" :key="easing" :value="easing">{{ easing }}</option>
-              </select>
-            </div>
-          </div>
-          
-          <!-- Layout Settings Column -->
-          <div class="customizer-block">
-            <h4 class="customizer-block-title">Layout</h4>
-            
-            <!-- Container Width -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Container Width ({{ containerWidth }}px)</label>
-              <input 
-                type="range" 
-                v-model="containerWidth" 
-                min="800" 
-                max="1600" 
-                step="40" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>Narrow</span>
-                <span>Wide</span>
-              </div>
-            </div>
-            
-            <!-- Grid Columns -->
-            <div class="customizer-item">
-              <label class="block text-xs font-medium mb-1.5">Grid Columns ({{ gridColumns }})</label>
-              <input 
-                type="range" 
-                v-model="gridColumns" 
-                min="4" 
-                max="16" 
-                step="1" 
-                class="w-full"
-              />
-              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-                <span>4</span>
-                <span>16</span>
-              </div>
-              <div class="flex gap-0.5 mt-1.5">
-                <div 
-                  v-for="i in gridColumns" 
-                  :key="i" 
-                  class="h-6 bg-primary opacity-80 first:rounded-l-sm last:rounded-r-sm" 
-                  :style="{ width: `${100/gridColumns}%` }"
-                ></div>
-              </div>
-            </div>
+        </div>
+        
+        <!-- Color Preview -->
+        <div class="customizer-item mt-4 p-2 border border-border rounded-md bg-muted/30">
+          <h5 class="text-xs font-medium mb-2">Preview</h5>
+          <div class="grid grid-cols-3 gap-1.5">
+            <Button variant="primary" size="sm" class="text-xs">Primary</Button>
+            <Button variant="secondary" size="sm" class="text-xs">Secondary</Button>
+            <Button variant="outline-primary" size="sm" class="text-xs">Outline</Button>
           </div>
         </div>
       </div>
-    </Modal>
+      
+      <!-- Typography Column -->
+      <div class="customizer-block">
+        <h4 class="customizer-block-title">Typography</h4>
+        
+        <!-- Body Font -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Body Font</label>
+          <select 
+            v-model="bodyFont"
+            class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+          >
+            <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
+          </select>
+          <p class="mt-1.5 text-sm" :style="{ fontFamily: bodyFont }">
+            Body text with {{ bodyFont }}.
+          </p>
+        </div>
+        
+        <!-- Heading Font -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Heading Font</label>
+          <select 
+            v-model="headingFont"
+            class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+          >
+            <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
+          </select>
+          <h5 class="mt-1.5 text-base font-bold" :style="{ fontFamily: headingFont }">
+            Heading with {{ headingFont }}.
+          </h5>
+        </div>
+        
+        <!-- Base Font Size -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Base Font Size ({{ fontSize }}px)</label>
+          <input 
+            type="range" 
+            v-model="fontSize" 
+            min="12" 
+            max="24" 
+            step="1" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>12px</span>
+            <span>24px</span>
+          </div>
+        </div>
+        
+        <!-- Line Height -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Line Height ({{ lineHeight }})</label>
+          <input 
+            type="range" 
+            v-model="lineHeight" 
+            min="1" 
+            max="2" 
+            step="0.1" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>1.0</span>
+            <span>2.0</span>
+          </div>
+        </div>
+        
+        <!-- Font Scale -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Font Scale ({{ fontScale }})</label>
+          <input 
+            type="range" 
+            v-model="fontScale" 
+            min="0.8" 
+            max="1.2" 
+            step="0.05" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>0.8</span>
+            <span>1.2</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Spacing & Effects Column -->
+      <div class="customizer-block">
+        <h4 class="customizer-block-title">Spacing & Effects</h4>
+        
+        <!-- Border Radius -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Border Radius ({{ borderRadius }}px)</label>
+          <input 
+            type="range" 
+            v-model="borderRadius" 
+            min="0" 
+            max="16" 
+            step="1" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>0px</span>
+            <span>16px</span>
+          </div>
+          <div class="flex gap-2 mt-1.5">
+            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 0.5 + 'px' }"></div>
+            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius + 'px' }"></div>
+            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 2 + 'px' }"></div>
+          </div>
+        </div>
+        
+        <!-- Base Spacing -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Base Spacing Unit ({{ spacing }}px)</label>
+          <input 
+            type="range" 
+            v-model="spacing" 
+            min="2" 
+            max="8" 
+            step="1" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>2px</span>
+            <span>8px</span>
+          </div>
+          <div class="flex gap-1 mt-1.5">
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 0.5 + 'px' }"></div>
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing + 'px' }"></div>
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 2 + 'px' }"></div>
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 4 + 'px' }"></div>
+          </div>
+        </div>
+        
+        <!-- Shadow Intensity -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Shadow Intensity ({{ shadowIntensity }})</label>
+          <input 
+            type="range" 
+            v-model="shadowIntensity" 
+            min="0" 
+            max="20" 
+            step="1" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>None</span>
+            <span>Heavy</span>
+          </div>
+          <div class="flex gap-2 mt-1.5">
+            <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 1px ${Math.round(2 * shadowIntensity/10)}px 0 rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
+            <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 4px ${Math.round(6 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 2px ${Math.round(4 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.06 * shadowIntensity/10})` }"></div>
+            <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 10px ${Math.round(15 * shadowIntensity/10)}px -3px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 4px ${Math.round(6 * shadowIntensity/10)}px -2px rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Animation Settings Column -->
+      <div class="customizer-block">
+        <h4 class="customizer-block-title">Animation</h4>
+        
+        <!-- Animation Speed -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Animation Speed ({{ animationSpeed }}ms)</label>
+          <input 
+            type="range" 
+            v-model="animationSpeed" 
+            min="100" 
+            max="500" 
+            step="50" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>Fast</span>
+            <span>Slow</span>
+          </div>
+        </div>
+        
+        <!-- Animation Easing -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Animation Easing</label>
+          <select 
+            v-model="animationEasing"
+            class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+          >
+            <option v-for="easing in easingOptions" :key="easing" :value="easing">{{ easing }}</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Layout Settings Column -->
+      <div class="customizer-block">
+        <h4 class="customizer-block-title">Layout</h4>
+        
+        <!-- Container Width -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Container Width ({{ containerWidth }}px)</label>
+          <input 
+            type="range" 
+            v-model="containerWidth" 
+            min="800" 
+            max="1600" 
+            step="40" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>Narrow</span>
+            <span>Wide</span>
+          </div>
+        </div>
+        
+        <!-- Grid Columns -->
+        <div class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">Grid Columns ({{ gridColumns }})</label>
+          <input 
+            type="range" 
+            v-model="gridColumns" 
+            min="4" 
+            max="16" 
+            step="1" 
+            class="w-full"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+            <span>4</span>
+            <span>16</span>
+          </div>
+          <div class="flex gap-0.5 mt-1.5">
+            <div 
+              v-for="i in gridColumns" 
+              :key="i" 
+              class="h-6 bg-primary opacity-80 first:rounded-l-sm last:rounded-r-sm" 
+              :style="{ width: `${100/gridColumns}%` }"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <!-- Save Preset Modal -->
     <Modal 
@@ -933,41 +831,5 @@ input[type="range"]::-moz-range-thumb {
 
 .customizer-item:last-child {
   margin-bottom: 0;
-}
-
-/* Palette icon animation */
-.palette-icon {
-  position: relative;
-  overflow: hidden;
-}
-
-.palette-icon::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle, transparent 1%, var(--color-primary) 1%) center/15000%;
-  opacity: 0;
-  transition: background 0.5s, opacity 0.5s;
-}
-
-.palette-icon:hover::after {
-  opacity: 0.1;
-}
-
-.palette-icon:active::after {
-  background-size: 100%;
-  opacity: 0.2;
-  transition: 0s;
-}
-
-.palette-icon .i-mdi-palette {
-  transition: transform 0.3s ease;
-}
-
-.palette-icon:hover .i-mdi-palette {
-  transform: rotate(15deg) scale(1.1);
 }
 </style>
