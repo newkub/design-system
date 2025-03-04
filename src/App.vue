@@ -92,7 +92,6 @@ import ThemeToggle from './components/ThemeToggle.vue'
 
           <h3 id="semantic-colors" class="text-2xl font-heading font-semibold mt-8 mb-4 text-primary">Semantic Colors</h3>
           <div class="grid grid-cols-3 gap-4 mb-8">
-            <div class="card p-4 flex flex-col <div class="grid grid-cols-3 gap-4 mb-8">
             <div class="card p-4 flex flex-col items-center">
               <div class="bg-background w-16 h-16 rounded-md shadow-sm border border-border"></div>
               <span class="text-sm mt-2">Background</span>
