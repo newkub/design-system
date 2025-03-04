@@ -8,6 +8,8 @@ const themes = [
 ]
 const activeTheme = ref('light')
 
+const emit = defineEmits(['click'])
+
 onMounted(() => {
   // Check if user has a theme preference in localStorage
   const savedTheme = localStorage.getItem('theme-mode')
@@ -43,6 +45,9 @@ const toggleTheme = () => {
     activeTheme.value = 'light'
     localStorage.setItem('theme-mode', 'light')
   }
+  
+  // Emit click event for parent components
+  emit('click')
 }
 </script>
 

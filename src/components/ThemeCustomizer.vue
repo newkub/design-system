@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
 import Button from './Button.vue'
+import Modal from './Modal.vue'
 
 // Main state
 const isOpen = ref(false)
@@ -416,6 +417,9 @@ onMounted(() => {
     applyPreset('default')
   }
 })
+
+// Expose toggleCustomizer for external components
+defineExpose({ toggleCustomizer })
 </script>
 
 <template>
@@ -429,19 +433,16 @@ onMounted(() => {
       <div class="i-mdi-palette text-primary text-xl"></div>
     </button>
     
-    <!-- Floating customizer widget -->
-    <div 
-      v-if="isOpen"
-      class="fixed z-50 bg-card rounded-xl shadow-xl border border-border overflow-hidden transform transition-all duration-300 ease-out customizer-panel"
-      :class="isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
+    <!-- Theme Customizer Modal -->
+    <Modal 
+      :show="isOpen" 
+      title="Theme Customizer"
+      maxWidth="xl"
+      @close="toggleCustomizer"
     >
-      <!-- Header -->
-      <div class="p-4 border-b border-border flex justify-between items-center bg-card">
-        <h3 class="text-lg font-heading font-semibold text-primary flex items-center gap-2">
-          <div class="i-mdi-palette text-lg"></div>
-          Theme Customizer
-        </h3>
-        <div class="flex items-center gap-2">
+      <div class="p-4 max-h-[70vh] overflow-y-auto">
+        <!-- Header Actions -->
+        <div class="flex justify-end items-center gap-2 mb-4">
           <Button 
             variant="outline-primary" 
             size="sm" 
@@ -460,18 +461,8 @@ onMounted(() => {
             <div class="i-mdi-content-save mr-1"></div>
             Save Preset
           </Button>
-          <button 
-            @click="toggleCustomizer" 
-            class="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-muted transition-colors"
-            aria-label="Close customizer"
-          >
-            <div class="i-mdi-close text-lg"></div>
-          </button>
         </div>
-      </div>
-      
-      <!-- Content -->
-      <div class="p-4 max-h-[70vh] overflow-y-auto">
+        
         <!-- Presets Section -->
         <div class="customizer-block mb-6">
           <h4 class="customizer-block-title">Theme Presets</h4>
@@ -823,23 +814,16 @@ onMounted(() => {
           </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Backdrop for mobile -->
-    <div 
-      v-if="isOpen" 
-      class="fixed inset-0 bg-black/20 z-40"
-      @click="toggleCustomizer"
-    ></div>
+    </Modal>
     
     <!-- Save Preset Modal -->
-    <div 
-      v-if="showSavePresetModal" 
-      class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
-      @click.self="showSavePresetModal = false"
+    <Modal 
+      :show="showSavePresetModal" 
+      title="Save as Preset"
+      maxWidth="sm"
+      @close="showSavePresetModal = false"
     >
-      <div class="bg-card border border-border rounded-lg shadow-xl w-full max-w-xs p-4">
-        <h3 class="text-lg font-heading font-semibold mb-3">Save as Preset</h3>
+      <div class="p-4">
         <div class="mb-3">
           <label class="block text-sm font-medium mb-1.5">Preset Name</label>
           <input 
@@ -850,7 +834,7 @@ onMounted(() => {
             @keyup.enter="saveAsNewPreset"
           />
         </div>
-        <div class="flex justify-end gap-2">
+        <div class="flex justify-end gap-2 mt-4">
           <Button 
             variant="outline-primary" 
             size="sm" 
@@ -868,7 +852,7 @@ onMounted(() => {
           </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   </div>
 </template>
 
@@ -985,27 +969,5 @@ input[type="range"]::-moz-range-thumb {
 
 .palette-icon:hover .i-mdi-palette {
   transform: rotate(15deg) scale(1.1);
-}
-
-/* Responsive customizer panel */
-.customizer-panel {
-  bottom: 6rem;
-  right: 1.5rem;
-  width: 90vw;
-  max-width: 1200px;
-  max-height: calc(100vh - 8rem);
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-  .customizer-panel {
-    bottom: 0;
-    right: 0;
-    left: 0;
-    width: 100vw;
-    max-width: 100%;
-    height: 80vh;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  }
 }
 </style>

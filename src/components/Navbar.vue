@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ThemeToggle from './ThemeToggle.vue'
 import ThemeCustomizer from './ThemeCustomizer.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -11,6 +11,7 @@ const scrollToTop = () => {
 }
 
 const isMenuOpen = ref(false)
+const themeCustomizerRef = ref<InstanceType<typeof ThemeCustomizer> | null>(null)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -20,10 +21,15 @@ const closeMenu = () => {
   isMenuOpen.value = false
 }
 
+const openThemeCustomizer = () => {
+  if (themeCustomizerRef.value) {
+    themeCustomizerRef.value.toggleCustomizer()
+  }
+}
+
 const menuItems = [
   { label: 'Components', href: '#components' },
   { label: 'Utils', href: '#utils' },
-
 ]
 </script>
 
@@ -54,8 +60,8 @@ const menuItems = [
             </li>
           </ul>
         </nav>
-        <ThemeToggle />
-        <ThemeCustomizer />
+        <ThemeToggle @click="openThemeCustomizer" />
+        <ThemeCustomizer ref="themeCustomizerRef" />
         <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
           <div class="i-mdi-github text-muted-foreground text-xl"></div>
         </a>
@@ -71,7 +77,7 @@ const menuItems = [
       
       <!-- Mobile Menu Button -->
       <div class="flex items-center gap-3 md:hidden">
-        <ThemeToggle />
+        <ThemeToggle @click="openThemeCustomizer" />
         <button 
           @click="toggleMenu" 
           class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors"
@@ -102,7 +108,7 @@ const menuItems = [
           </li>
           <li class="pt-2 border-t border-border">
             <div class="flex items-center gap-2">
-              <ThemeCustomizer />
+              <ThemeCustomizer ref="themeCustomizerRef" />
               <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
                 <div class="i-mdi-github text-muted-foreground text-xl"></div>
               </a>
