@@ -2,7 +2,7 @@
 import Button from './components/Button.vue'
 import Alert from './components/Alert.vue'
 import TableOfContents from './components/TableOfContents.vue'
-import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
+import ThemeToggle from './components/ThemeToggle.vue'
 import Navbar from './components/Navbar.vue'
 
 const scrollToTop = () => {
@@ -352,14 +352,12 @@ import Button from './components/Button.vue'
 import Alert from './components/Alert.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ThemeCustomizer from './components/ThemeCustomizer.vue'
-import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
 
 // Then use them in your template
 &lt;Button variant="primary"&gt;Click Me&lt;/Button&gt;
 &lt;Alert type="success" title="Great job!"&gt;Your action was successful.&lt;/Alert&gt;
 &lt;ThemeToggle /&gt;
 &lt;ThemeCustomizer /&gt;
-&lt;ThemeModeSwitcher /&gt;
             </pre>
           </div>
         </section>

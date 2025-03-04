@@ -28,6 +28,14 @@ const scrollToTop = () => {
         <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
           <div class="i-mdi-github text-muted-foreground text-xl"></div>
         </a>
+        <a 
+          href="https://bolt.new/github.com/newkub/design-system" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+        >
+          Start Design
+        </a>
       </div>
     </div>
   </header>
