@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ThemeToggle from './ThemeToggle.vue'
 import ThemeCustomizer from './ThemeCustomizer.vue'
+import { ref } from 'vue'
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -8,6 +9,22 @@ const scrollToTop = () => {
     behavior: 'smooth'
   })
 }
+
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const closeMenu = () => {
+  isMenuOpen.value = false
+}
+
+const menuItems = [
+  { label: 'Components', href: '#components' },
+  { label: 'Utils', href: '#utils' },
+
+]
 </script>
 
 <template>
@@ -22,7 +39,21 @@ const scrollToTop = () => {
         <div class="i-mdi-palette-swatch text-primary text-3xl"></div>
         <h1 class="text-xl md:text-2xl font-heading font-bold text-primary">Design System</h1>
       </a>
-      <div class="flex items-center gap-3">
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center gap-4">
+        <nav class="flex items-center mr-4">
+          <ul class="flex gap-4">
+            <li v-for="item in menuItems" :key="item.label">
+              <a 
+                :href="item.href" 
+                class="text-foreground hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-muted"
+              >
+                {{ item.label }}
+              </a>
+            </li>
+          </ul>
+        </nav>
         <ThemeToggle />
         <ThemeCustomizer />
         <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
@@ -37,6 +68,56 @@ const scrollToTop = () => {
           Start Design
         </a>
       </div>
+      
+      <!-- Mobile Menu Button -->
+      <div class="flex items-center gap-3 md:hidden">
+        <ThemeToggle />
+        <button 
+          @click="toggleMenu" 
+          class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors"
+          aria-label="Toggle menu"
+          aria-expanded="isMenuOpen"
+        >
+          <div v-if="!isMenuOpen" class="i-mdi-menu text-foreground text-xl"></div>
+          <div v-else class="i-mdi-close text-foreground text-xl"></div>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div 
+      v-if="isMenuOpen" 
+      class="md:hidden bg-card border-b border-border shadow-md"
+    >
+      <nav class="container-content py-4">
+        <ul class="space-y-3">
+          <li v-for="item in menuItems" :key="item.label">
+            <a 
+              :href="item.href" 
+              class="block text-foreground hover:text-primary transition-colors py-2 px-3 rounded-md hover:bg-muted"
+              @click="closeMenu"
+            >
+              {{ item.label }}
+            </a>
+          </li>
+          <li class="pt-2 border-t border-border">
+            <div class="flex items-center gap-2">
+              <ThemeCustomizer />
+              <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
+                <div class="i-mdi-github text-muted-foreground text-xl"></div>
+              </a>
+              <a 
+                href="https://bolt.new/github.com/newkub/design-system" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="flex-1 flex items-center justify-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+              >
+                Start Design
+              </a>
+            </div>
+          </li>
+        </ul>
+      </nav>
     </div>
   </header>
 </template>

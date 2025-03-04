@@ -1,31 +1,22 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, PropType, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+
+// State for the TOC
+const activeSection = ref('')
+const isMobileMenuOpen = ref(false)
+const isScrolled = ref(false)
+const tocNavRef = ref<HTMLElement | null>(null)
+const mobileTocRef = ref<HTMLElement | null>(null)
+const sections = ref<Section[]>([])
 
 // Define section interface
 interface Section {
   id: string
   label: string
+  element: HTMLElement
+  level: number
   subsections?: Section[]
 }
-
-// Define props
-const props = defineProps({
-  sections: {
-    type: Array as PropType<Section[]>,
-    required: false,
-    default: () => []
-  },
-  defaultActiveSection: {
-    type: String,
-    default: ''
-  }
-})
-
-const activeSection = ref(props.defaultActiveSection || (props.sections.length > 0 ? props.sections[0].id : ''))
-const isMobileMenuOpen = ref(false)
-const isScrolled = ref(false)
-const tocNavRef = ref<HTMLElement | null>(null)
-const mobileTocRef = ref<HTMLElement | null>(null)
 
 // Toggle mobile menu
 const toggleMobileMenu = () => {
@@ -54,9 +45,66 @@ const handleLinkClick = (sectionId: string) => {
   }
 }
 
+// Generate TOC from page structure
+const generateTOC = () => {
+  // Find all section elements with IDs and h2/h3/h4 headings
+  const mainContent = document.getElementById('main-content')
+  if (!mainContent) return
+  
+  const sectionElements = mainContent.querySelectorAll('section[id]')
+  const newSections: Section[] = []
+  
+  sectionElements.forEach((sectionElement) => {
+    const id = sectionElement.id
+    const headingElement = sectionElement.querySelector('h2, h3, h4')
+    
+    if (id && headingElement) {
+      const label = headingElement.textContent || id
+      const level = parseInt(headingElement.tagName.substring(1)) - 1 // h2 = level 1, h3 = level 2, etc.
+      
+      // Create section object
+      const section: Section = {
+        id,
+        label,
+        element: sectionElement as HTMLElement,
+        level,
+        subsections: []
+      }
+      
+      // Find subsections (h3 elements within this section)
+      if (level === 1) { // Only for h2 sections
+        const subsectionElements = sectionElement.querySelectorAll('h3[id], h4[id], div[id] > h3, div[id] > h4')
+        
+        subsectionElements.forEach((subsectionElement) => {
+          const subsectionId = subsectionElement.id || (subsectionElement.parentElement?.id || '')
+          if (subsectionId && subsectionId !== id) {
+            const subsectionLabel = subsectionElement.textContent || subsectionId
+            
+            section.subsections?.push({
+              id: subsectionId,
+              label: subsectionLabel,
+              element: (subsectionElement.id ? subsectionElement : subsectionElement.parentElement) as HTMLElement,
+              level: parseInt(subsectionElement.tagName.substring(1)) - 1
+            })
+          }
+        })
+      }
+      
+      newSections.push(section)
+    }
+  })
+  
+  sections.value = newSections
+  
+  // Set initial active section
+  if (newSections.length > 0 && !activeSection.value) {
+    activeSection.value = newSections[0].id
+  }
+}
+
 // Update active section based on scroll position
 const updateActiveSection = () => {
-  const sections = document.querySelectorAll('section[id]')
+  if (sections.value.length === 0) return
   
   // Get current scroll position
   const scrollY = window.scrollY
@@ -65,16 +113,37 @@ const updateActiveSection = () => {
   isScrolled.value = scrollY > 10
   
   // Find the current section
-  sections.forEach((section) => {
-    const sectionElement = section as HTMLElement
-    const sectionHeight = sectionElement.offsetHeight
-    const sectionTop = sectionElement.offsetTop - 120 // Offset for header and mobile nav
-    const sectionId = sectionElement.getAttribute('id') || ''
+  let currentSection = sections.value[0].id
+  
+  // Check all sections
+  for (const section of sections.value) {
+    const sectionTop = section.element.offsetTop - 120 // Offset for header
+    const sectionHeight = section.element.offsetHeight
     
-    if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-      activeSection.value = sectionId
+    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+      currentSection = section.id
+      
+      // Check subsections
+      if (section.subsections && section.subsections.length > 0) {
+        for (const subsection of section.subsections) {
+          const subsectionElement = document.getElementById(subsection.id)
+          if (subsectionElement) {
+            const subsectionTop = subsectionElement.offsetTop - 120
+            const subsectionHeight = subsectionElement.offsetHeight
+            
+            if (scrollY >= subsectionTop && scrollY < subsectionTop + subsectionHeight) {
+              currentSection = subsection.id
+              break
+            }
+          }
+        }
+      }
+      
+      break
     }
-  })
+  }
+  
+  activeSection.value = currentSection
 }
 
 // Scroll active item into view in the TOC
@@ -116,53 +185,11 @@ const scrollActiveSectionIntoView = () => {
 
 // Get main sections for mobile touch bar
 const mainSections = computed(() => {
-  return props.sections.map(section => ({
+  return sections.value.filter(section => section.level === 1).map(section => ({
     id: section.id,
     label: section.label
   }))
 })
-
-// Get all sections including subsections flattened
-const allSections = computed(() => {
-  const result: Section[] = []
-  
-  props.sections.forEach(section => {
-    result.push(section)
-    if (section.subsections) {
-      section.subsections.forEach(subsection => {
-        result.push(subsection)
-      })
-    }
-  })
-  
-  return result
-})
-
-// Find parent section for a given subsection
-const findParentSection = (subsectionId: string): string | null => {
-  for (const section of props.sections) {
-    if (section.subsections) {
-      for (const subsection of section.subsections) {
-        if (subsection.id === subsectionId) {
-          return section.id
-        }
-      }
-    }
-  }
-  return null
-}
-
-// Check if a section has subsections
-const hasSubsections = (sectionId: string): boolean => {
-  const section = props.sections.find(s => s.id === sectionId)
-  return section?.subsections && section.subsections.length > 0
-}
-
-// Get subsections for a section
-const getSubsections = (sectionId: string): Section[] => {
-  const section = props.sections.find(s => s.id === sectionId)
-  return section?.subsections || []
-}
 
 // Watch for active section changes to scroll it into view
 watch(activeSection, () => {
@@ -172,12 +199,45 @@ watch(activeSection, () => {
   }, 100)
 })
 
+// Watch for sections changes
+watch(sections, () => {
+  // Update active section when sections change
+  updateActiveSection()
+}, { deep: true })
+
 onMounted(() => {
+  // Generate TOC from page structure
+  setTimeout(() => {
+    generateTOC()
+  }, 100)
+  
   // Initialize active section
   updateActiveSection()
   
   // Add scroll event listener
   window.addEventListener('scroll', updateActiveSection)
+  
+  // Add resize event listener to regenerate TOC when window size changes
+  window.addEventListener('resize', () => {
+    setTimeout(() => {
+      generateTOC()
+    }, 100)
+  })
+  
+  // Add mutation observer to detect DOM changes
+  const observer = new MutationObserver(() => {
+    setTimeout(() => {
+      generateTOC()
+    }, 100)
+  })
+  
+  const mainContent = document.getElementById('main-content')
+  if (mainContent) {
+    observer.observe(mainContent, {
+      childList: true,
+      subtree: true
+    })
+  }
   
   // Initial scroll to active section
   setTimeout(() => {
@@ -186,8 +246,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  // Clean up event listener
+  // Clean up event listeners
   window.removeEventListener('scroll', updateActiveSection)
+  window.removeEventListener('resize', generateTOC)
 })
 </script>
 
@@ -230,7 +291,13 @@ onUnmounted(() => {
     >
       <span class="font-medium flex items-center">
         <span class="i-mdi-menu-open text-xl mr-2"></span>
-        <span>{{ mainSections.find(s => s.id === activeSection)?.label || allSections.find(s => s.id === activeSection)?.label || 'Table of Contents' }}</span>
+        <span>
+          {{ 
+            sections.find(s => s.id === activeSection)?.label || 
+            sections.flatMap(s => s.subsections || []).find(s => s.id === activeSection)?.label || 
+            'Table of Contents' 
+          }}
+        </span>
       </span>
       <span 
         class="i-mdi-chevron-down text-lg transition-transform" 
@@ -247,7 +314,7 @@ onUnmounted(() => {
       role="menu"
     >
       <ul class="p-4 space-y-3">
-        <li v-for="section in props.sections" :key="section.id" role="menuitem">
+        <li v-for="section in sections" :key="section.id" role="menuitem">
           <a 
             :href="`#${section.id}`" 
             :class="activeSection === section.id ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
@@ -279,7 +346,7 @@ onUnmounted(() => {
       class="toc-nav hover-scrollable touch-pan-y"
     >
       <ul class="space-y-1">
-        <li v-for="section in props.sections" :key="section.id">
+        <li v-for="section in sections" :key="section.id">
           <a 
             :href="`#${section.id}`" 
             :class="[
