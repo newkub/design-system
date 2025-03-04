@@ -4,7 +4,6 @@ import Button from './Button.vue'
 
 // Main state
 const isOpen = ref(false)
-const activeTab = ref('colors')
 const activePreset = ref('default')
 const customPresets = ref<Record<string, ThemePreset>>({})
 const newPresetName = ref('')
@@ -430,569 +429,372 @@ onMounted(() => {
       <div class="i-mdi-palette text-primary text-xl"></div>
     </button>
     
-    <!-- Customizer panel -->
+    <!-- Floating customizer widget -->
     <div 
-      v-show="isOpen" 
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      @click.self="toggleCustomizer"
+      v-if="isOpen"
+      class="fixed bottom-6 right-6 z-50 w-[90vw] max-w-3xl bg-card rounded-xl shadow-xl border border-border overflow-hidden transform transition-all duration-300 ease-out"
+      :class="isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
     >
-      <div 
-        class="bg-card border border-border rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
-      >
-        <!-- Header -->
-        <div class="p-4 border-b border-border flex justify-between items-center sticky top-0 bg-card z-10">
-          <h3 class="text-xl font-heading font-semibold text-primary flex items-center gap-2">
-            <div class="i-mdi-palette text-xl"></div>
-            Theme Customizer
-          </h3>
-          <div class="flex items-center gap-2">
-            <div class="hidden sm:flex">
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
-                @click="showSavePresetModal = true"
-                class="mr-2"
-              >
-                <div class="i-mdi-content-save mr-1"></div>
-                Save Preset
-              </Button>
-            </div>
-            <button 
-              @click="toggleCustomizer" 
-              class="text-muted-foreground hover:text-foreground p-2 rounded-md hover:bg-muted transition-colors"
-              aria-label="Close customizer"
+      <!-- Header -->
+      <div class="p-4 border-b border-border flex justify-between items-center bg-card">
+        <h3 class="text-lg font-heading font-semibold text-primary flex items-center gap-2">
+          <div class="i-mdi-palette text-lg"></div>
+          Theme Customizer
+        </h3>
+        <div class="flex items-center gap-2">
+          <Button 
+            variant="outline-primary" 
+            size="sm" 
+            @click="resetToDefaults"
+            class="text-sm"
+          >
+            <div class="i-mdi-refresh mr-1"></div>
+            Reset
+          </Button>
+          <Button 
+            variant="outline-primary" 
+            size="sm" 
+            @click="showSavePresetModal = true"
+            class="text-sm"
+          >
+            <div class="i-mdi-content-save mr-1"></div>
+            Save Preset
+          </Button>
+          <button 
+            @click="toggleCustomizer" 
+            class="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-muted transition-colors"
+            aria-label="Close customizer"
+          >
+            <div class="i-mdi-close text-lg"></div>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-4 max-h-[70vh] overflow-y-auto">
+        <!-- Presets Section -->
+        <div class="mb-6">
+          <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Theme Presets</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            <div 
+              v-for="(name, key) in allPresets" 
+              :key="key"
+              class="flex items-center justify-between bg-muted/30 rounded-md p-2"
             >
-              <div class="i-mdi-close text-lg"></div>
-            </button>
+              <button 
+                @click="applyPreset(key)"
+                class="text-left py-1 px-2 rounded-md w-full transition-colors text-sm flex items-center"
+                :class="activePreset === key ? 'text-primary font-medium' : 'text-foreground hover:text-primary'"
+              >
+                <div class="i-mdi-check-circle text-sm mr-1.5" v-if="activePreset === key"></div>
+                <div class="i-mdi-circle-outline text-sm mr-1.5" v-else></div>
+                {{ name }}
+                <span v-if="key.startsWith('custom-')" class="text-xs text-muted-foreground ml-1">(Custom)</span>
+              </button>
+              <button 
+                v-if="key.startsWith('custom-')"
+                @click="deleteCustomPreset(key.replace('custom-', ''))"
+                class="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger-light/30 transition-colors"
+                aria-label="Delete preset"
+              >
+                <div class="i-mdi-delete-outline text-sm"></div>
+              </button>
+            </div>
           </div>
         </div>
         
-        <!-- Content -->
-        <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
-          <!-- Sidebar -->
-          <div class="w-full md:w-64 border-b md:border-b-0 md:border-r border-border bg-muted/30">
-            <!-- Presets section -->
-            <div class="p-4">
-              <h4 class="text-sm font-medium uppercase text-muted-foreground mb-2">Presets</h4>
-              <div class="space-y-2">
-                <div 
-                  v-for="(name, key) in allPresets" 
-                  :key="key"
-                  class="flex items-center justify-between"
-                >
-                  <button 
-                    @click="applyPreset(key)"
-                    class="text-left py-2 px-3 rounded-md w-full transition-colors"
-                    :class="activePreset === key ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-foreground'"
-                  >
-                    {{ name }}
-                    <span v-if="key.startsWith('custom-')" class="text-xs text-muted-foreground ml-1">(Custom)</span>
-                  </button>
-                  <button 
-                    v-if="key.startsWith('custom-')"
-                    @click="deleteCustomPreset(key.replace('custom-', ''))"
-                    class="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger-light/30 transition-colors"
-                    aria-label="Delete preset"
-                  >
-                    <div class="i-mdi-delete-outline text-sm"></div>
-                  </button>
-                </div>
+        <!-- Main Customization Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Colors Column -->
+          <div class="space-y-4">
+            <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Colors</h4>
+            
+            <!-- Primary Color -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Primary Color</label>
+              <div class="flex items-center gap-2">
+                <input 
+                  type="color" 
+                  v-model="primaryColor" 
+                  class="w-8 h-8 rounded cursor-pointer"
+                />
+                <input 
+                  type="text" 
+                  v-model="primaryColor" 
+                  class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+                />
               </div>
-              <div class="mt-4 md:hidden">
-                <Button 
-                  variant="outline-primary" 
-                  size="sm" 
-                  @click="showSavePresetModal = true"
-                  class="w-full"
-                >
-                  <div class="i-mdi-content-save mr-1"></div>
-                  Save Current as Preset
-                </Button>
+              <div class="flex mt-1.5 gap-1">
+                <div class="h-4 flex-1 rounded-sm bg-primary-light"></div>
+                <div class="h-4 flex-1 rounded-sm bg-primary"></div>
+                <div class="h-4 flex-1 rounded-sm bg-primary-dark"></div>
               </div>
             </div>
             
-            <!-- Tabs -->
-            <div class="p-4 border-t border-border">
-              <h4 class="text-sm font-medium uppercase text-muted-foreground mb-2">Customize</h4>
-              <div class="space-y-1">
-                <button 
-                  @click="activeTab = 'colors'"
-                  class="text-left py-2 px-3 rounded-md w-full transition-colors flex items-center gap-2"
-                  :class="activeTab === 'colors' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-foreground'"
-                >
-                  <div class="i-mdi-palette-outline"></div>
-                  Colors
-                </button>
-                <button 
-                  @click="activeTab = 'typography'"
-                  class="text-left py-2 px-3 rounded-md w-full transition-colors flex items-center gap-2"
-                  :class="activeTab === 'typography' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-foreground'"
-                >
-                  <div class="i-mdi-format-font"></div>
-                  Typography
-                </button>
-                <button 
-                  @click="activeTab = 'spacing'"
-                  class="text-left py-2 px-3 rounded-md w-full transition-colors flex items-center gap-2"
-                  :class="activeTab === 'spacing' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-foreground'"
-                >
-                  <div class="i-mdi-ruler"></div>
-                  Spacing & Borders
-                </button>
-                <button 
-                  @click="activeTab = 'effects'"
-                  class="text-left py-2 px-3 rounded-md w-full transition-colors flex items-center gap-2"
-                  :class="activeTab === 'effects' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-foreground'"
-                >
-                  <div class="i-mdi-blur"></div>
-                  Effects & Animation
-                </button>
-                <button 
-                  @click="activeTab = 'layout'"
-                  class="text-left py-2 px-3 rounded-md w-full transition-colors flex items-center gap-2"
-                  :class="activeTab === 'layout' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-foreground'"
-                >
-                  <div class="i-mdi-view-grid-outline"></div>
-                  Layout
-                </button>
+            <!-- Secondary Color -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Secondary Color</label>
+              <div class="flex items-center gap-2">
+                <input 
+                  type="color" 
+                  v-model="secondaryColor" 
+                  class="w-8 h-8 rounded cursor-pointer"
+                />
+                <input 
+                  type="text" 
+                  v-model="secondaryColor" 
+                  class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+                />
+              </div>
+              <div class="flex mt-1.5 gap-1">
+                <div class="h-4 flex-1 rounded-sm bg-secondary-light"></div>
+                <div class="h-4 flex-1 rounded-sm bg-secondary"></div>
+                <div class="h-4 flex-1 rounded-sm bg-secondary-dark"></div>
               </div>
             </div>
             
-            <!-- Actions -->
-            <div class="p-4 border-t border-border">
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
-                @click="resetToDefaults"
-                class="w-full"
-              >
-                <div class="i-mdi-refresh mr-1"></div>
-                Reset to Default
-              </Button>
+            <!-- Accent Color -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Accent Color</label>
+              <div class="flex items-center gap-2">
+                <input 
+                  type="color" 
+                  v-model="accentColor" 
+                  class="w-8 h-8 rounded cursor-pointer"
+                />
+                <input 
+                  type="text" 
+                  v-model="accentColor" 
+                  class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+                />
+              </div>
+              <div class="flex mt-1.5 gap-1">
+                <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + '33' }"></div>
+                <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor }"></div>
+                <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + 'dd' }"></div>
+              </div>
+            </div>
+            
+            <!-- Color Preview -->
+            <div class="mt-4 p-2 border border-border rounded-md bg-muted/30">
+              <h5 class="text-xs font-medium mb-2">Preview</h5>
+              <div class="grid grid-cols-3 gap-1.5">
+                <Button variant="primary" size="sm" class="text-xs">Primary</Button>
+                <Button variant="secondary" size="sm" class="text-xs">Secondary</Button>
+                <Button variant="outline-primary" size="sm" class="text-xs">Outline</Button>
+              </div>
             </div>
           </div>
           
-          <!-- Main content area -->
-          <div class="flex-1 overflow-y-auto p-4">
-            <!-- Colors Tab -->
-            <div v-if="activeTab === 'colors'" class="space-y-6">
-              <h4 class="text-lg font-heading font-semibold mb-4">Color Settings</h4>
-              
-              <!-- Primary Color -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Primary Color</label>
-                <div class="flex items-center gap-3">
-                  <input 
-                    type="color" 
-                    v-model="primaryColor" 
-                    class="w-12 h-12 rounded cursor-pointer"
-                  />
-                  <div class="flex-1">
-                    <input 
-                      type="text" 
-                      v-model="primaryColor" 
-                      class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    />
-                    <div class="flex mt-2 gap-2">
-                      <div class="h-6 flex-1 rounded-md bg-primary-light"></div>
-                      <div class="h-6 flex-1 rounded-md bg-primary"></div>
-                      <div class="h-6 flex-1 rounded-md bg-primary-dark"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Secondary Color -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Secondary Color</label>
-                <div class="flex items-center gap-3">
-                  <input 
-                    type="color" 
-                    v-model="secondaryColor" 
-                    class="w-12 h-12 rounded cursor-pointer"
-                  />
-                  <div class="flex-1">
-                    <input 
-                      type="text" 
-                      v-model="secondaryColor" 
-                      class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    />
-                    <div class="flex mt-2 gap-2">
-                      <div class="h-6 flex-1 rounded-md bg-secondary-light"></div>
-                      <div class="h-6 flex-1 rounded-md bg-secondary"></div>
-                      <div class="h-6 flex-1 rounded-md bg-secondary-dark"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Accent Color -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Accent Color</label>
-                <div class="flex items-center gap-3">
-                  <input 
-                    type="color" 
-                    v-model="accentColor" 
-                    class="w-12 h-12 rounded cursor-pointer"
-                  />
-                  <div class="flex-1">
-                    <input 
-                      type="text" 
-                      v-model="accentColor" 
-                      class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    />
-                    <div class="flex mt-2 gap-2">
-                      <div class="h-6 flex-1 rounded-md" :style="{ backgroundColor: accentColor + '33' }"></div>
-                      <div class="h-6 flex-1 rounded-md" :style="{ backgroundColor: accentColor }"></div>
-                      <div class="h-6 flex-1 rounded-md" :style="{ backgroundColor: accentColor + 'dd' }"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Color Preview -->
-              <div class="mt-6 p-4 border border-border rounded-lg">
-                <h5 class="text-sm font-medium mb-3">Color Preview</h5>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <Button variant="primary" size="sm">Primary</Button>
-                  <Button variant="secondary" size="sm">Secondary</Button>
-                  <Button variant="success" size="sm">Success</Button>
-                  <Button variant="warning" size="sm">Warning</Button>
-                  <Button variant="danger" size="sm">Danger</Button>
-                  <Button variant="outline-primary" size="sm">Outline</Button>
-                </div>
+          <!-- Typography Column -->
+          <div class="space-y-4">
+            <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Typography</h4>
+            
+            <!-- Body Font -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Body Font</label>
+              <select 
+                v-model="bodyFont"
+                class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+              >
+                <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
+              </select>
+              <p class="mt-1.5 text-sm" :style="{ fontFamily: bodyFont }">
+                Body text with {{ bodyFont }}.
+              </p>
+            </div>
+            
+            <!-- Heading Font -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Heading Font</label>
+              <select 
+                v-model="headingFont"
+                class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+              >
+                <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
+              </select>
+              <h5 class="mt-1.5 text-base font-bold" :style="{ fontFamily: headingFont }">
+                Heading with {{ headingFont }}.
+              </h5>
+            </div>
+            
+            <!-- Base Font Size -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Base Font Size ({{ fontSize }}px)</label>
+              <input 
+                type="range" 
+                v-model="fontSize" 
+                min="12" 
+                max="24" 
+                step="1" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>12px</span>
+                <span>24px</span>
               </div>
             </div>
             
-            <!-- Typography Tab -->
-            <div v-if="activeTab === 'typography'" class="space-y-6">
-              <h4 class="text-lg font-heading font-semibold mb-4">Typography Settings</h4>
-              
-              <!-- Body Font -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Body Font</label>
-                <select 
-                  v-model="bodyFont"
-                  class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                >
-                  <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
-                </select>
-                <p class="mt-2 text-base" :style="{ fontFamily: bodyFont }">
-                  This is how your body text will look with {{ bodyFont }}.
-                </p>
-              </div>
-              
-              <!-- Heading Font -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Heading Font</label>
-                <select 
-                  v-model="headingFont"
-                  class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                >
-                  <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
-                </select>
-                <h5 class="mt-2 text-xl font-bold" :style="{ fontFamily: headingFont }">
-                  This is how your headings will look with {{ headingFont }}.
-                </h5>
-              </div>
-              
-              <!-- Base Font Size -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Base Font Size ({{ fontSize }}px)</label>
-                <input 
-                  type="range" 
-                  v-model="fontSize" 
-                  min="12" 
-                  max="24" 
-                  step="1" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>12px</span>
-                  <span>16px</span>
-                  <span>24px</span>
-                </div>
-              </div>
-              
-              <!-- Line Height -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Line Height ({{ lineHeight }})</label>
-                <input 
-                  type="range" 
-                  v-model="lineHeight" 
-                  min="1" 
-                  max="2" 
-                  step="0.1" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>1.0</span>
-                  <span>1.5</span>
-                  <span>2.0</span>
-                </div>
-              </div>
-              
-              <!-- Font Scale -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Font Scale ({{ fontScale }})</label>
-                <input 
-                  type="range" 
-                  v-model="fontScale" 
-                  min="0.8" 
-                  max="1.2" 
-                  step="0.05" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>0.8</span>
-                  <span>1.0</span>
-                  <span>1.2</span>
-                </div>
-              </div>
-              
-              <!-- Typography Preview -->
-              <div class="mt-6 p-4 border border-border rounded-lg">
-                <h5 class="text-sm font-medium mb-3">Typography Preview</h5>
-                <div class="space-y-3">
-                  <h1 class="font-heading text-2xl font-bold">Heading 1</h1>
-                  <h2 class="font-heading text-xl font-bold">Heading 2</h2>
-                  <h3 class="font-heading text-lg font-semibold">Heading 3</h3>
-                  <p>This is a paragraph of text that demonstrates how body text will appear in your design system. The font, size, and line height settings you choose will affect readability and overall aesthetic.</p>
-                </div>
+            <!-- Line Height -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Line Height ({{ lineHeight }})</label>
+              <input 
+                type="range" 
+                v-model="lineHeight" 
+                min="1" 
+                max="2" 
+                step="0.1" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>1.0</span>
+                <span>2.0</span>
               </div>
             </div>
             
-            <!-- Spacing & Borders Tab -->
-            <div v-if="activeTab === 'spacing'" class="space-y-6">
-              <h4 class="text-lg font-heading font-semibold mb-4">Spacing & Border Settings</h4>
-              
-              <!-- Base Spacing -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Base Spacing Unit ({{ spacing }}px)</label>
-                <input 
-                  type="range" 
-                  v-model="spacing" 
-                  min="2" 
-                  max="8" 
-                  step="1" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>2px</span>
-                  <span>4px</span>
-                  <span>8px</span>
-                </div>
-                <div class="flex gap-2 mt-3">
-                  <div class="h-8 bg-primary rounded-md" :style="{ width: spacing * 0.5 + 'px' }"></div>
-                  <div class="h-8 bg-primary rounded-md" :style="{ width: spacing + 'px' }"></div>
-                  <div class="h-8 bg-primary rounded-md" :style="{ width: spacing * 2 + 'px' }"></div>
-                  <div class="h-8 bg-primary rounded-md" :style="{ width: spacing * 4 + 'px' }"></div>
-                </div>
+            <!-- Font Scale -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Font Scale ({{ fontScale }})</label>
+              <input 
+                type="range" 
+                v-model="fontScale" 
+                min="0.8" 
+                max="1.2" 
+                step="0.05" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>0.8</span>
+                <span>1.2</span>
               </div>
-              
-              <!-- Border Radius -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Border Radius ({{ borderRadius }}px)</label>
-                <input 
-                  type="range" 
-                  v-model="borderRadius" 
-                  min="0" 
-                  max="16" 
-                  step="1" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>0px</span>
-                  <span>8px</span>
-                  <span>16px</span>
-                </div>
-                <div class="flex gap-4 mt-3">
-                  <div class="w-16 h-16 bg-primary" :style="{ borderRadius: borderRadius * 0.5 + 'px' }"></div>
-                  <div class="w-16 h-16 bg-primary" :style="{ borderRadius: borderRadius + 'px' }"></div>
-                  <div class="w-16 h-16 bg-primary" :style="{ borderRadius: borderRadius * 2 + 'px' }"></div>
-                </div>
+            </div>
+          </div>
+          
+          <!-- Spacing & Effects Column -->
+          <div class="space-y-4">
+            <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Spacing & Effects</h4>
+            
+            <!-- Border Radius -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Border Radius ({{ borderRadius }}px)</label>
+              <input 
+                type="range" 
+                v-model="borderRadius" 
+                min="0" 
+                max="16" 
+                step="1" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>0px</span>
+                <span>16px</span>
               </div>
-              
-              <!-- Spacing & Border Preview -->
-              <div class="mt-6 p-4 border border-border rounded-lg">
-                <h5 class="text-sm font-medium mb-3">Spacing & Border Preview</h5>
-                <div class="grid grid-cols-2 gap-4">
-                  <div class="p-4 bg-muted rounded-md">
-                    <div class="bg-card p-4 rounded-md border border-border">
-                      <p class="text-sm">Card with current spacing and border radius</p>
-                    </div>
-                  </div>
-                  <div class="flex flex-col gap-2">
-                    <Button variant="primary">Button</Button>
-                    <Button variant="outline-primary">Outline Button</Button>
-                  </div>
-                </div>
+              <div class="flex gap-2 mt-1.5">
+                <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 0.5 + 'px' }"></div>
+                <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius + 'px' }"></div>
+                <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 2 + 'px' }"></div>
               </div>
             </div>
             
-            <!-- Effects & Animation Tab -->
-            <div v-if="activeTab === 'effects'" class="space-y-6">
-              <h4 class="text-lg font-heading font-semibold mb-4">Effects & Animation Settings</h4>
-              
-              <!-- Shadow Intensity -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Shadow Intensity ({{ shadowIntensity }})</label>
-                <input 
-                  type="range" 
-                  v-model="shadowIntensity" 
-                  min="0" 
-                  max="20" 
-                  step="1" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>None</span>
-                  <span>Medium</span>
-                  <span>Heavy</span>
-                </div>
-                <div class="flex gap-4 mt-3">
-                  <div class="w-16 h-16 bg-card border border-border rounded-md" :style="{ boxShadow: `0 1px ${Math.round(2 * shadowIntensity/10)}px 0 rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
-                  <div class="w-16 h-16 bg-card border border-border rounded-md" :style="{ boxShadow: `0 4px ${Math.round(6 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 2px ${Math.round(4 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.06 * shadowIntensity/10})` }"></div>
-                  <div class="w-16 h-16 bg-card border border-border rounded-md" :style="{ boxShadow: `0 10px ${Math.round(15 * shadowIntensity/10)}px -3px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 4px ${Math.round(6 * shadowIntensity/10)}px -2px rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
-                </div>
+            <!-- Base Spacing -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Base Spacing Unit ({{ spacing }}px)</label>
+              <input 
+                type="range" 
+                v-model="spacing" 
+                min="2" 
+                max="8" 
+                step="1" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>2px</span>
+                <span>8px</span>
               </div>
-              
-              <!-- Animation Speed -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Animation Speed ({{ animationSpeed }}ms)</label>
-                <input 
-                  type="range" 
-                  v-model="animationSpeed" 
-                  min="100" 
-                  max="500" 
-                  step="50" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>Fast (100ms)</span>
-                  <span>Medium (300ms)</span>
-                  <span>Slow (500ms)</span>
-                </div>
-              </div>
-              
-              <!-- Animation Easing -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Animation Easing</label>
-                <select 
-                  v-model="animationEasing"
-                  class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                >
-                  <option v-for="easing in easingOptions" :key="easing" :value="easing">{{ easing }}</option>
-                </select>
-              </div>
-              
-              <!-- Animation Preview -->
-              <div class="mt-6 p-4 border border-border rounded-lg">
-                <h5 class="text-sm font-medium mb-3">Animation Preview</h5>
-                <div class="flex flex-wrap gap-4">
-                  <button 
-                    class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
-                    :style="{ transitionDuration: `${animationSpeed}ms`, transitionTimingFunction: animationEasing }"
-                  >
-                    Hover Me
-                  </button>
-                  <button 
-                    class="px-4 py-2 bg-transparent border border-primary text-primary rounded-md hover:bg-primary-light transition-colors"
-                    :style="{ transitionDuration: `${animationSpeed}ms`, transitionTimingFunction: animationEasing }"
-                  >
-                    Hover Me
-                  </button>
-                </div>
+              <div class="flex gap-1 mt-1.5">
+                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 0.5 + 'px' }"></div>
+                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing + 'px' }"></div>
+                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 2 + 'px' }"></div>
+                <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 4 + 'px' }"></div>
               </div>
             </div>
             
-            <!-- Layout Tab -->
-            <div v-if="activeTab === 'layout'" class="space-y-6">
-              <h4 class="text-lg font-heading font-semibold mb-4">Layout Settings</h4>
-              
-              <!-- Container Width -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Max Container Width ({{ containerWidth }}px)</label>
-                <input 
-                  type="range" 
-                  v-model="containerWidth" 
-                  min="960" 
-                  max="1600" 
-                  step="40" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>Narrow (960px)</span>
-                  <span>Medium (1280px)</span>
-                  <span>Wide (1600px)</span>
-                </div>
+            <!-- Shadow Intensity -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Shadow Intensity ({{ shadowIntensity }})</label>
+              <input 
+                type="range" 
+                v-model="shadowIntensity" 
+                min="0" 
+                max="20" 
+                step="1" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>None</span>
+                <span>Heavy</span>
               </div>
-              
-              <!-- Grid Columns -->
-              <div>
-                <label class="block text-sm font-medium mb-2">Grid Columns ({{ gridColumns }})</label>
-                <input 
-                  type="range" 
-                  v-model="gridColumns" 
-                  min="4" 
-                  max="16" 
-                  step="1" 
-                  class="w-full"
-                />
-                <div class="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>4</span>
-                  <span>12</span>
-                  <span>16</span>
-                </div>
-                <div class="h-8 bg-muted rounded-md mt-3 flex">
-                  <div 
-                    v-for="i in gridColumns" 
-                    :key="i" 
-                    class="h-full bg-primary-light border-r border-muted last:border-r-0"
-                    :style="{ width: `${100 / gridColumns}%` }"
-                  ></div>
-                </div>
+              <div class="flex gap-2 mt-1.5">
+                <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 1px ${Math.round(2 * shadowIntensity/10)}px 0 rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
+                <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 4px ${Math.round(6 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 2px ${Math.round(4 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.06 * shadowIntensity/10})` }"></div>
+                <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 10px ${Math.round(15 * shadowIntensity/10)}px -3px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 4px ${Math.round(6 * shadowIntensity/10)}px -2px rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
               </div>
-              
-              <!-- Layout Preview -->
-              <div class="mt-6 p-4 border border-border rounded-lg">
-                <h5 class="text-sm font-medium mb-3">Layout Preview</h5>
-                <div class="bg-muted p-2 rounded-md">
-                  <div class="bg-card border border-border p-2 rounded-md text-center text-sm">
-                    Container (max-width: {{ containerWidth }}px)
-                  </div>
-                  <div class="grid gap-2 mt-2" :style="{ gridTemplateColumns: `repeat(${Math.min(gridColumns, 6)}, 1fr)` }">
-                    <div 
-                      v-for="i in Math.min(gridColumns, 6)" 
-                      :key="i" 
-                      class="bg-primary-light p-2 rounded-md text-center text-xs"
-                    >
-                      Col {{ i }}
-                    </div>
-                  </div>
-                </div>
+            </div>
+            
+            <!-- Animation Speed -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Animation Speed ({{ animationSpeed }}ms)</label>
+              <input 
+                type="range" 
+                v-model="animationSpeed" 
+                min="100" 
+                max="500" 
+                step="50" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>Fast</span>
+                <span>Slow</span>
               </div>
+            </div>
+            
+            <!-- Animation Easing -->
+            <div>
+              <label class="block text-xs font-medium mb-1.5">Animation Easing</label>
+              <select 
+                v-model="animationEasing"
+                class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+              >
+                <option v-for="easing in easingOptions" :key="easing" :value="easing">{{ easing }}</option>
+              </select>
             </div>
           </div>
         </div>
       </div>
     </div>
     
+    <!-- Backdrop for mobile -->
+    <div 
+      v-if="isOpen" 
+      class="fixed inset-0 bg-black/20 z-40"
+      @click="toggleCustomizer"
+    ></div>
+    
     <!-- Save Preset Modal -->
     <div 
       v-if="showSavePresetModal" 
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50"
       @click.self="showSavePresetModal = false"
     >
-      <div class="bg-card border border-border rounded-lg shadow-xl w-full max-w-md p-6">
-        <h3 class="text-xl font-heading font-semibold mb-4">Save as New Preset</h3>
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2">Preset Name</label>
+      <div class="bg-card border border-border rounded-lg shadow-xl w-full max-w-xs p-4">
+        <h3 class="text-lg font-heading font-semibold mb-3">Save as Preset</h3>
+        <div class="mb-3">
+          <label class="block text-sm font-medium mb-1.5">Preset Name</label>
           <input 
             type="text" 
             v-model="newPresetName" 
-            placeholder="My Custom Preset"
-            class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+            placeholder="My Custom Theme"
+            class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background text-foreground"
             @keyup.enter="saveAsNewPreset"
           />
         </div>
@@ -1010,10 +812,38 @@ onMounted(() => {
             @click="saveAsNewPreset"
             :disabled="!newPresetName.trim()"
           >
-            Save Preset
+            Save
           </Button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom range input styling */
+input[type="range"] {
+  height: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+}
+</style>
