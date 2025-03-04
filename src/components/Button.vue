@@ -3,6 +3,7 @@ defineProps<{
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline-primary'
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }>()
 
 const emit = defineEmits<{
@@ -24,6 +25,7 @@ const getButtonClass = (variant: string = 'primary', size: string = 'md') => {
   <button
     :class="getButtonClass(variant, size)"
     :disabled="disabled"
+    :type="type || 'button'"
     @click="emit('click', $event)"
   >
     <slot></slot>

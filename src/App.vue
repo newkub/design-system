@@ -5,18 +5,35 @@ import TableOfContents from './components/TableOfContents.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ThemeCustomizer from './components/ThemeCustomizer.vue'
 import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
 </script>
 
 <template>
+  <!-- Skip to content link for keyboard users -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  
   <div class="min-h-screen font-sans">
-    <header class="bg-card shadow-sm border-b border-border sticky top-0 z-10">
-      <div class="container-content py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-heading font-bold text-primary">Design System</h1>
-        <div class="flex items-center gap-4">
-          <ThemeModeSwitcher class="hidden md:flex" />
-          <ThemeCustomizer />
+    <header class="bg-card shadow-sm border-b border-border sticky top-0 z-20">
+      <div class="container-content py-3 flex justify-between items-center">
+        <a 
+          href="#" 
+          @click.prevent="scrollToTop" 
+          class="flex items-center gap-2 hover:opacity-90 transition-opacity"
+          aria-label="Design System - Back to top"
+        >
+          <div class="i-mdi-palette-swatch text-primary text-3xl"></div>
+          <h1 class="text-xl md:text-2xl font-heading font-bold text-primary">Design System</h1>
+        </a>
+        <div class="flex items-center gap-3">
           <ThemeToggle />
-          <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors">
+          <ThemeCustomizer />
+          <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
             <div class="i-mdi-github text-muted-foreground text-xl"></div>
           </a>
         </div>
@@ -28,7 +45,7 @@ import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
         <TableOfContents />
       </aside>
 
-      <main class="flex-1 max-w-3xl mx-auto">
+      <main id="main-content" class="flex-1 max-w-3xl mx-auto" tabindex="-1">
         <section id="introduction" class="mb-12">
           <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Introduction</h2>
           <p class="mb-4 text-foreground">

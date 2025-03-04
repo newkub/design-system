@@ -15,7 +15,12 @@ const close = () => {
 </script>
 
 <template>
-  <div v-if="visible" :class="`alert-${type || 'info'} flex items-start`">
+  <div 
+    v-if="visible" 
+    :class="`alert-${type || 'info'} flex items-start`"
+    role="alert"
+    aria-live="polite"
+  >
     <div class="flex-grow">
       <div v-if="title" class="font-bold mb-1">{{ title }}</div>
       <div>
