@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, PropType } from 'vue'
+import { ref, onMounted, onUnmounted, computed, PropType, watch } from 'vue'
 
 // Define section interface
 interface Section {
@@ -24,6 +24,8 @@ const props = defineProps({
 const activeSection = ref(props.defaultActiveSection || (props.sections.length > 0 ? props.sections[0].id : ''))
 const isMobileMenuOpen = ref(false)
 const isScrolled = ref(false)
+const tocNavRef = ref<HTMLElement | null>(null)
+const mobileTocRef = ref<HTMLElement | null>(null)
 
 // Toggle mobile menu
 const toggleMobileMenu = () => {
@@ -73,6 +75,43 @@ const updateActiveSection = () => {
       activeSection.value = sectionId
     }
   })
+}
+
+// Scroll active item into view in the TOC
+const scrollActiveSectionIntoView = () => {
+  // For desktop TOC
+  if (tocNavRef.value) {
+    const activeItem = tocNavRef.value.querySelector(`[aria-current="page"]`) as HTMLElement
+    if (activeItem) {
+      // Calculate the center position
+      const containerHeight = tocNavRef.value.offsetHeight
+      const itemTop = activeItem.offsetTop
+      const itemHeight = activeItem.offsetHeight
+      
+      // Scroll to position that centers the active item
+      tocNavRef.value.scrollTo({
+        top: itemTop - (containerHeight / 2) + (itemHeight / 2),
+        behavior: 'smooth'
+      })
+    }
+  }
+  
+  // For mobile touch bar
+  if (mobileTocRef.value) {
+    const activeItem = mobileTocRef.value.querySelector(`[aria-current="page"]`) as HTMLElement
+    if (activeItem) {
+      // Calculate the center position
+      const containerWidth = mobileTocRef.value.offsetWidth
+      const itemLeft = activeItem.offsetLeft
+      const itemWidth = activeItem.offsetWidth
+      
+      // Scroll to position that centers the active item
+      mobileTocRef.value.scrollTo({
+        left: itemLeft - (containerWidth / 2) + (itemWidth / 2),
+        behavior: 'smooth'
+      })
+    }
+  }
 }
 
 // Get main sections for mobile touch bar
@@ -125,12 +164,25 @@ const getSubsections = (sectionId: string): Section[] => {
   return section?.subsections || []
 }
 
+// Watch for active section changes to scroll it into view
+watch(activeSection, () => {
+  // Use setTimeout to ensure DOM is updated before scrolling
+  setTimeout(() => {
+    scrollActiveSectionIntoView()
+  }, 100)
+})
+
 onMounted(() => {
   // Initialize active section
   updateActiveSection()
   
   // Add scroll event listener
   window.addEventListener('scroll', updateActiveSection)
+  
+  // Initial scroll to active section
+  setTimeout(() => {
+    scrollActiveSectionIntoView()
+  }, 500)
 })
 
 onUnmounted(() => {
@@ -144,7 +196,8 @@ onUnmounted(() => {
   <div class="lg:hidden fixed top-[60px] left-0 right-0 z-10 w-full">
     <!-- Mobile Touch Bar -->
     <div 
-      class="w-full overflow-x-auto scrollbar-hide bg-card border-b border-border transition-all duration-200"
+      ref="mobileTocRef"
+      class="w-full overflow-x-auto scrollbar-hide bg-card border-b border-border transition-all duration-200 touch-pan-x"
       :class="{ 'shadow-sm': isScrolled }"
       aria-label="Table of Contents"
       role="navigation"
@@ -190,7 +243,7 @@ onUnmounted(() => {
     <div 
       id="mobile-toc-dropdown"
       v-show="isMobileMenuOpen" 
-      class="bg-card border-b border-border shadow-md"
+      class="bg-card border-b border-border shadow-md overflow-y-auto max-h-[50vh] touch-pan-y"
       role="menu"
     >
       <ul class="p-4 space-y-3">
@@ -205,4 +258,113 @@ onUnmounted(() => {
           <ul v-if="section.subsections && section.subsections.length > 0" class="pl-4 mt-2 space-y-2">
             <li v-for="subsection in section.subsections" :key="subsection.id" role="menuitem">
               <a 
-                :href="`
+                :href="`#${subsection.id}`" 
+                :class="activeSection === subsection.id ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
+                @click.prevent="handleLinkClick(subsection.id)"
+              >
+                {{ subsection.label }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Desktop sidebar TOC (visible on large screens) -->
+  <div class="hidden lg:block sticky top-20 pr-6">
+    <nav 
+      ref="tocNavRef"
+      aria-label="Table of Contents" 
+      class="toc-nav hover-scrollable touch-pan-y"
+    >
+      <ul class="space-y-1">
+        <li v-for="section in props.sections" :key="section.id">
+          <a 
+            :href="`#${section.id}`" 
+            :class="[
+              'block py-1.5 px-3 rounded-md transition-colors',
+              activeSection === section.id 
+                ? 'bg-primary-light text-primary font-medium' 
+                : 'text-foreground hover:text-primary hover:bg-muted'
+            ]"
+            @click.prevent="handleLinkClick(section.id)"
+            :aria-current="activeSection === section.id ? 'page' : undefined"
+          >
+            {{ section.label }}
+          </a>
+          
+          <!-- Subsections -->
+          <ul v-if="section.subsections && section.subsections.length > 0" class="pl-4 mt-1 mb-2 space-y-1">
+            <li v-for="subsection in section.subsections" :key="subsection.id">
+              <a 
+                :href="`#${subsection.id}`" 
+                :class="[
+                  'block py-1 px-3 text-sm rounded-md transition-colors',
+                  activeSection === subsection.id 
+                    ? 'text-primary font-medium' 
+                    : 'text-muted-foreground hover:text-primary hover:bg-muted'
+                ]"
+                @click.prevent="handleLinkClick(subsection.id)"
+                :aria-current="activeSection === subsection.id ? 'page' : undefined"
+              >
+                {{ subsection.label }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</template>
+
+<style scoped>
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* TOC nav styling */
+.toc-nav {
+  width: 100%;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-muted) transparent;
+}
+
+.toc-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.toc-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.toc-nav::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
+  border-radius: 4px;
+}
+
+/* Hover scrollable behavior */
+.hover-scrollable {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Touch support for mobile */
+.touch-pan-x {
+  touch-action: pan-x;
+}
+
+.touch-pan-y {
+  touch-action: pan-y;
+}
+</style>
