@@ -5,6 +5,7 @@ import TableOfContents from './components/TableOfContents.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import Navbar from './components/Navbar.vue'
 import ComponentsSection from './components/ComponentsSection.vue'
+import ThemeCustomizer from './components/ThemeCustomizer.vue'
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -70,10 +71,18 @@ import ThemeCustomizer from './components/ThemeCustomizer.vue'
             or by updating the UnoCSS configuration in the <code>uno.config.ts</code> file.
           </p>
           <p class="mb-4 text-foreground">
-            You can also use the theme customizer in the header to change colors, typography, spacing, and more in real-time.
-            Click on the palette icon to open the customizer panel.
+            You can also use the theme customizer below to change colors, typography, spacing, and more in real-time.
           </p>
-          <div class="card p-4 mt-4">
+          
+          <div class="card p-6 mt-6 flex flex-col items-center">
+            <h3 class="text-xl font-heading font-semibold mb-4">Try the Theme Customizer</h3>
+            <p class="text-center mb-6">Click on the palette icon below to open the customizer panel</p>
+            <div class="flex justify-center">
+              <ThemeCustomizer />
+            </div>
+          </div>
+          
+          <div class="card p-4 mt-6">
             <h3 class="text-xl font-heading font-semibold mb-3">Theme Customization Options</h3>
             <ul class="list-disc pl-5 space-y-2">
               <li>Colors - Primary, secondary, and accent colors for UI elements</li>
@@ -89,35 +98,10 @@ import ThemeCustomizer from './components/ThemeCustomizer.vue'
           </div>
         </section>
 
-      
-
         <!-- Components Section -->
         <ComponentsSection />
         
-        <!-- Utils Section -->
-        <section id="utils" class="mb-12">
-          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Utils</h2>
-          <p class="mb-4 text-foreground">
-            Utility functions to help with common tasks in your applications.
-          </p>
-          <div class="card p-4 bg-muted/30">
-            <p class="text-muted-foreground italic">Utils documentation will be added here.</p>
-          </div>
-        </section>
-        
-        <!-- Composables Section -->
-        <section id="composables" class="mb-12">
-          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Composables</h2>
-          <p class="mb-4 text-foreground">
-            Reusable Vue composition functions that encapsulate and reuse stateful logic between components.
-          </p>
-          <div class="card p-4 bg-muted/30">
-            <p class="text-muted-foreground italic">Composables documentation will be added here.</p>
-          </div>
-        </section>
-
-       
-      </main>
+       </main>
     </div>
   </div>
 </template>
