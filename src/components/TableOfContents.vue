@@ -1,7 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, PropType } from 'vue'
 
-const activeSection = ref('introduction')
+// Define section interface
+interface Section {
+  id: string
+  label: string
+  subsections?: Section[]
+}
+
+// Define props
+const props = defineProps({
+  sections: {
+    type: Array as PropType<Section[]>,
+    required: false,
+    default: () => []
+  },
+  defaultActiveSection: {
+    type: String,
+    default: ''
+  }
+})
+
+const activeSection = ref(props.defaultActiveSection || (props.sections.length > 0 ? props.sections[0].id : ''))
 const isMobileMenuOpen = ref(false)
 const isScrolled = ref(false)
 
@@ -57,20 +77,53 @@ const updateActiveSection = () => {
 
 // Get main sections for mobile touch bar
 const mainSections = computed(() => {
-  return [
-    { id: 'introduction', label: 'Intro' },
-    { id: 'theme', label: 'Theme' },
-    { id: 'colors', label: 'Colors' },
-    { id: 'typography', label: 'Type' },
-    { id: 'spacing', label: 'Spacing' },
-    { id: 'radius', label: 'Radius' },
-    { id: 'buttons', label: 'Buttons' },
-    { id: 'alerts', label: 'Alerts' },
-    { id: 'icons', label: 'Icons' },
-    { id: 'usage', label: 'Usage' },
-    { id: 'customization', label: 'Custom' }
-  ]
+  return props.sections.map(section => ({
+    id: section.id,
+    label: section.label
+  }))
 })
+
+// Get all sections including subsections flattened
+const allSections = computed(() => {
+  const result: Section[] = []
+  
+  props.sections.forEach(section => {
+    result.push(section)
+    if (section.subsections) {
+      section.subsections.forEach(subsection => {
+        result.push(subsection)
+      })
+    }
+  })
+  
+  return result
+})
+
+// Find parent section for a given subsection
+const findParentSection = (subsectionId: string): string | null => {
+  for (const section of props.sections) {
+    if (section.subsections) {
+      for (const subsection of section.subsections) {
+        if (subsection.id === subsectionId) {
+          return section.id
+        }
+      }
+    }
+  }
+  return null
+}
+
+// Check if a section has subsections
+const hasSubsections = (sectionId: string): boolean => {
+  const section = props.sections.find(s => s.id === sectionId)
+  return section?.subsections && section.subsections.length > 0
+}
+
+// Get subsections for a section
+const getSubsections = (sectionId: string): Section[] => {
+  const section = props.sections.find(s => s.id === sectionId)
+  return section?.subsections || []
+}
 
 onMounted(() => {
   // Initialize active section
@@ -124,7 +177,7 @@ onUnmounted(() => {
     >
       <span class="font-medium flex items-center">
         <span class="i-mdi-menu-open text-xl mr-2"></span>
-        <span>{{ mainSections.find(s => s.id === activeSection)?.label || 'Table of Contents' }}</span>
+        <span>{{ mainSections.find(s => s.id === activeSection)?.label || allSections.find(s => s.id === activeSection)?.label || 'Table of Contents' }}</span>
       </span>
       <span 
         class="i-mdi-chevron-down text-lg transition-transform" 
@@ -141,403 +194,15 @@ onUnmounted(() => {
       role="menu"
     >
       <ul class="p-4 space-y-3">
-        <li role="menuitem">
+        <li v-for="section in props.sections" :key="section.id" role="menuitem">
           <a 
-            href="#introduction" 
-            :class="activeSection === 'introduction' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('introduction')"
+            :href="`#${section.id}`" 
+            :class="activeSection === section.id ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
+            @click.prevent="handleLinkClick(section.id)"
           >
-            Introduction
+            {{ section.label }}
           </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#theme" 
-            :class="activeSection === 'theme' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('theme')"
-          >
-            Theme System
-          </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#colors" 
-            :class="activeSection === 'colors' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('colors')"
-          >
-            Color Tokens
-          </a>
-          <ul class="pl-4 mt-2 space-y-2">
-            <li role="menuitem">
+          <ul v-if="section.subsections && section.subsections.length > 0" class="pl-4 mt-2 space-y-2">
+            <li v-for="subsection in section.subsections" :key="subsection.id" role="menuitem">
               <a 
-                href="#primary-colors" 
-                :class="activeSection === 'primary-colors' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('primary-colors')"
-              >
-                Primary Colors
-              </a>
-            </li>
-            <li role="menuitem">
-              <a 
-                href="#secondary-colors" 
-                :class="activeSection === 'secondary-colors' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('secondary-colors')"
-              >
-                Secondary Colors
-              </a>
-            </li>
-            <li role="menuitem">
-              <a 
-                href="#semantic-colors" 
-                :class="activeSection === 'semantic-colors' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('semantic-colors')"
-              >
-                Semantic Colors
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#typography" 
-            :class="activeSection === 'typography' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('typography')"
-          >
-            Typography
-          </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#spacing" 
-            :class="activeSection === 'spacing' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('spacing')"
-          >
-            Spacing
-          </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#radius" 
-            :class="activeSection === 'radius' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('radius')"
-          >
-            Border Radius
-          </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#buttons" 
-            :class="activeSection === 'buttons' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('buttons')"
-          >
-            Buttons
-          </a>
-          <ul class="pl-4 mt-2 space-y-2">
-            <li role="menuitem">
-              <a 
-                href="#button-variants" 
-                :class="activeSection === 'button-variants' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('button-variants')"
-              >
-                Button Variants
-              </a>
-            </li>
-            <li role="menuitem">
-              <a 
-                href="#button-sizes" 
-                :class="activeSection === 'button-sizes' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('button-sizes')"
-              >
-                Button Sizes
-              </a>
-            </li>
-            <li role="menuitem">
-              <a 
-                href="#button-states" 
-                :class="activeSection === 'button-states' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('button-states')"
-              >
-                Button States
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#alerts" 
-            :class="activeSection === 'alerts' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('alerts')"
-          >
-            Alerts
-          </a>
-          <ul class="pl-4 mt-2 space-y-2">
-            <li role="menuitem">
-              <a 
-                href="#alert-types" 
-                :class="activeSection === 'alert-types' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('alert-types')"
-              >
-                Alert Types
-              </a>
-            </li>
-            <li role="menuitem">
-              <a 
-                href="#dismissible-alerts" 
-                :class="activeSection === 'dismissible-alerts' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-                @click.prevent="handleLinkClick('dismissible-alerts')"
-              >
-                Dismissible Alerts
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#icons" 
-            :class="activeSection === 'icons' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('icons')"
-          >
-            Icons
-          </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#usage" 
-            :class="activeSection === 'usage' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('usage')"
-          >
-            Usage
-          </a>
-        </li>
-        <li role="menuitem">
-          <a 
-            href="#customization" 
-            :class="activeSection === 'customization' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-            @click.prevent="handleLinkClick('customization')"
-          >
-            Customization
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Desktop TOC (lg screens and up) -->
-  <nav class="sticky top-20 hidden lg:block" aria-label="Desktop Table of Contents">
-    <h3 class="text-lg font-heading font-semibold mb-4 text-primary">Contents</h3>
-    <ul class="space-y-3">
-      <li>
-        <a 
-          href="#introduction" 
-          :class="activeSection === 'introduction' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('introduction')"
-          :aria-current="activeSection === 'introduction' ? 'page' : undefined"
-        >
-          Introduction
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#theme" 
-          :class="activeSection === 'theme' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('theme')"
-          :aria-current="activeSection === 'theme' ? 'page' : undefined"
-        >
-          Theme System
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#colors" 
-          :class="activeSection === 'colors' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('colors')"
-          :aria-current="activeSection === 'colors' ? 'page' : undefined"
-        >
-          Color Tokens
-        </a>
-        <ul class="pl-4 mt-2 space-y-2">
-          <li>
-            <a 
-              href="#primary-colors" 
-              :class="activeSection === 'primary-colors' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('primary-colors')"
-              :aria-current="activeSection === 'primary-colors' ? 'page' : undefined"
-            >
-              Primary Colors
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#secondary-colors" 
-              :class="activeSection === 'secondary-colors' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('secondary-colors')"
-              :aria-current="activeSection === 'secondary-colors' ? 'page' : undefined"
-            >
-              Secondary Colors
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#semantic-colors" 
-              :class="activeSection === 'semantic-colors' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('semantic-colors')"
-              :aria-current="activeSection === 'semantic-colors' ? 'page' : undefined"
-            >
-              Semantic Colors
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a 
-          href="#typography" 
-          :class="activeSection === 'typography' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('typography')"
-          :aria-current="activeSection === 'typography' ? 'page' : undefined"
-        >
-          Typography
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#spacing" 
-          :class="activeSection === 'spacing' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('spacing')"
-          :aria-current="activeSection === 'spacing' ? 'page' : undefined"
-        >
-          Spacing
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#radius" 
-          :class="activeSection === 'radius' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('radius')"
-          :aria-current="activeSection === 'radius' ? 'page' : undefined"
-        >
-          Border Radius
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#buttons" 
-          :class="activeSection === 'buttons' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('buttons')"
-          :aria-current="activeSection === 'buttons' ? 'page' : undefined"
-        >
-          Buttons
-        </a>
-        <ul class="pl-4 mt-2 space-y-2">
-          <li>
-            <a 
-              href="#button-variants" 
-              :class="activeSection === 'button-variants' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('button-variants')"
-              :aria-current="activeSection === 'button-variants' ? 'page' : undefined"
-            >
-              Button Variants
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#button-sizes" 
-              :class="activeSection === 'button-sizes' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('button-sizes')"
-              :aria-current="activeSection === 'button-sizes' ? 'page' : undefined"
-            >
-              Button Sizes
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#button-states" 
-              :class="activeSection === 'button-states' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('button-states')"
-              :aria-current="activeSection === 'button-states' ? 'page' : undefined"
-            >
-              Button States
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a 
-          href="#alerts" 
-          :class="activeSection === 'alerts' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('alerts')"
-          :aria-current="activeSection === 'alerts' ? 'page' : undefined"
-        >
-          Alerts
-        </a>
-        <ul class="pl-4 mt-2 space-y-2">
-          <li>
-            <a 
-              href="#alert-types" 
-              :class="activeSection === 'alert-types' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('alert-types')"
-              :aria-current="activeSection === 'alert-types' ? 'page' : undefined"
-            >
-              Alert Types
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#dismissible-alerts" 
-              :class="activeSection === 'dismissible-alerts' ? 'text-primary text-sm' : 'text-muted-foreground hover:text-primary transition-colors text-sm'"
-              @click.prevent="handleLinkClick('dismissible-alerts')"
-              :aria-current="activeSection === 'dismissible-alerts' ? 'page' : undefined"
-            >
-              Dismissible Alerts
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a 
-          href="#icons" 
-          :class="activeSection === 'icons' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('icons')"
-          :aria-current="activeSection === 'icons' ? 'page' : undefined"
-        >
-          Icons
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#usage" 
-          :class="activeSection === 'usage' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('usage')"
-          :aria-current="activeSection === 'usage' ? 'page' : undefined"
-        >
-          Usage
-        </a>
-      </li>
-      <li>
-        <a 
-          href="#customization" 
-          :class="activeSection === 'customization' ? 'text-primary font-medium' : 'text-foreground hover:text-primary transition-colors'"
-          @click.prevent="handleLinkClick('customization')"
-          :aria-current="activeSection === 'customization' ? 'page' : undefined"
-        >
-          Customization
-        </a>
-      </li>
-    </ul>
-  </nav>
-  
-  <!-- Spacer for mobile to account for fixed TOC -->
-  <div class="lg:hidden h-[110px]"></div>
-</template>
-
-<style scoped>
-/* Hide scrollbar for Chrome, Safari and Opera */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-</style>
+                :href="`

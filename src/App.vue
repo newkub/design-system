@@ -2,9 +2,8 @@
 import Button from './components/Button.vue'
 import Alert from './components/Alert.vue'
 import TableOfContents from './components/TableOfContents.vue'
-import ThemeToggle from './components/ThemeToggle.vue'
-import ThemeCustomizer from './components/ThemeCustomizer.vue'
 import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
+import Navbar from './components/Navbar.vue'
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -12,6 +11,68 @@ const scrollToTop = () => {
     behavior: 'smooth'
   })
 }
+
+// Define sections for TableOfContents
+const tocSections = [
+  {
+    id: 'introduction',
+    label: 'Introduction'
+  },
+  {
+    id: 'theme',
+    label: 'Theme System'
+  },
+  {
+    id: 'colors',
+    label: 'Color Tokens',
+    subsections: [
+      { id: 'primary-colors', label: 'Primary Colors' },
+      { id: 'secondary-colors', label: 'Secondary Colors' },
+      { id: 'semantic-colors', label: 'Semantic Colors' }
+    ]
+  },
+  {
+    id: 'typography',
+    label: 'Typography'
+  },
+  {
+    id: 'spacing',
+    label: 'Spacing'
+  },
+  {
+    id: 'radius',
+    label: 'Border Radius'
+  },
+  {
+    id: 'buttons',
+    label: 'Buttons',
+    subsections: [
+      { id: 'button-variants', label: 'Button Variants' },
+      { id: 'button-sizes', label: 'Button Sizes' },
+      { id: 'button-states', label: 'Button States' }
+    ]
+  },
+  {
+    id: 'alerts',
+    label: 'Alerts',
+    subsections: [
+      { id: 'alert-types', label: 'Alert Types' },
+      { id: 'dismissible-alerts', label: 'Dismissible Alerts' }
+    ]
+  },
+  {
+    id: 'icons',
+    label: 'Icons'
+  },
+  {
+    id: 'usage',
+    label: 'Usage'
+  },
+  {
+    id: 'customization',
+    label: 'Customization'
+  }
+]
 </script>
 
 <template>
@@ -19,30 +80,11 @@ const scrollToTop = () => {
   <a href="#main-content" class="skip-to-content">Skip to content</a>
   
   <div class="min-h-screen font-sans">
-    <header class="bg-card shadow-sm border-b border-border sticky top-0 z-20">
-      <div class="container-content py-3 flex justify-between items-center">
-        <a 
-          href="#" 
-          @click.prevent="scrollToTop" 
-          class="flex items-center gap-2 hover:opacity-90 transition-opacity"
-          aria-label="Design System - Back to top"
-        >
-          <div class="i-mdi-palette-swatch text-primary text-3xl"></div>
-          <h1 class="text-xl md:text-2xl font-heading font-bold text-primary">Design System</h1>
-        </a>
-        <div class="flex items-center gap-3">
-          <ThemeToggle />
-          <ThemeCustomizer />
-          <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors" aria-label="View on GitHub">
-            <div class="i-mdi-github text-muted-foreground text-xl"></div>
-          </a>
-        </div>
-      </div>
-    </header>
+    <Navbar />
 
     <div class="container-content py-8 flex flex-col lg:flex-row">
       <aside class="w-full lg:w-64 lg:sticky lg:top-20 lg:self-start">
-        <TableOfContents />
+        <TableOfContents :sections="tocSections" default-active-section="introduction" />
       </aside>
 
       <main id="main-content" class="flex-1 max-w-3xl mx-auto" tabindex="-1">
