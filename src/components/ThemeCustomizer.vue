@@ -420,10 +420,10 @@ onMounted(() => {
 
 <template>
   <div class="relative">
-    <!-- Customizer toggle button -->
+    <!-- Customizer toggle button with animation -->
     <button 
       @click="toggleCustomizer" 
-      class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors"
+      class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors palette-icon"
       aria-label="Customize theme"
     >
       <div class="i-mdi-palette text-primary text-xl"></div>
@@ -432,7 +432,7 @@ onMounted(() => {
     <!-- Floating customizer widget -->
     <div 
       v-if="isOpen"
-      class="fixed bottom-6 right-6 z-50 w-[90vw] max-w-3xl bg-card rounded-xl shadow-xl border border-border overflow-hidden transform transition-all duration-300 ease-out"
+      class="fixed z-50 bg-card rounded-xl shadow-xl border border-border overflow-hidden transform transition-all duration-300 ease-out customizer-panel"
       :class="isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
     >
       <!-- Header -->
@@ -473,8 +473,8 @@ onMounted(() => {
       <!-- Content -->
       <div class="p-4 max-h-[70vh] overflow-y-auto">
         <!-- Presets Section -->
-        <div class="mb-6">
-          <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Theme Presets</h4>
+        <div class="customizer-block mb-6">
+          <h4 class="customizer-block-title">Theme Presets</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             <div 
               v-for="(name, key) in allPresets" 
@@ -504,19 +504,19 @@ onMounted(() => {
         </div>
         
         <!-- Main Customization Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Colors Column -->
-          <div class="space-y-4">
-            <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Colors</h4>
+          <div class="customizer-block">
+            <h4 class="customizer-block-title">Colors</h4>
             
             <!-- Primary Color -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Primary Color</label>
               <div class="flex items-center gap-2">
                 <input 
                   type="color" 
                   v-model="primaryColor" 
-                  class="w-8 h-8 rounded cursor-pointer"
+                  class="color-picker"
                 />
                 <input 
                   type="text" 
@@ -532,13 +532,13 @@ onMounted(() => {
             </div>
             
             <!-- Secondary Color -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Secondary Color</label>
               <div class="flex items-center gap-2">
                 <input 
                   type="color" 
                   v-model="secondaryColor" 
-                  class="w-8 h-8 rounded cursor-pointer"
+                  class="color-picker"
                 />
                 <input 
                   type="text" 
@@ -554,13 +554,13 @@ onMounted(() => {
             </div>
             
             <!-- Accent Color -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Accent Color</label>
               <div class="flex items-center gap-2">
                 <input 
                   type="color" 
                   v-model="accentColor" 
-                  class="w-8 h-8 rounded cursor-pointer"
+                  class="color-picker"
                 />
                 <input 
                   type="text" 
@@ -576,7 +576,7 @@ onMounted(() => {
             </div>
             
             <!-- Color Preview -->
-            <div class="mt-4 p-2 border border-border rounded-md bg-muted/30">
+            <div class="customizer-item mt-4 p-2 border border-border rounded-md bg-muted/30">
               <h5 class="text-xs font-medium mb-2">Preview</h5>
               <div class="grid grid-cols-3 gap-1.5">
                 <Button variant="primary" size="sm" class="text-xs">Primary</Button>
@@ -587,11 +587,11 @@ onMounted(() => {
           </div>
           
           <!-- Typography Column -->
-          <div class="space-y-4">
-            <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Typography</h4>
+          <div class="customizer-block">
+            <h4 class="customizer-block-title">Typography</h4>
             
             <!-- Body Font -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Body Font</label>
               <select 
                 v-model="bodyFont"
@@ -605,7 +605,7 @@ onMounted(() => {
             </div>
             
             <!-- Heading Font -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Heading Font</label>
               <select 
                 v-model="headingFont"
@@ -619,7 +619,7 @@ onMounted(() => {
             </div>
             
             <!-- Base Font Size -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Base Font Size ({{ fontSize }}px)</label>
               <input 
                 type="range" 
@@ -636,7 +636,7 @@ onMounted(() => {
             </div>
             
             <!-- Line Height -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Line Height ({{ lineHeight }})</label>
               <input 
                 type="range" 
@@ -653,7 +653,7 @@ onMounted(() => {
             </div>
             
             <!-- Font Scale -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Font Scale ({{ fontScale }})</label>
               <input 
                 type="range" 
@@ -671,11 +671,11 @@ onMounted(() => {
           </div>
           
           <!-- Spacing & Effects Column -->
-          <div class="space-y-4">
-            <h4 class="text-sm font-medium uppercase text-muted-foreground mb-3">Spacing & Effects</h4>
+          <div class="customizer-block">
+            <h4 class="customizer-block-title">Spacing & Effects</h4>
             
             <!-- Border Radius -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Border Radius ({{ borderRadius }}px)</label>
               <input 
                 type="range" 
@@ -697,7 +697,7 @@ onMounted(() => {
             </div>
             
             <!-- Base Spacing -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Base Spacing Unit ({{ spacing }}px)</label>
               <input 
                 type="range" 
@@ -720,7 +720,7 @@ onMounted(() => {
             </div>
             
             <!-- Shadow Intensity -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Shadow Intensity ({{ shadowIntensity }})</label>
               <input 
                 type="range" 
@@ -740,9 +740,14 @@ onMounted(() => {
                 <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 10px ${Math.round(15 * shadowIntensity/10)}px -3px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 4px ${Math.round(6 * shadowIntensity/10)}px -2px rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
               </div>
             </div>
+          </div>
+          
+          <!-- Animation Settings Column -->
+          <div class="customizer-block">
+            <h4 class="customizer-block-title">Animation</h4>
             
             <!-- Animation Speed -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Animation Speed ({{ animationSpeed }}ms)</label>
               <input 
                 type="range" 
@@ -759,7 +764,7 @@ onMounted(() => {
             </div>
             
             <!-- Animation Easing -->
-            <div>
+            <div class="customizer-item">
               <label class="block text-xs font-medium mb-1.5">Animation Easing</label>
               <select 
                 v-model="animationEasing"
@@ -767,6 +772,53 @@ onMounted(() => {
               >
                 <option v-for="easing in easingOptions" :key="easing" :value="easing">{{ easing }}</option>
               </select>
+            </div>
+          </div>
+          
+          <!-- Layout Settings Column -->
+          <div class="customizer-block">
+            <h4 class="customizer-block-title">Layout</h4>
+            
+            <!-- Container Width -->
+            <div class="customizer-item">
+              <label class="block text-xs font-medium mb-1.5">Container Width ({{ containerWidth }}px)</label>
+              <input 
+                type="range" 
+                v-model="containerWidth" 
+                min="800" 
+                max="1600" 
+                step="40" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>Narrow</span>
+                <span>Wide</span>
+              </div>
+            </div>
+            
+            <!-- Grid Columns -->
+            <div class="customizer-item">
+              <label class="block text-xs font-medium mb-1.5">Grid Columns ({{ gridColumns }})</label>
+              <input 
+                type="range" 
+                v-model="gridColumns" 
+                min="4" 
+                max="16" 
+                step="1" 
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+                <span>4</span>
+                <span>16</span>
+              </div>
+              <div class="flex gap-0.5 mt-1.5">
+                <div 
+                  v-for="i in gridColumns" 
+                  :key="i" 
+                  class="h-6 bg-primary opacity-80 first:rounded-l-sm last:rounded-r-sm" 
+                  :style="{ width: `${100/gridColumns}%` }"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
@@ -845,5 +897,115 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-thumb {
   width: 12px;
   height: 12px;
+}
+
+/* Square color picker styling */
+.color-picker {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.color-picker::-moz-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+/* Customizer block styling */
+.customizer-block {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.customizer-block-title {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.customizer-item {
+  margin-bottom: 1.25rem;
+}
+
+.customizer-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Palette icon animation */
+.palette-icon {
+  position: relative;
+  overflow: hidden;
+}
+
+.palette-icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, transparent 1%, var(--color-primary) 1%) center/15000%;
+  opacity: 0;
+  transition: background 0.5s, opacity 0.5s;
+}
+
+.palette-icon:hover::after {
+  opacity: 0.1;
+}
+
+.palette-icon:active::after {
+  background-size: 100%;
+  opacity: 0.2;
+  transition: 0s;
+}
+
+.palette-icon .i-mdi-palette {
+  transition: transform 0.3s ease;
+}
+
+.palette-icon:hover .i-mdi-palette {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Responsive customizer panel */
+.customizer-panel {
+  bottom: 6rem;
+  right: 1.5rem;
+  width: 90vw;
+  max-width: 1200px;
+  max-height: calc(100vh - 8rem);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .customizer-panel {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100vw;
+    max-width: 100%;
+    height: 80vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
 }
 </style>
