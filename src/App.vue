@@ -4,8 +4,8 @@ import Alert from './components/Alert.vue'
 import TableOfContents from './components/TableOfContents.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import Navbar from './components/Navbar.vue'
-import ComponentsSection from './components/ComponentsSection.vue'
 import ThemeCustomizer from './components/ThemeCustomizer.vue'
+import ComponentsSection from './templates/ComponentsSection.vue'
 
 const scrollToTop = () => {
   window.scrollTo({

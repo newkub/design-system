@@ -11,53 +11,74 @@ const customPresets = ref<Record<string, ThemePreset>>({})
 const newPresetName = ref('')
 const showSavePresetModal = ref(false)
 
-// Theme state
-const primaryColor = ref('#3b82f6') // Default blue
-const secondaryColor = ref('#8b5cf6') // Default purple
-const accentColor = ref('#10b981') // Default green accent
-const borderRadius = ref(4) // Default border radius in px
-const fontScale = ref(1) // Font size scale
-const spacing = ref(4) // Base spacing unit
-const shadowIntensity = ref(10) // Shadow intensity (0-20)
+// Dynamic theme settings structure
+const themeSettings = ref({
+  colors: [
+    { id: 'primaryColor', label: 'Primary Color', value: '#3b82f6', type: 'color' },
+    { id: 'secondaryColor', label: 'Secondary Color', value: '#8b5cf6', type: 'color' },
+    { id: 'accentColor', label: 'Accent Color', value: '#10b981', type: 'color' }
+  ],
+  typography: [
+    { 
+      id: 'bodyFont', 
+      label: 'Body Font', 
+      value: 'Inter', 
+      type: 'select',
+      options: [
+        'Inter', 'Montserrat', 'Roboto', 'Open Sans', 'Nunito', 
+        'Poppins', 'Lato', 'Source Sans Pro', 'Playfair Display', 'Merriweather'
+      ]
+    },
+    { 
+      id: 'headingFont', 
+      label: 'Heading Font', 
+      value: 'Montserrat', 
+      type: 'select',
+      options: [
+        'Inter', 'Montserrat', 'Roboto', 'Open Sans', 'Nunito', 
+        'Poppins', 'Lato', 'Source Sans Pro', 'Playfair Display', 'Merriweather'
+      ]
+    },
+    { id: 'fontSize', label: 'Base Font Size', value: 16, type: 'range', min: 12, max: 24, step: 1, unit: 'px' },
+    { id: 'lineHeight', label: 'Line Height', value: 1.5, type: 'range', min: 1, max: 2, step: 0.1 },
+    { id: 'fontScale', label: 'Font Scale', value: 1, type: 'range', min: 0.8, max: 1.2, step: 0.05 }
+  ],
+  spacing: [
+    { id: 'borderRadius', label: 'Border Radius', value: 4, type: 'range', min: 0, max: 16, step: 1, unit: 'px' },
+    { id: 'spacing', label: 'Base Spacing Unit', value: 4, type: 'range', min: 2, max: 8, step: 1, unit: 'px' },
+    { id: 'shadowIntensity', label: 'Shadow Intensity', value: 10, type: 'range', min: 0, max: 20, step: 1 }
+  ],
+  animation: [
+    { id: 'animationSpeed', label: 'Animation Speed', value: 300, type: 'range', min: 100, max: 500, step: 50, unit: 'ms' },
+    { 
+      id: 'animationEasing', 
+      label: 'Animation Easing', 
+      value: 'ease', 
+      type: 'select',
+      options: [
+        'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear',
+        'cubic-bezier(0.34, 1.56, 0.64, 1)', 'cubic-bezier(0.68, -0.6, 0.32, 1.6)'
+      ]
+    }
+  ],
+  layout: [
+    { id: 'containerWidth', label: 'Container Width', value: 1280, type: 'range', min: 800, max: 1600, step: 40, unit: 'px' },
+    { id: 'gridColumns', label: 'Grid Columns', value: 12, type: 'range', min: 4, max: 16, step: 1 }
+  ]
+})
 
-// Typography settings
-const bodyFont = ref('Inter')
-const headingFont = ref('Montserrat')
-const fontSize = ref(16) // Base font size in px
-const lineHeight = ref(1.5) // Line height multiplier
-
-// Animation settings
-const animationSpeed = ref(300) // in ms
-const animationEasing = ref('ease')
-
-// Layout settings
-const containerWidth = ref(1280) // Max container width in px
-const gridColumns = ref(12) // Number of grid columns
-
-// Available font options
-const fontOptions = [
-  'Inter',
-  'Montserrat',
-  'Roboto',
-  'Open Sans',
-  'Nunito',
-  'Poppins',
-  'Lato',
-  'Source Sans Pro',
-  'Playfair Display',
-  'Merriweather'
-]
-
-// Available easing options
-const easingOptions = [
-  'ease',
-  'ease-in',
-  'ease-out',
-  'ease-in-out',
-  'linear',
-  'cubic-bezier(0.34, 1.56, 0.64, 1)',
-  'cubic-bezier(0.68, -0.6, 0.32, 1.6)'
-]
+// Create a flat map of all settings for easy access
+const settingsMap = computed(() => {
+  const map: Record<string, any> = {}
+  
+  Object.values(themeSettings.value).forEach(group => {
+    group.forEach((setting: any) => {
+      map[setting.id] = setting
+    })
+  })
+  
+  return map
+})
 
 // Convert hex to hsl for CSS variables
 const hexToHSL = (hex: string) => {
@@ -97,9 +118,10 @@ const hexToHSL = (hex: string) => {
 
 // Apply theme changes
 const applyThemeChanges = () => {
-  const primaryHSL = hexToHSL(primaryColor.value)
-  const secondaryHSL = hexToHSL(secondaryColor.value)
-  const accentHSL = hexToHSL(accentColor.value)
+  // Apply color settings
+  const primaryHSL = hexToHSL(settingsMap.value.primaryColor.value)
+  const secondaryHSL = hexToHSL(settingsMap.value.secondaryColor.value)
+  const accentHSL = hexToHSL(settingsMap.value.accentColor.value)
   
   // Update CSS variables for colors
   document.documentElement.style.setProperty('--color-primary', `hsl(${primaryHSL.h}, ${primaryHSL.s}%, 48%)`)
@@ -115,38 +137,38 @@ const applyThemeChanges = () => {
   document.documentElement.style.setProperty('--color-accent-dark', `hsl(${accentHSL.h}, ${accentHSL.s}%, 38%)`)
   
   // Update border radius
-  document.documentElement.style.setProperty('--radius-sm', `${borderRadius.value * 0.5}px`)
-  document.documentElement.style.setProperty('--radius-md', `${borderRadius.value}px`)
-  document.documentElement.style.setProperty('--radius-lg', `${borderRadius.value * 2}px`)
+  document.documentElement.style.setProperty('--radius-sm', `${settingsMap.value.borderRadius.value * 0.5}px`)
+  document.documentElement.style.setProperty('--radius-md', `${settingsMap.value.borderRadius.value}px`)
+  document.documentElement.style.setProperty('--radius-lg', `${settingsMap.value.borderRadius.value * 2}px`)
   
   // Update typography
-  document.documentElement.style.setProperty('--font-sans', `'${bodyFont.value}', system-ui, sans-serif`)
-  document.documentElement.style.setProperty('--font-heading', `'${headingFont.value}', system-ui, sans-serif`)
-  document.documentElement.style.setProperty('--font-size-base', `${fontSize.value}px`)
-  document.documentElement.style.setProperty('--line-height', `${lineHeight.value}`)
-  document.documentElement.style.setProperty('--font-scale', `${fontScale.value}`)
+  document.documentElement.style.setProperty('--font-sans', `'${settingsMap.value.bodyFont.value}', system-ui, sans-serif`)
+  document.documentElement.style.setProperty('--font-heading', `'${settingsMap.value.headingFont.value}', system-ui, sans-serif`)
+  document.documentElement.style.setProperty('--font-size-base', `${settingsMap.value.fontSize.value}px`)
+  document.documentElement.style.setProperty('--line-height', `${settingsMap.value.lineHeight.value}`)
+  document.documentElement.style.setProperty('--font-scale', `${settingsMap.value.fontScale.value}`)
   
   // Update spacing
-  document.documentElement.style.setProperty('--spacing-unit', `${spacing.value}px`)
-  document.documentElement.style.setProperty('--spacing-sm', `${spacing.value * 0.5}px`)
-  document.documentElement.style.setProperty('--spacing-md', `${spacing.value}px`)
-  document.documentElement.style.setProperty('--spacing-lg', `${spacing.value * 2}px`)
+  document.documentElement.style.setProperty('--spacing-unit', `${settingsMap.value.spacing.value}px`)
+  document.documentElement.style.setProperty('--spacing-sm', `${settingsMap.value.spacing.value * 0.5}px`)
+  document.documentElement.style.setProperty('--spacing-md', `${settingsMap.value.spacing.value}px`)
+  document.documentElement.style.setProperty('--spacing-lg', `${settingsMap.value.spacing.value * 2}px`)
   
   // Update shadows
-  const shadowBase = shadowIntensity.value / 10
+  const shadowBase = settingsMap.value.shadowIntensity.value / 10
   document.documentElement.style.setProperty('--shadow-sm', `0 1px ${Math.round(2 * shadowBase)}px 0 rgba(0, 0, 0, ${0.05 * shadowBase})`)
   document.documentElement.style.setProperty('--shadow-md', `0 4px ${Math.round(6 * shadowBase)}px -1px rgba(0, 0, 0, ${0.1 * shadowBase}), 0 2px ${Math.round(4 * shadowBase)}px -1px rgba(0, 0, 0, ${0.06 * shadowBase})`)
   document.documentElement.style.setProperty('--shadow-lg', `0 10px ${Math.round(15 * shadowBase)}px -3px rgba(0, 0, 0, ${0.1 * shadowBase}), 0 4px ${Math.round(6 * shadowBase)}px -2px rgba(0, 0, 0, ${0.05 * shadowBase})`)
   
   // Update animations
-  document.documentElement.style.setProperty('--duration-normal', `${animationSpeed.value}ms`)
-  document.documentElement.style.setProperty('--duration-fast', `${Math.round(animationSpeed.value * 0.5)}ms`)
-  document.documentElement.style.setProperty('--duration-slow', `${Math.round(animationSpeed.value * 1.5)}ms`)
-  document.documentElement.style.setProperty('--ease-default', animationEasing.value)
+  document.documentElement.style.setProperty('--duration-normal', `${settingsMap.value.animationSpeed.value}ms`)
+  document.documentElement.style.setProperty('--duration-fast', `${Math.round(settingsMap.value.animationSpeed.value * 0.5)}ms`)
+  document.documentElement.style.setProperty('--duration-slow', `${Math.round(settingsMap.value.animationSpeed.value * 1.5)}ms`)
+  document.documentElement.style.setProperty('--ease-default', settingsMap.value.animationEasing.value)
   
   // Update layout
-  document.documentElement.style.setProperty('--container-width', `${containerWidth.value}px`)
-  document.documentElement.style.setProperty('--grid-columns', `${gridColumns.value}`)
+  document.documentElement.style.setProperty('--container-width', `${settingsMap.value.containerWidth.value}px`)
+  document.documentElement.style.setProperty('--grid-columns', `${settingsMap.value.gridColumns.value}`)
   
   // Save current settings to localStorage
   saveCurrentSettings()
@@ -154,25 +176,17 @@ const applyThemeChanges = () => {
 
 // Save current settings to localStorage
 const saveCurrentSettings = () => {
-  const currentSettings = {
-    primaryColor: primaryColor.value,
-    secondaryColor: secondaryColor.value,
-    accentColor: accentColor.value,
-    borderRadius: borderRadius.value,
-    fontScale: fontScale.value,
-    spacing: spacing.value,
-    shadowIntensity: shadowIntensity.value,
-    bodyFont: bodyFont.value,
-    headingFont: headingFont.value,
-    fontSize: fontSize.value,
-    lineHeight: lineHeight.value,
-    animationSpeed: animationSpeed.value,
-    animationEasing: animationEasing.value,
-    containerWidth: containerWidth.value,
-    gridColumns: gridColumns.value,
+  const currentSettings: Record<string, any> = {
     activePreset: activePreset.value,
     customPresets: customPresets.value
   }
+  
+  // Save all settings values
+  Object.values(themeSettings.value).forEach(group => {
+    group.forEach((setting: any) => {
+      currentSettings[setting.id] = setting.value
+    })
+  })
   
   localStorage.setItem('theme-settings', JSON.stringify(currentSettings))
 }
@@ -189,21 +203,14 @@ const applyPreset = (presetKey: string) => {
     : predefinedPresets[presetKey]
   
   if (preset) {
-    primaryColor.value = preset.primaryColor
-    secondaryColor.value = preset.secondaryColor
-    accentColor.value = preset.accentColor
-    borderRadius.value = preset.borderRadius
-    fontScale.value = preset.fontScale
-    spacing.value = preset.spacing
-    shadowIntensity.value = preset.shadowIntensity
-    bodyFont.value = preset.bodyFont
-    headingFont.value = preset.headingFont
-    fontSize.value = preset.fontSize
-    lineHeight.value = preset.lineHeight
-    animationSpeed.value = preset.animationSpeed
-    animationEasing.value = preset.animationEasing
-    containerWidth.value = preset.containerWidth
-    gridColumns.value = preset.gridColumns
+    // Update all settings from preset
+    Object.values(themeSettings.value).forEach(group => {
+      group.forEach((setting: any) => {
+        if (preset[setting.id] !== undefined) {
+          setting.value = preset[setting.id]
+        }
+      })
+    })
     
     activePreset.value = presetKey
   }
@@ -214,25 +221,16 @@ const saveAsNewPreset = () => {
   if (!newPresetName.value.trim()) return
   
   const presetName = newPresetName.value.trim()
+  const newPreset: any = { name: presetName }
   
-  customPresets.value[presetName] = {
-    name: presetName,
-    primaryColor: primaryColor.value,
-    secondaryColor: secondaryColor.value,
-    accentColor: accentColor.value,
-    borderRadius: borderRadius.value,
-    fontScale: fontScale.value,
-    spacing: spacing.value,
-    shadowIntensity: shadowIntensity.value,
-    bodyFont: bodyFont.value,
-    headingFont: headingFont.value,
-    fontSize: fontSize.value,
-    lineHeight: lineHeight.value,
-    animationSpeed: animationSpeed.value,
-    animationEasing: animationEasing.value,
-    containerWidth: containerWidth.value,
-    gridColumns: gridColumns.value
-  }
+  // Save all current settings to the preset
+  Object.values(themeSettings.value).forEach(group => {
+    group.forEach((setting: any) => {
+      newPreset[setting.id] = setting.value
+    })
+  })
+  
+  customPresets.value[presetName] = newPreset as ThemePreset
   
   activePreset.value = `custom-${presetName}`
   newPresetName.value = ''
@@ -272,13 +270,8 @@ const allPresets = computed(() => {
   return presets
 })
 
-// Watch for changes and apply them
-watch([
-  primaryColor, secondaryColor, accentColor, borderRadius, 
-  fontScale, spacing, shadowIntensity, bodyFont, headingFont,
-  fontSize, lineHeight, animationSpeed, animationEasing,
-  containerWidth, gridColumns
-], () => {
+// Watch for changes in all settings and apply them
+watch(themeSettings, () => {
   applyThemeChanges()
 }, { deep: true })
 
@@ -304,26 +297,24 @@ onMounted(() => {
         } else if (predefinedPresets[settings.activePreset]) {
           applyPreset(settings.activePreset)
         } else {
-          // Fallback to default if preset doesn't exist
-          applyPreset('default')
+          // Load individual settings if no preset is active or preset doesn't exist
+          Object.values(themeSettings.value).forEach(group => {
+            group.forEach((setting: any) => {
+              if (settings[setting.id] !== undefined) {
+                setting.value = settings[setting.id]
+              }
+            })
+          })
         }
       } else {
         // Load individual settings if no preset is active
-        primaryColor.value = settings.primaryColor || primaryColor.value
-        secondaryColor.value = settings.secondaryColor || secondaryColor.value
-        accentColor.value = settings.accentColor || accentColor.value
-        borderRadius.value = settings.borderRadius || borderRadius.value
-        fontScale.value = settings.fontScale || fontScale.value
-        spacing.value = settings.spacing || spacing.value
-        shadowIntensity.value = settings.shadowIntensity || shadowIntensity.value
-        bodyFont.value = settings.bodyFont || bodyFont.value
-        headingFont.value = settings.headingFont || headingFont.value
-        fontSize.value = settings.fontSize || fontSize.value
-        lineHeight.value = settings.lineHeight || lineHeight.value
-        animationSpeed.value = settings.animationSpeed || animationSpeed.value
-        animationEasing.value = settings.animationEasing || animationEasing.value
-        containerWidth.value = settings.containerWidth || containerWidth.value
-        gridColumns.value = settings.gridColumns || gridColumns.value
+        Object.values(themeSettings.value).forEach(group => {
+          group.forEach((setting: any) => {
+            if (settings[setting.id] !== undefined) {
+              setting.value = settings[setting.id]
+            }
+          })
+        })
       }
     }
     
@@ -335,6 +326,63 @@ onMounted(() => {
     applyPreset('default')
   }
 })
+
+// Helper function to render setting controls based on type
+const renderSettingControl = (setting: any) => {
+  switch (setting.type) {
+    case 'color':
+      return {
+        template: `
+          <div class="flex items-center gap-2">
+            <input 
+              type="color" 
+              v-model="setting.value" 
+              class="color-picker"
+            />
+            <input 
+              type="text" 
+              v-model="setting.value" 
+              class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
+            />
+          </div>
+        `
+      }
+    case 'range':
+      return {
+        template: `
+          <div>
+            <input 
+              type="range" 
+              v-model="setting.value" 
+              :min="setting.min" 
+              :max="setting.max" 
+              :step="setting.step" 
+              class="w-full"
+            />
+            <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+              <span>{{ setting.min }}{{ setting.unit || '' }}</span>
+              <span>{{ setting.max }}{{ setting.unit || '' }}</span>
+            </div>
+          </div>
+        `
+      }
+    case 'select':
+      return {
+        template: `
+          <select 
+            v-model="setting.value"
+            class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
+          >
+            <option v-for="option in setting.options" :key="option" :value="option">{{ option }}</option>
+          </select>
+        `
+      }
+    default:
+      return {
+        template: `<div>Unknown setting type: {{ setting.type }}</div>`
+      }
+  }
+}
 </script>
 
 <template>
@@ -394,75 +442,44 @@ onMounted(() => {
       </div>
     </div>
     
-    <!-- Main Customization Grid -->
+    <!-- Dynamic Settings Sections -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Colors Column -->
+      <!-- Colors Section -->
       <div class="customizer-block">
         <h4 class="customizer-block-title">Colors</h4>
         
-        <!-- Primary Color -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Primary Color</label>
-          <div class="flex items-center gap-2">
+        <div v-for="setting in themeSettings.colors" :key="setting.id" class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">{{ setting.label }} {{ setting.unit ? `(${setting.value}${setting.unit})` : '' }}</label>
+          
+          <!-- Color picker -->
+          <div v-if="setting.type === 'color'" class="flex items-center gap-2">
             <input 
               type="color" 
-              v-model="primaryColor" 
+              v-model="setting.value" 
               class="color-picker"
             />
             <input 
               type="text" 
-              v-model="primaryColor" 
+              v-model="setting.value" 
               class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
             />
           </div>
-          <div class="flex mt-1.5 gap-1">
+          
+          <!-- Color preview for primary, secondary, accent -->
+          <div v-if="setting.id === 'primaryColor'" class="flex mt-1.5 gap-1">
             <div class="h-4 flex-1 rounded-sm bg-primary-light"></div>
             <div class="h-4 flex-1 rounded-sm bg-primary"></div>
             <div class="h-4 flex-1 rounded-sm bg-primary-dark"></div>
           </div>
-        </div>
-        
-        <!-- Secondary Color -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Secondary Color</label>
-          <div class="flex items-center gap-2">
-            <input 
-              type="color" 
-              v-model="secondaryColor" 
-              class="color-picker"
-            />
-            <input 
-              type="text" 
-              v-model="secondaryColor" 
-              class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
-            />
-          </div>
-          <div class="flex mt-1.5 gap-1">
+          <div v-if="setting.id === 'secondaryColor'" class="flex mt-1.5 gap-1">
             <div class="h-4 flex-1 rounded-sm bg-secondary-light"></div>
             <div class="h-4 flex-1 rounded-sm bg-secondary"></div>
             <div class="h-4 flex-1 rounded-sm bg-secondary-dark"></div>
           </div>
-        </div>
-        
-        <!-- Accent Color -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Accent Color</label>
-          <div class="flex items-center gap-2">
-            <input 
-              type="color" 
-              v-model="accentColor" 
-              class="color-picker"
-            />
-            <input 
-              type="text" 
-              v-model="accentColor" 
-              class="flex-1 px-2 py-1 text-sm border border-border rounded-md bg-background text-foreground"
-            />
-          </div>
-          <div class="flex mt-1.5 gap-1">
-            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + '33' }"></div>
-            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor }"></div>
-            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: accentColor + 'dd' }"></div>
+          <div v-if="setting.id === 'accentColor'" class="flex mt-1.5 gap-1">
+            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: setting.value + '33' }"></div>
+            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: setting.value }"></div>
+            <div class="h-4 flex-1 rounded-sm" :style="{ backgroundColor: setting.value + 'dd' }"></div>
           </div>
         </div>
         
@@ -477,237 +494,167 @@ onMounted(() => {
         </div>
       </div>
       
-      <!-- Typography Column -->
+      <!-- Typography Section -->
       <div class="customizer-block">
         <h4 class="customizer-block-title">Typography</h4>
         
-        <!-- Body Font -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Body Font</label>
+        <div v-for="setting in themeSettings.typography" :key="setting.id" class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">
+            {{ setting.label }} {{ setting.unit ? `(${setting.value}${setting.unit})` : setting.value }}
+          </label>
+          
+          <!-- Select control -->
           <select 
-            v-model="bodyFont"
+            v-if="setting.type === 'select'"
+            v-model="setting.value"
             class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
           >
-            <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
+            <option v-for="option in setting.options" :key="option" :value="option">{{ option }}</option>
           </select>
-          <p class="mt-1.5 text-sm" :style="{ fontFamily: bodyFont }">
-            Body text with {{ bodyFont }}.
+          
+          <!-- Range control -->
+          <template v-else-if="setting.type === 'range'">
+            <input 
+              type="range" 
+              v-model="setting.value" 
+              :min="setting.min" 
+              :max="setting.max" 
+              :step="setting.step" 
+              class="w-full"
+            />
+            <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+              <span>{{ setting.min }}{{ setting.unit || '' }}</span>
+              <span>{{ setting.max }}{{ setting.unit || '' }}</span>
+            </div>
+          </template>
+          
+          <!-- Font previews -->
+          <p v-if="setting.id === 'bodyFont'" class="mt-1.5 text-sm" :style="{ fontFamily: setting.value }">
+            Body text with {{ setting.value }}.
           </p>
-        </div>
-        
-        <!-- Heading Font -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Heading Font</label>
-          <select 
-            v-model="headingFont"
-            class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
-          >
-            <option v-for="font in fontOptions" :key="font" :value="font">{{ font }}</option>
-          </select>
-          <h5 class="mt-1.5 text-base font-bold" :style="{ fontFamily: headingFont }">
-            Heading with {{ headingFont }}.
+          <h5 v-if="setting.id === 'headingFont'" class="mt-1.5 text-base font-bold" :style="{ fontFamily: setting.value }">
+            Heading with {{ setting.value }}.
           </h5>
-        </div>
-        
-        <!-- Base Font Size -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Base Font Size ({{ fontSize }}px)</label>
-          <input 
-            type="range" 
-            v-model="fontSize" 
-            min="12" 
-            max="24" 
-            step="1" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>12px</span>
-            <span>24px</span>
-          </div>
-        </div>
-        
-        <!-- Line Height -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Line Height ({{ lineHeight }})</label>
-          <input 
-            type="range" 
-            v-model="lineHeight" 
-            min="1" 
-            max="2" 
-            step="0.1" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>1.0</span>
-            <span>2.0</span>
-          </div>
-        </div>
-        
-        <!-- Font Scale -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Font Scale ({{ fontScale }})</label>
-          <input 
-            type="range" 
-            v-model="fontScale" 
-            min="0.8" 
-            max="1.2" 
-            step="0.05" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>0.8</span>
-            <span>1.2</span>
-          </div>
         </div>
       </div>
       
-      <!-- Spacing & Effects Column -->
+      <!-- Spacing & Effects Section -->
       <div class="customizer-block">
         <h4 class="customizer-block-title">Spacing & Effects</h4>
         
-        <!-- Border Radius -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Border Radius ({{ borderRadius }}px)</label>
+        <div v-for="setting in themeSettings.spacing" :key="setting.id" class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">
+            {{ setting.label }} {{ setting.unit ? `(${setting.value}${setting.unit})` : setting.value }}
+          </label>
+          
+          <!-- Range control -->
           <input 
             type="range" 
-            v-model="borderRadius" 
-            min="0" 
-            max="16" 
-            step="1" 
+            v-model="setting.value" 
+            :min="setting.min" 
+            :max="setting.max" 
+            :step="setting.step" 
             class="w-full"
           />
           <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>0px</span>
-            <span>16px</span>
+            <span>{{ setting.min }}{{ setting.unit || '' }}</span>
+            <span>{{ setting.max }}{{ setting.unit || '' }}</span>
           </div>
-          <div class="flex gap-2 mt-1.5">
-            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 0.5 + 'px' }"></div>
-            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius + 'px' }"></div>
-            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: borderRadius * 2 + 'px' }"></div>
+          
+          <!-- Visual previews -->
+          <div v-if="setting.id === 'borderRadius'" class="flex gap-2 mt-1.5">
+            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: setting.value * 0.5 + 'px' }"></div>
+            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: setting.value + 'px' }"></div>
+            <div class="w-10 h-10 bg-primary" :style="{ borderRadius: setting.value * 2 + 'px' }"></div>
           </div>
-        </div>
-        
-        <!-- Base Spacing -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Base Spacing Unit ({{ spacing }}px)</label>
-          <input 
-            type="range" 
-            v-model="spacing" 
-            min="2" 
-            max="8" 
-            step="1" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>2px</span>
-            <span>8px</span>
+          
+          <div v-if="setting.id === 'spacing'" class="flex gap-1 mt-1.5">
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: setting.value * 0.5 + 'px' }"></div>
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: setting.value + 'px' }"></div>
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: setting.value * 2 + 'px' }"></div>
+            <div class="h-6 bg-primary rounded-sm" :style="{ width: setting.value * 4 + 'px' }"></div>
           </div>
-          <div class="flex gap-1 mt-1.5">
-            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 0.5 + 'px' }"></div>
-            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing + 'px' }"></div>
-            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 2 + 'px' }"></div>
-            <div class="h-6 bg-primary rounded-sm" :style="{ width: spacing * 4 + 'px' }"></div>
-          </div>
-        </div>
-        
-        <!-- Shadow Intensity -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Shadow Intensity ({{ shadowIntensity }})</label>
-          <input 
-            type="range" 
-            v-model="shadowIntensity" 
-            min="0" 
-            max="20" 
-            step="1" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>None</span>
-            <span>Heavy</span>
-          </div>
-          <div class="flex gap-2 mt-1.5">
-            <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 1px ${Math.round(2 * shadowIntensity/10)}px 0 rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
-            <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 4px ${Math.round(6 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 2px ${Math.round(4 * shadowIntensity/10)}px -1px rgba(0, 0, 0, ${0.06 * shadowIntensity/10})` }"></div>
-            <div class="w-10 h-10 bg-card border border-border rounded-md" :style="{ boxShadow: `0 10px ${Math.round(15 * shadowIntensity/10)}px -3px rgba(0, 0, 0, ${0.1 * shadowIntensity/10}), 0 4px ${Math.round(6 * shadowIntensity/10)}px -2px rgba(0, 0, 0, ${0.05 * shadowIntensity/10})` }"></div>
+          
+          <div v-if="setting.id === 'shadowIntensity'" class="flex gap-2 mt-1.5">
+            <div class="w-10 h-10 bg-card border border-border rounded-md" 
+                 :style="{ boxShadow: `0 1px ${Math.round(2 * setting.value/10)}px 0 rgba(0, 0, 0, ${0.05 * setting.value/10})` }"></div>
+            <div class="w-10 h-10 bg-card border border-border rounded-md" 
+                 :style="{ boxShadow: `0 4px ${Math.round(6 * setting.value/10)}px -1px rgba(0, 0, 0, ${0.1 * setting.value/10}), 0 2px ${Math.round(4 * setting.value/10)}px -1px rgba(0, 0, 0, ${0.06 * setting.value/10})` }"></div>
+            <div class="w-10 h-10 bg-card border border-border rounded-md" 
+                 :style="{ boxShadow: `0 10px ${Math.round(15 * setting.value/10)}px -3px rgba(0, 0, 0, ${0.1 * setting.value/10}), 0 4px ${Math.round(6 * setting.value/10)}px -2px rgba(0, 0, 0, ${0.05 * setting.value/10})` }"></div>
           </div>
         </div>
       </div>
       
-      <!-- Animation Settings Column -->
+      <!-- Animation Settings Section -->
       <div class="customizer-block">
         <h4 class="customizer-block-title">Animation</h4>
         
-        <!-- Animation Speed -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Animation Speed ({{ animationSpeed }}ms)</label>
-          <input 
-            type="range" 
-            v-model="animationSpeed" 
-            min="100" 
-            max="500" 
-            step="50" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>Fast</span>
-            <span>Slow</span>
-          </div>
-        </div>
-        
-        <!-- Animation Easing -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Animation Easing</label>
+        <div v-for="setting in themeSettings.animation" :key="setting.id" class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">
+            {{ setting.label }} {{ setting.unit ? `(${setting.value}${setting.unit})` : '' }}
+          </label>
+          
+          <!-- Range control -->
+          <template v-if="setting.type === 'range'">
+            <input 
+              type="range" 
+              v-model="setting.value" 
+              :min="setting.min" 
+              :max="setting.max" 
+              :step="setting.step" 
+              class="w-full"
+            />
+            <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
+              <span>Fast</span>
+              <span>Slow</span>
+            </div>
+          </template>
+          
+          <!-- Select control -->
           <select 
-            v-model="animationEasing"
+            v-else-if="setting.type === 'select'"
+            v-model="setting.value"
             class="w-full px-2 py-1.5 text-sm border border-border rounded-md bg-background text-foreground"
           >
-            <option v-for="easing in easingOptions" :key="easing" :value="easing">{{ easing }}</option>
+            <option v-for="option in setting.options" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
       </div>
       
-      <!-- Layout Settings Column -->
+      <!-- Layout Settings Section -->
       <div class="customizer-block">
         <h4 class="customizer-block-title">Layout</h4>
         
-        <!-- Container Width -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Container Width ({{ containerWidth }}px)</label>
+        <div v-for="setting in themeSettings.layout" :key="setting.id" class="customizer-item">
+          <label class="block text-xs font-medium mb-1.5">
+            {{ setting.label }} {{ setting.unit ? `(${setting.value}${setting.unit})` : setting.value }}
+          </label>
+          
+          <!-- Range control -->
           <input 
             type="range" 
-            v-model="containerWidth" 
-            min="800" 
-            max="1600" 
-            step="40" 
+            v-model="setting.value" 
+            :min="setting.min" 
+            :max="setting.max" 
+            :step="setting.step" 
             class="w-full"
           />
           <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>Narrow</span>
-            <span>Wide</span>
+            <span v-if="setting.id === 'containerWidth'">Narrow</span>
+            <span v-else>{{ setting.min }}</span>
+            
+            <span v-if="setting.id === 'containerWidth'">Wide</span>
+            <span v-else>{{ setting.max }}</span>
           </div>
-        </div>
-        
-        <!-- Grid Columns -->
-        <div class="customizer-item">
-          <label class="block text-xs font-medium mb-1.5">Grid Columns ({{ gridColumns }})</label>
-          <input 
-            type="range" 
-            v-model="gridColumns" 
-            min="4" 
-            max="16" 
-            step="1" 
-            class="w-full"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground mt-0.5">
-            <span>4</span>
-            <span>16</span>
-          </div>
-          <div class="flex gap-0.5 mt-1.5">
+          
+          <!-- Grid columns preview -->
+          <div v-if="setting.id === 'gridColumns'" class="flex gap-0.5 mt-1.5">
             <div 
-              v-for="i in gridColumns" 
+              v-for="i in setting.value" 
               :key="i" 
               class="h-6 bg-primary opacity-80 first:rounded-l-sm last:rounded-r-sm" 
-              :style="{ width: `${100/gridColumns}%` }"
+              :style="{ width: `${100/setting.value}%` }"
             ></div>
           </div>
         </div>
