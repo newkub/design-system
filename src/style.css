@@ -3,15 +3,21 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-heading: 'Montserrat', system-ui, sans-serif;
   
+  /* Font settings */
+  --font-size-base: 16px;
+  --line-height: 1.5;
+  --font-scale: 1;
+  
   /* Border radius */
   --radius-sm: 0.125rem;
   --radius-md: 0.25rem;
   --radius-lg: 0.5rem;
   
   /* Spacing */
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 2rem;
+  --spacing-unit: 4px;
+  --spacing-sm: calc(var(--spacing-unit) * 1);
+  --spacing-md: calc(var(--spacing-unit) * 2);
+  --spacing-lg: calc(var(--spacing-unit) * 4);
   
   /* Padding */
   --padding-sm: 0.5rem;
@@ -44,6 +50,10 @@
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Layout */
+  --container-width: 1280px;
+  --grid-columns: 12;
 }
 
 /* Light mode (default) */
@@ -57,6 +67,11 @@
   --color-secondary-light: hsl(270, 100%, 97%);
   --color-secondary: hsl(270, 100%, 48%);
   --color-secondary-dark: hsl(270, 100%, 38%);
+  
+  /* Accent color - Green */
+  --color-accent-light: hsl(160, 84%, 97%);
+  --color-accent: hsl(160, 84%, 39%);
+  --color-accent-dark: hsl(160, 84%, 29%);
   
   /* Success color - Green */
   --color-success-light: hsl(142, 76%, 95%);
@@ -86,8 +101,9 @@
   
   color-scheme: light;
   font-family: var(--font-sans);
-  line-height: 1.5;
+  line-height: var(--line-height);
   font-weight: 400;
+  font-size: var(--font-size-base);
   
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -106,6 +122,11 @@
   --color-secondary-light: hsl(270, 100%, 20%);
   --color-secondary: hsl(270, 100%, 60%);
   --color-secondary-dark: hsl(270, 100%, 80%);
+  
+  /* Accent color - Green (adjusted for dark mode) */
+  --color-accent-light: hsl(160, 84%, 20%);
+  --color-accent: hsl(160, 84%, 50%);
+  --color-accent-dark: hsl(160, 84%, 70%);
   
   /* Success color - Green (adjusted for dark mode) */
   --color-success-light: hsl(142, 76%, 20%);
@@ -220,4 +241,45 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Custom color input styling */
+input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+/* Responsive container */
+.container-content {
+  width: 100%;
+  max-width: var(--container-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-content {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }

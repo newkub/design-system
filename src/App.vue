@@ -4,6 +4,7 @@ import Alert from './components/Alert.vue'
 import TableOfContents from './components/TableOfContents.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ThemeCustomizer from './components/ThemeCustomizer.vue'
+import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
 </script>
 
 <template>
@@ -12,9 +13,12 @@ import ThemeCustomizer from './components/ThemeCustomizer.vue'
       <div class="container-content py-4 flex justify-between items-center">
         <h1 class="text-2xl font-heading font-bold text-primary">Design System</h1>
         <div class="flex items-center gap-4">
+          <ThemeModeSwitcher class="hidden md:flex" />
           <ThemeCustomizer />
           <ThemeToggle />
-          <div class="i-mdi-github text-muted-foreground text-xl"></div>
+          <a href="https://github.com/yourusername/design-system" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 rounded-md hover:bg-muted transition-colors">
+            <div class="i-mdi-github text-muted-foreground text-xl"></div>
+          </a>
         </div>
       </div>
     </header>
@@ -289,12 +293,14 @@ import Button from './components/Button.vue'
 import Alert from './components/Alert.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ThemeCustomizer from './components/ThemeCustomizer.vue'
+import ThemeModeSwitcher from './components/ThemeModeSwitcher.vue'
 
 // Then use them in your template
 &lt;Button variant="primary"&gt;Click Me&lt;/Button&gt;
 &lt;Alert type="success" title="Great job!"&gt;Your action was successful.&lt;/Alert&gt;
 &lt;ThemeToggle /&gt;
 &lt;ThemeCustomizer /&gt;
+&lt;ThemeModeSwitcher /&gt;
             </pre>
           </div>
         </section>
@@ -306,18 +312,21 @@ import ThemeCustomizer from './components/ThemeCustomizer.vue'
             or by updating the UnoCSS configuration in the <code>uno.config.ts</code> file.
           </p>
           <p class="mb-4 text-foreground">
-            You can also use the theme customizer in the header to change colors and border radius in real-time.
+            You can also use the theme customizer in the header to change colors, typography, spacing, and more in real-time.
             Click on the palette icon to open the customizer panel.
           </p>
           <div class="card p-4 mt-4">
             <h3 class="text-xl font-heading font-semibold mb-3">Theme Customization Options</h3>
             <ul class="list-disc pl-5 space-y-2">
-              <li>Primary color - Used for buttons, links, and primary UI elements</li>
-              <li>Secondary color - Used for accents and secondary UI elements</li>
-              <li>Border radius - Controls the roundness of UI elements</li>
+              <li>Colors - Primary, secondary, and accent colors for UI elements</li>
+              <li>Typography - Font families, sizes, and scales</li>
+              <li>Spacing & Borders - Control spacing units and border radius</li>
+              <li>Effects & Animation - Shadow intensity and animation settings</li>
+              <li>Layout - Container width and grid columns</li>
             </ul>
             <p class="mt-3">
               Your customizations are saved to your browser's local storage and will persist between visits.
+              You can also save your customizations as presets for quick switching between different themes.
             </p>
           </div>
         </section>
