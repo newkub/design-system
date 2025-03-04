@@ -61,21 +61,22 @@ const transitionDuration = ref(150) // Default transition duration in ms
 // Shadow intensity
 const shadowIntensity = ref(10) // Default shadow intensity (0-20)
 
+// Active tab
+const activeTab = ref('typography')
+
 // Generate color shades
 const generateColorShades = (baseColor: string) => {
   // This is a simplified version - in a real app you'd use a color library
   // to generate proper color shades
   return {
-    50: adjustBrightness(baseColor, 0.9),
-    100: adjustBrightness(baseColor, 0.8),
-    200: adjustBrightness(baseColor, 0.6),
-    300: adjustBrightness(baseColor, 0.4),
-    400: adjustBrightness(baseColor, 0.2),
-    500: baseColor,
-    600: adjustBrightness(baseColor, -0.2),
-    700: adjustBrightness(baseColor, -0.4),
-    800: adjustBrightness(baseColor, -0.6),
-    900: adjustBrightness(baseColor, -0.8),
+    lightest: adjustBrightness(baseColor, 0.9),
+    lighter: adjustBrightness(baseColor, 0.8),
+    light: adjustBrightness(baseColor, 0.6),
+    medium: adjustBrightness(baseColor, 0.4),
+    default: adjustBrightness(baseColor, 0.2),
+    dark: baseColor,
+    darker: adjustBrightness(baseColor, -0.2),
+    darkest: adjustBrightness(baseColor, -0.4),
   }
 }
 
@@ -185,319 +186,189 @@ const resetToDefaults = () => {
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-    <div class="w-96 bg-bg-primary shadow-lg overflow-y-auto animate-slide-in-right h-full">
+  <div class="fixed inset-0 z-50 flex justify-end">
+    <div class="fixed inset-0 bg-bg-overlay" @click="emit('close')"></div>
+    <div class="relative w-80 bg-bg-primary shadow-xl h-full">
       <div class="p-4 border-b border-border flex justify-between items-center sticky top-0 bg-bg-primary z-10">
-        <h2 class="text-lg font-semibold">Customize Theme</h2>
+        <h2 class="text-lg font-semibold">Theme Customizer</h2>
         <div class="flex items-center gap-2">
           <button 
-            class="p-2 rounded-md hover:bg-bg-muted transition-colors text-sm"
+            class="p-1.5 rounded-md hover:bg-bg-muted transition-colors text-sm"
             @click="resetToDefaults"
           >
             Reset
           </button>
           <button 
-            class="p-2 rounded-full hover:bg-bg-muted transition-colors"
+            class="p-1.5 rounded-md hover:bg-bg-muted transition-colors"
             @click="emit('close')"
           >
-            <Icon icon="carbon:close" class="text-xl" />
+            <Icon icon="carbon:close" class="text-lg" />
           </button>
         </div>
       </div>
       
-      <div class="p-6 space-y-8">
-        <!-- Typography -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Typography</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-2">Font Category</label>
-              <select 
-                v-model="selectedFontCategory"
-                class="w-full p-2 border border-border rounded-md bg-bg-primary"
-              >
-                <option v-for="category in fontCategories" :key="category.id" :value="category.id">
-                  {{ category.label }}
-                </option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-2">Font Family</label>
-              <select 
-                v-model="selectedFont"
-                class="w-full p-2 border border-border rounded-md bg-bg-primary"
-              >
-                <option v-for="font in fontsForCategory" :key="font" :value="font">
-                  {{ font }}
-                </option>
-              </select>
-            </div>
-            
-            <div class="p-3 border border-border rounded-md" :style="{ fontFamily: `'${selectedFont}', system-ui, sans-serif` }">
-              <p class="text-sm mb-1">The quick brown fox jumps over the lazy dog.</p>
-              <p class="text-lg font-bold">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-              <p>abcdefghijklmnopqrstuvwxyz 0123456789</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Colors -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Colors</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-2">Primary Color</label>
-              <div class="flex items-center gap-3">
-                <input 
-                  v-model="primaryColor"
-                  type="color" 
-                  class="w-10 h-10 rounded-md overflow-hidden cursor-pointer"
-                />
-                <input 
-                  v-model="primaryColor"
-                  type="text" 
-                  class="flex-1 p-2 border border-border rounded-md bg-bg-primary"
-                />
-              </div>
-              <div class="flex mt-2">
-                <div 
-                  v-for="shade in [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]" 
-                  :key="shade"
-                  class="h-6 flex-1"
-                  :style="{ backgroundColor: `var(--color-primary-${shade})` }"
-                ></div>
-              </div>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-2">Secondary Color</label>
-              <div class="flex items-center gap-3">
-                <input 
-                  v-model="secondaryColor"
-                  type="color" 
-                  class="w-10 h-10 rounded-md overflow-hidden cursor-pointer"
-                />
-                <input 
-                  v-model="secondaryColor"
-                  type="text" 
-                  class="flex-1 p-2 border border-border rounded-md bg-bg-primary"
-                />
-              </div>
-              <div class="flex mt-2">
-                <div 
-                  v-for="shade in [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]" 
-                  :key="shade"
-                  class="h-6 flex-1"
-                  :style="{ backgroundColor: `var(--color-secondary-${shade})` }"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Border Radius -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Border Radius</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between mb-1">
-                <label class="text-sm font-medium">Roundness</label>
-                <span class="text-sm text-text-secondary">{{ borderRadius }}px</span>
-              </div>
-              <input 
-                v-model="borderRadius"
-                type="range" 
-                min="0" 
-                max="20" 
-                step="1"
-                class="w-full"
-              />
-              <div class="flex gap-4 mt-3">
-                <div 
-                  class="w-16 h-16 bg-primary"
-                  :style="{ borderRadius: `${borderRadius}px` }"
-                ></div>
-                <div 
-                  class="w-16 h-16 bg-secondary"
-                  :style="{ borderRadius: `${borderRadius}px` }"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Spacing -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Spacing</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between mb-1">
-                <label class="text-sm font-medium">Base Spacing</label>
-                <span <div class="flex justify-between mb-1">
-                <label class="text-sm font-medium">Base Spacing</label>
-                <span class="text-sm text-text-secondary">{{ baseSpacing }}px</span>
-              </div>
-              <input 
-                v-model="baseSpacing"
-                type="range" 
-                min="2" 
-                max="8" 
-                step="0.5"
-                class="w-full"
-              />
-              <div class="flex gap-2 mt-3 items-end">
-                <div 
-                  class="w-8 bg-primary"
-                  :style="{ height: `${baseSpacing * 1}px` }"
-                ></div>
-                <div 
-                  class="w-8 bg-primary"
-                  :style="{ height: `${baseSpacing * 2}px` }"
-                ></div>
-                <div 
-                  class="w-8 bg-primary"
-                  :style="{ height: `${baseSpacing * 4}px` }"
-                ></div>
-                <div 
-                  class="w-8 bg-primary"
-                  :style="{ height: `${baseSpacing * 8}px` }"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Animations -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Animations</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between mb-1">
-                <label class="text-sm font-medium">Transition Duration</label>
-                <span class="text-sm text-text-secondary">{{ transitionDuration }}ms</span>
-              </div>
-              <input 
-                v-model="transitionDuration"
-                type="range" 
-                min="50" 
-                max="500" 
-                step="10"
-                class="w-full"
-              />
-              <div class="flex gap-4 mt-3">
-                <button 
-                  class="px-3 py-1 bg-primary text-text-inverted rounded-md"
-                  :style="{ transition: `all ${transitionDuration}ms` }"
-                >
-                  Hover me
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Shadows -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Shadows</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between mb-1">
-                <label class="text-sm font-medium">Shadow Intensity</label>
-                <span class="text-sm text-text-secondary">{{ shadowIntensity }}%</span>
-              </div>
-              <input 
-                v-model="shadowIntensity"
-                type="range" 
-                min="0" 
-                max="20" 
-                step="1"
-                class="w-full"
-              />
-              <div class="flex gap-4 mt-3">
-                <div 
-                  class="w-16 h-16 bg-bg-primary rounded-md"
-                  :style="{ boxShadow: `var(--shadow-md)` }"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Preview -->
-        <div class="p-4 border border-border rounded-md">
-          <h3 class="text-md font-medium mb-4">Preview</h3>
-          
-          <div class="space-y-4">
-            <div class="flex gap-2">
-              <button class="px-3 py-1 bg-primary text-text-inverted rounded-md">Primary</button>
-              <button class="px-3 py-1 bg-secondary text-text-inverted rounded-md">Secondary</button>
-            </div>
-            
-            <div class="p-3 bg-primary-100 border-l-4 border-primary text-primary-800">
-              This is a sample alert with primary color
-            </div>
-            
-            <div class="p-3 bg-secondary-100 border-l-4 border-secondary text-secondary-800">
-              This is a sample alert with secondary color
-            </div>
-            
-            <div class="p-4 bg-bg-primary rounded-md shadow-md">
-              <h4 class="font-medium mb-2">Card Example</h4>
-              <p class="text-sm text-text-secondary">This card shows your current theme settings.</p>
-            </div>
-          </div>
-        </div>
+      <!-- Tabs -->
+      <div class="flex border-b border-border">
+        <button 
+          v-for="tab in ['typography', 'colors', 'layout', 'effects']" 
+          :key="tab"
+          class="flex-1 py-2 text-sm font-medium transition-colors"
+          :class="activeTab === tab ? 'text-primary border-b-2 border-primary' : 'text-text-secondary hover:text-text-primary'"
+          @click="activeTab = tab"
+        >
+          {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+        </button>
       </div>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-.animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  background: var(--color-bg-muted);
-  border-radius: 3px;
-  outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  cursor: pointer;
-  border: none;
-}
-</style>
+      
+      <div class="p-4 overflow-y-auto" style="height: calc(100% - 105px)">
+        <!-- Typography Tab -->
+        <div v-if="activeTab === 'typography'" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">Font Category</label>
+            <select 
+              v-model="selectedFontCategory"
+              class="w-full p-2 border border-border rounded-md bg-bg-primary text-sm"
+            >
+              <option v-for="category in fontCategories" :key="category.id" :value="category.id">
+                {{ category.label }}
+              </option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-2">Font Family</label>
+            <select 
+              v-model="selectedFont"
+              class="w-full p-2 border border-border rounded-md bg-bg-primary text-sm"
+            >
+              <option v-for="font in fontsForCategory" :key="font" :value="font">
+                {{ font }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="p-3 border border-border rounded-md" :style="{ fontFamily: `'${selectedFont}', system-ui, sans-serif` }">
+            <p class="text-sm mb-1">The quick brown fox jumps over the lazy dog.</p>
+            <p class="text-lg font-bold">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+            <p>abcdefghijklmnopqrstuvwxyz 0123456789</p>
+          </div>
+        </div>
+        
+        <!-- Colors Tab -->
+        <div v-if="activeTab === 'colors'" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">Primary Color</label>
+            <div class="flex items-center gap-3">
+              <input 
+                v-model="primaryColor"
+                type="color" 
+                class="w-10 h-10 rounded-md overflow-hidden cursor-pointer"
+              />
+              <input 
+                v-model="primaryColor"
+                type="text" 
+                class="flex-1 p-2 border border-border rounded-md bg-bg-primary text-sm"
+              />
+            </div>
+            <div class="flex mt-2 rounded-md overflow-hidden">
+              <div 
+                v-for="shade in ['lightest', 'lighter', 'light', 'medium', 'default', 'dark', 'darker', 'darkest']" 
+                :key="shade"
+                class="h-6 flex-1 text-[0px]"
+                :style="{ backgroundColor: `var(--color-primary-${shade})` }"
+              >{{ shade }}</div>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-2">Secondary Color</label>
+            <div class="flex items-center gap-3">
+              <input 
+                v-model="secondaryColor"
+                type="color" 
+                class="w-10 h-10 rounded-md overflow-hidden cursor-pointer"
+              />
+              <input 
+                v-model="secondaryColor"
+                type="text" 
+                class="flex-1 p-2 border border-border rounded-md bg-bg-primary text-sm"
+              />
+            </div>
+            <div class="flex mt-2 rounded-md overflow-hidden">
+              <div 
+                v-for="shade in ['lightest', 'lighter', 'light', 'medium', 'default', 'dark', 'darker', 'darkest']" 
+                :key="shade"
+                class="h-6 flex-1 text-[0px]"
+                :style="{ backgroundColor: `var(--color-secondary-${shade})` }"
+              >{{ shade }}</div>
+            </div>
+          </div>
+          
+          <div class="p-3 border border-border rounded-md space-y-3">
+            <div class="p-2 bg-primary-lightest text-primary-darkest rounded-md text-sm">
+              Primary Lightest
+            </div>
+            <div class="p-2 bg-primary text-text-inverted rounded-md text-sm">
+              Primary Default
+            </div>
+            <div class="p-2 bg-secondary-lightest text-secondary-darkest rounded-md text-sm">
+              Secondary Lightest
+            </div>
+            <div class="p-2 bg-secondary text-text-inverted rounded-md text-sm">
+              Secondary Default
+            </div>
+          </div>
+        </div>
+        
+        <!-- Layout Tab -->
+        <div v-if="activeTab === 'layout'" class="space-y-6">
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="text-sm font-medium">Border Radius</label>
+              <span class="text-sm text-text-secondary">{{ borderRadius }}px</span>
+            </div>
+            <input 
+              v-model="borderRadius"
+              type="range" 
+              min="0" 
+              max="20" 
+              step="1"
+              class="w-full"
+            />
+            <div class="flex gap-4 mt-3">
+              <div 
+                class="w-16 h-16 bg-primary text-text-inverted flex items-center justify-center text-sm"
+                :style="{ borderRadius: `${borderRadius}px` }"
+              >
+                {{ borderRadius }}px
+              </div>
+              <div 
+                class="w-16 h-16 bg-secondary text-text-inverted flex items-center justify-center text-sm"
+                :style="{ borderRadius: `${borderRadius}px` }"
+              >
+                {{ borderRadius }}px
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <div class="flex justify-between mb-1">
+              <label class="text-sm font-medium">Base Spacing</label>
+              <span class="text-sm text-text-secondary">{{ baseSpacing }}px</span>
+            </div>
+            <input 
+              v-model="baseSpacing"
+              type="range" 
+              min="2" 
+              max="8" 
+              step="0.5"
+              class="w-full"
+            />
+            <div class="flex gap-2 mt-3 items-end">
+              <div 
+                class="w-8 bg-primary flex items-center justify-center text-[0px]"
+                :style="{ height: `${baseSpacing * 1}px` }"
+              >1x</div>
+              <div 
+                class="w-8 bg-primary flex items-center justify-center text-[0px]"
+                :style="{ height: `${baseSp

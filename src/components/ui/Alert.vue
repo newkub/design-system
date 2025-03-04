@@ -16,12 +16,12 @@ const variantClasses = computed(() => {
   switch (props.variant) {
     case 'primary':
       return {
-        container: 'bg-primary-50 border-primary text-primary-800',
+        container: 'bg-primary-lightest border-primary text-primary-darkest',
         icon: 'text-primary'
       }
     case 'secondary':
       return {
-        container: 'bg-secondary-50 border-secondary text-secondary-800',
+        container: 'bg-secondary-lightest border-secondary text-secondary-darkest',
         icon: 'text-secondary'
       }
     case 'success':

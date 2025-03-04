@@ -44,9 +44,9 @@ const buttonClasses = computed(() => {
   
   // Variant classes
   if (props.variant === 'primary') {
-    classes.push('bg-primary text-text-inverted hover:bg-primary-700 active:bg-primary-800')
+    classes.push('bg-primary text-text-inverted hover:bg-primary-darker active:bg-primary-darkest')
   } else if (props.variant === 'secondary') {
-    classes.push('bg-bg-muted text-text-primary hover:bg-bg-muted/80 active:bg-bg-muted/90')
+    classes.push('bg-secondary text-text-inverted hover:bg-secondary-darker active:bg-secondary-darkest')
   } else if (props.variant === 'outline') {
     classes.push('border border-border bg-transparent hover:bg-bg-muted active:bg-bg-muted/80')
   } else if (props.variant === 'destructive') {
