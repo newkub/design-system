@@ -3,6 +3,7 @@ import Button from './components/Button.vue'
 import Alert from './components/Alert.vue'
 import TableOfContents from './components/TableOfContents.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+import ThemeCustomizer from './components/ThemeCustomizer.vue'
 </script>
 
 <template>
@@ -11,20 +12,21 @@ import ThemeToggle from './components/ThemeToggle.vue'
       <div class="container-content py-4 flex justify-between items-center">
         <h1 class="text-2xl font-heading font-bold text-primary">Design System</h1>
         <div class="flex items-center gap-4">
+          <ThemeCustomizer />
           <ThemeToggle />
           <div class="i-mdi-github text-muted-foreground text-xl"></div>
         </div>
       </div>
     </header>
 
-    <div class="container-content py-8 flex">
-      <aside class="w-64 sticky top-20 self-start hidden lg:block">
+    <div class="container-content py-8 flex flex-col lg:flex-row">
+      <aside class="w-full lg:w-64 lg:sticky lg:top-20 lg:self-start">
         <TableOfContents />
       </aside>
 
       <main class="flex-1 max-w-3xl mx-auto">
-        <section class="mb-12">
-          <h2 id="introduction" class="text-3xl font-heading font-bold mb-6 text-primary">Introduction</h2>
+        <section id="introduction" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Introduction</h2>
           <p class="mb-4 text-foreground">
             This is a simple design system built with Vue 3, TypeScript, and UnoCSS. It includes reusable components
             like buttons and alerts that you can use in your projects.
@@ -34,8 +36,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </Alert>
         </section>
 
-        <section class="mb-12">
-          <h2 id="theme" class="text-3xl font-heading font-bold mb-6 text-primary">Theme System</h2>
+        <section id="theme" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Theme System</h2>
           <p class="mb-4 text-foreground">
             Our design system supports both light and dark modes. You can toggle between them using the theme switch in the header.
           </p>
@@ -52,8 +54,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="colors" class="text-3xl font-heading font-bold mb-6 text-primary">Color Tokens</h2>
+        <section id="colors" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Color Tokens</h2>
           <p class="mb-4 text-foreground">
             Our design system uses two main colors: primary (blue) and secondary (purple), along with utility colors for different states.
           </p>
@@ -107,8 +109,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="typography" class="text-3xl font-heading font-bold mb-6 text-primary">Typography</h2>
+        <section id="typography" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Typography</h2>
           <p class="mb-4 text-foreground">
             We use Inter for body text and Montserrat for headings to create a clear visual hierarchy.
           </p>
@@ -133,8 +135,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="spacing" class="text-3xl font-heading font-bold mb-6 text-primary">Spacing</h2>
+        <section id="spacing" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Spacing</h2>
           <p class="mb-4 text-foreground">
             Our spacing system is based on a simple small, medium, and large scale.
           </p>
@@ -155,8 +157,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="radius" class="text-3xl font-heading font-bold mb-6 text-primary">Border Radius</h2>
+        <section id="radius" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Border Radius</h2>
           <p class="mb-4 text-foreground">
             We use a consistent border radius system to create a cohesive look and feel.
           </p>
@@ -177,8 +179,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="buttons" class="text-3xl font-heading font-bold mb-6 text-primary">Buttons</h2>
+        <section id="buttons" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Buttons</h2>
           <p class="mb-4 text-foreground">
             Buttons are used to trigger actions or events. They come in different variants and sizes.
           </p>
@@ -207,8 +209,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="alerts" class="text-3xl font-heading font-bold mb-6 text-primary">Alerts</h2>
+        <section id="alerts" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Alerts</h2>
           <p class="mb-4 text-foreground">
             Alerts are used to provide feedback to the user. They come in different types and can be dismissible.
           </p>
@@ -237,8 +239,8 @@ import ThemeToggle from './components/ThemeToggle.vue'
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="icons" class="text-3xl font-heading font-bold mb-6 text-primary">Icons</h2>
+        <section id="icons" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Icons</h2>
           <p class="mb-4 text-foreground">
             We use Material Design Icons through UnoCSS's icon preset.
           </p>
@@ -268,11 +270,15 @@ import ThemeToggle from './components/ThemeToggle.vue'
               <div class="i-mdi-moon-waning-crescent text-3xl text-primary"></div>
               <span class="text-sm mt-2">i-mdi-moon-waning-crescent</span>
             </div>
+            <div class="flex flex-col items-center p-4 bg-muted rounded-md">
+              <div class="i-mdi-palette text-3xl text-primary"></div>
+              <span class="text-sm mt-2">i-mdi-palette</span>
+            </div>
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="usage" class="text-3xl font-heading font-bold mb-6 text-primary">Usage</h2>
+        <section id="usage" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Usage</h2>
           <p class="mb-4 text-foreground">
             To use these components in your Vue application, simply import them from the components directory.
           </p>
@@ -282,24 +288,38 @@ import ThemeToggle from './components/ThemeToggle.vue'
 import Button from './components/Button.vue'
 import Alert from './components/Alert.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+import ThemeCustomizer from './components/ThemeCustomizer.vue'
 
 // Then use them in your template
 &lt;Button variant="primary"&gt;Click Me&lt;/Button&gt;
 &lt;Alert type="success" title="Great job!"&gt;Your action was successful.&lt;/Alert&gt;
 &lt;ThemeToggle /&gt;
+&lt;ThemeCustomizer /&gt;
             </pre>
           </div>
         </section>
 
-        <section class="mb-12">
-          <h2 id="customization" class="text-3xl font-heading font-bold mb-6 text-primary">Customization</h2>
+        <section id="customization" class="mb-12">
+          <h2 class="text-3xl font-heading font-bold mb-6 text-primary">Customization</h2>
           <p class="mb-4 text-foreground">
             You can customize the design system by modifying the CSS variables in the <code>style.css</code> file
             or by updating the UnoCSS configuration in the <code>uno.config.ts</code> file.
           </p>
           <p class="mb-4 text-foreground">
-            You can also use the theme customizer in the header to change colors in real-time.
+            You can also use the theme customizer in the header to change colors and border radius in real-time.
+            Click on the palette icon to open the customizer panel.
           </p>
+          <div class="card p-4 mt-4">
+            <h3 class="text-xl font-heading font-semibold mb-3">Theme Customization Options</h3>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>Primary color - Used for buttons, links, and primary UI elements</li>
+              <li>Secondary color - Used for accents and secondary UI elements</li>
+              <li>Border radius - Controls the roundness of UI elements</li>
+            </ul>
+            <p class="mt-3">
+              Your customizations are saved to your browser's local storage and will persist between visits.
+            </p>
+          </div>
         </section>
       </main>
     </div>
