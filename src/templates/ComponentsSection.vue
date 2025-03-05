@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ComponentPreview from '../components/ComponentPreview.vue'
+import Button from '../components/Button.vue'
+import Modal from '../components/Modal.vue'
+import Alert from '../components/Alert.vue'
 import { loadComponents, ComponentMeta } from '../utils/componentLoader'
 
 // Dynamic component discovery and code extraction
@@ -22,6 +25,13 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+// Modal Example Component
+const showModalExample = ref(false)
+
+const toggleModalExample = () => {
+  showModalExample.value = !showModalExample.value
+}
 </script>
 
 <template>
@@ -108,7 +118,23 @@ onMounted(async () => {
           <!-- Modal component -->
           <div v-else-if="component.name === 'Modal'" class="space-y-4">
             <div class="flex flex-col items-center gap-4">
-              <ModalExample />
+              <Button @click="toggleModalExample">Open Example Modal</Button>
+              
+              <Modal :show="showModalExample" title="Example Modal" @close="toggleModalExample">
+                <div class="p-4">
+                  <Alert type="info" title="Modal Content">
+                    This is an example modal with a title and footer buttons.
+                  </Alert>
+                  <p class="mt-4">Modals are useful for displaying content that requires user attention or interaction.</p>
+                </div>
+                
+                <template #footer>
+                  <div class="flex justify-end gap-2">
+                    <Button variant="outline-primary" size="sm" @click="toggleModalExample">Cancel</Button>
+                    <Button variant="primary" size="sm" @click="toggleModalExample">Confirm</Button>
+                  </div>
+                </template>
+              </Modal>
             </div>
           </div>
           
@@ -129,38 +155,4 @@ onMounted(async () => {
       </template>
     </template>
   </section>
-</template>
-
-<!-- Modal Example Component -->
-<script setup name="ModalExample">
-import { ref } from 'vue'
-import Button from '../components/Button.vue'
-import Modal from '../components/Modal.vue'
-import Alert from '../components/Alert.vue'
-
-const showModal = ref(false)
-
-const toggleModal = () => {
-  showModal.value = !showModal.value
-}
-</script>
-
-<template name="ModalExample">
-  <Button @click="toggleModal">Open Example Modal</Button>
-  
-  <Modal :show="showModal" title="Example Modal" @close="toggleModal">
-    <div class="p-4">
-      <Alert type="info" title="Modal Content">
-        This is an example modal with a title and footer buttons.
-      </Alert>
-      <p class="mt-4">Modals are useful for displaying content that requires user attention or interaction.</p>
-    </div>
-    
-    <template #footer>
-      <div class="flex justify-end gap-2">
-        <Button variant="outline-primary" size="sm" @click="toggleModal">Cancel</Button>
-        <Button variant="primary" size="sm" @click="toggleModal">Confirm</Button>
-      </div>
-    </template>
-  </Modal>
 </template>
